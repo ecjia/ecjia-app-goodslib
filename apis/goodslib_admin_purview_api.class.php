@@ -57,15 +57,6 @@ class goodslib_admin_purview_api extends Component_Event_Api {
         	array('action_name' => '商品库更新', 'action_code' => 'goodslib_update', 'relevance' => ''),
         	array('action_name' => '商品库删除', 'action_code' => 'goodslib_delete', 'relevance' => ''),
         	
-            array('action_name' => '分类管理', 'action_code' => 'goodslib_category_manage', 'relevance' => ''),
-            array('action_name' => '分类更新', 'action_code' => 'goodslib_category_update', 'relevance' => ''),
-            array('action_name' => '', 'action_code' => 'goodslib_category_move', 'relevance' => ''),
-            array('action_name' => '分类删除', 'action_code' => 'goodslib_category_delete', 'relevance' => ''),
-            
-            array('action_name' => '商品品牌', 'action_code' => 'goodslib_brand_manage', 'relevance' => ''),
-            array('action_name' => '商品品牌更新', 'action_code' => 'goodslib_brand_update', 'relevance' => ''),
-            array('action_name' => '商品品牌删除', 'action_code' => 'goodslib_brand_delete', 'relevance' => ''),
-            
             array('action_name' => '商品规格', 'action_code' => 'goodslib_goods_type', 'relevance' => ''),
             array('action_name' => '商品规格更新', 'action_code' => 'goodslib_goods_type_update', 'relevance' => ''),
             array('action_name' => '商品规格删除', 'action_code' => 'goodslib_goods_type_delete', 'relevance' => ''),
