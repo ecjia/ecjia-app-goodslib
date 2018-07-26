@@ -100,11 +100,11 @@ class admin extends ecjia_admin {
         );
         RC_Script::localize_script( 'goods_list', 'admin_goodsList_lang', $goods_list_jslang );
         
-//         $goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;
+        $goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;
 //         $extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
         
-//         $this->tags = get_goods_info_nav($goods_id, $extension_code);
-//         $this->tags[ROUTE_A]['active'] = 1;
+        $this->tags = get_goods_info_nav($goods_id);
+        $this->tags[ROUTE_A]['active'] = 1;
         
         $this->db_goods 			= RC_Model::model('goods/goods_model');
     }
@@ -365,47 +365,234 @@ class admin extends ecjia_admin {
      * 编辑商品
      */
     public function edit() {
-        $this->admin_priv('goods_manage'); // 检查权限
-        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库',  RC_Uri::url('goodslib/admin/init')));
-        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('添加商品'));
-        $this->assign('ur_here', '添加商品库商品');
-        $this->assign('action_link', array('href' =>  RC_Uri::url('goodslib/admin/init'), 'text' => '商品列表'));
+        $this->admin_priv('goods_update');
         
-        /* 默认值 */
-        $goods = array(
-            'goods_id'				=> 0,
-            'goods_desc'			=> '',
-            'cat_id'				=> $last_choose[0],
-            'brand_id'				=> $last_choose[1],
-            'goods_type'			=> 0, // 商品类型
-            'shop_price'			=> 0,
-            'market_price'			=> 0,
-            'goods_weight'			=> 0,
-        );
-        /* 商品名称样式 */
-        $goods_name_style = isset($goods['goods_name_style']) ? $goods['goods_name_style'] : '';
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库', RC_Uri::url('goodslib/admin/init')));
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('编辑商品'));
         
-        /* 模板赋值 */
-        $this->assign('tags', array('edit' => array('name' => _('通用信息'), 'active' => 1, 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/add'))));
-        $this->assign('goods', $goods);
-        $this->assign('goods_name_color', $goods_name_style);
-        $this->assign('cat_list', cat_list(0, $goods['cat_id'], false));
-        $this->assign('brand_list', get_brand_list());
-        $this->assign('unit_list',  goods::unit_list());
-        //         $this->assign('user_rank_list', get_user_rank_list());
-        $this->assign('cfg', ecjia::config());
-        $this->assign('goods_attr_html', build_attr_html($goods['goods_type'], $goods['goods_id']));
-        $volume_price_list = '';
-        if (isset($_REQUEST['goods_id'])) {
-            $volume_price_list = get_volume_price_list($_REQUEST['goods_id']);
+        $this->assign('ur_here', '编辑商品');
+        $this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin/init'), 'text' => RC_Lang::get('goods::goods.goods_list')));
+        
+        /* 商品信息 */
+        $goods = RC_DB::table('goodslib')->where('goods_id', $_GET['goods_id'])->first();
+        if (empty($goods)) {
+            return $this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => RC_Lang::get('goods::goods.return_last_page'), 'href' => 'javascript:history.go(-1)'))));
         }
-        if (empty($volume_price_list)) {
-            $volume_price_list = array('0' => array('number' => '', 'price' => ''));
+        
+        /* 获取商品类型存在规格的类型 */
+        $specifications = get_goods_type_specifications();
+        if (isset($specifications[$goods['goods_type']])) {
+            $goods['specifications_id'] = $specifications[$goods['goods_type']];
         }
-        $this->assign('volume_price_list', $volume_price_list);
-        $this->assign('form_action', RC_Uri::url('goodslib/admin/insert'));
-        $this->assign_lang();
+        $_attribute = get_goods_specifications_list($goods['goods_id']);
+        $goods['_attribute'] = empty($_attribute) ? '' : 1;
+        
+        if (empty($goods) === true) {
+            /* 默认值 */
+            $goods = array(
+                'goods_id'				=> 0,
+                'goods_desc'			=> '',
+                'cat_id'				=> 0,
+                'shop_price'			=> 0,
+                'market_price'			=> 0,
+                'goods_weight'			=> 0,
+            );
+        }
+        /* 根据商品重量的单位重新计算 */
+        if ($goods['goods_weight'] > 0) {
+            $goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight'] / 0.001);
+        }
+        
+        if (!empty($goods['goods_brief'])) {
+            $goods['goods_brief'] = $goods['goods_brief'];
+        }
+        if (!empty($goods['keywords'])) {
+            $goods['keywords'] = $goods['keywords'];
+        }
+        
+        /* 商品图片路径 */
+        if (!empty($goods['goods_img'])) {
+            $goods['goods_img'] = goods_imageutils::getAbsoluteUrl($goods['goods_img']);
+            $goods['goods_thumb'] = goods_imageutils::getAbsoluteUrl($goods['goods_thumb']);
+            $goods['original_img'] = goods_imageutils::getAbsoluteUrl($goods['original_img']);
+        }
+        
+        /* 拆分商品名称样式 */
+        $goods_name_style = explode('+', empty($goods['goods_name_style']) ? '+' : $goods['goods_name_style']);
+        
+        $cat_list = cat_list(0, $goods['cat_id'], false);
+        
+        foreach ($cat_list as $k => $v) {
+            if (!empty($goods['other_cat']) && is_array($goods['other_cat'])){
+                if (in_array($v['cat_id'], $goods['other_cat'])) {
+                    $cat_list[$k]['is_other_cat'] = 1;
+                }
+            }
+        }
+        
+        //设置选中状态,并分配标签导航
+        $this->assign('action', 			ROUTE_A);
+        $this->assign('tags', 				$this->tags);
+        
+        $this->assign('goods', 				$goods);
+        $this->assign('goods_name_color', 	$goods_name_style[0]);
+        $this->assign('cat_list', 			$cat_list);
+        
+        $this->assign('brand_list', 		get_brand_list());
+        $this->assign('unit_list', 			goods::unit_list());
+        
+        $this->assign('weight_unit', 		$goods['goods_weight'] >= 1 ? '1' : '0.001');
+        $this->assign('cfg', 				ecjia::config());
+        
+        $this->assign('form_act', 			RC_Uri::url('goodslib/admin/edit'));
+        $this->assign('form_tab', 			'edit');
+        $this->assign('gd', 				RC_ENV::gd_version());
+        $this->assign('thumb_width', 		ecjia::config('thumb_width'));
+        $this->assign('thumb_height', 		ecjia::config('thumb_height'));
+        
+        /* 显示商品信息页面 */
+        $this->assign('form_action', RC_Uri::url('goodslib/admin/update'));
         
         $this->display('goodslib_info.dwt');
+    }
+    
+    /**
+     * 编辑商品
+     */
+    public function update() {
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $goods_id = $_POST['goods_id'];
+        
+        /* 检查货号是否重复 */
+        if (trim($_POST['goods_sn'])) {
+            $count = RC_DB::table('goodslib')->where('goods_sn', trim($_POST['goods_sn']))->where('is_delete', 0)->where('goods_id', '!=', $goods_id)->count();
+            if ($count > 0) {
+                return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+        }
+        
+        $upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
+        $upload->add_saving_callback(function ($file, $filename) {
+            return true;
+        });
+        /* 是否处理商品图 */
+        $proc_goods_img = true;
+        if (isset($_FILES['goods_img']) && !$upload->check_upload_file($_FILES['goods_img'])) {
+            $proc_goods_img = false;
+        }
+        /* 是否处理缩略图 */
+        //$proc_thumb_img = true;
+        $proc_thumb_img = isset($_FILES['thumb_img']) ? true : false;
+        if (isset($_FILES['thumb_img']) && !$upload->check_upload_file($_FILES['thumb_img'])) {
+            $proc_thumb_img = false;
+        }
+        
+        if ($proc_goods_img) {
+            if (isset($_FILES['goods_img'])) {
+                $image_info = $upload->upload($_FILES['goods_img']);
+                if (empty($image_info)) {
+                    return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+                }
+            }
+        }
+        if ($proc_thumb_img) {
+            if (isset($_FILES['thumb_img'])) {
+                $thumb_info = $upload->upload($_FILES['thumb_img']);
+                if (empty($thumb_info)) {
+                    return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+                }
+            }
+        }
+        
+        /* 处理商品图片 */
+        $goods_img = ''; // 初始化商品图片
+        $goods_thumb = ''; // 初始化商品缩略图
+        $img_original = ''; // 初始化原始图片
+        
+        /* 如果没有输入商品货号则自动生成一个商品货号 */
+        if (empty($_POST['goods_sn'])) {
+            $goods_sn = generate_goods_sn($goods_id);
+        } else {
+            $goods_sn = trim($_POST['goods_sn']);
+        }
+        
+        /* 处理商品数据 */
+        $shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
+        $market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
+        
+        $goods_weight 	= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
+        
+        $suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
+        
+        $goods_name 		= htmlspecialchars($_POST['goods_name']);
+        $goods_name_style 	= htmlspecialchars($_POST['goods_name_color']);
+        
+        $catgory_id = empty($_POST['cat_id']) 	? 0 : intval($_POST['cat_id']);
+        $brand_id 	= empty($_POST['brand_id']) ? 0 : intval($_POST['brand_id']);
+        
+        if (empty($catgory_id)) {
+            return $this->showmessage('请选择商品分类', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        }
+        
+        if (empty($goods_name)) {
+            return $this->showmessage(RC_Lang::get('goods::category.goods_name_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        }
+        
+        $data = array(
+            'goods_name'				=> rc_stripslashes($goods_name),
+            'goods_name_style'	  		=> $goods_name_style,
+            'goods_sn'			  		=> $goods_sn,
+            'cat_id'					=> $catgory_id,
+            'brand_id'			  		=> $brand_id,
+            'shop_price'				=> $shop_price,
+            'market_price'		  		=> $market_price,
+//             'suppliers_id'		  		=> $suppliers_id,
+            'is_real'			   		=> empty($code) ? '1' : '0',
+            'extension_code'			=> $code,
+            'keywords'			  		=> $_POST['keywords'],
+            'goods_brief'		   		=> $_POST['goods_brief'],
+            'goods_weight'		 		=> $goods_weight,
+            'last_update'		   		=> RC_Time::gmtime(),
+        );
+        RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
+        /* 记录日志 */
+        ecjia_admin::admin_log($_POST['goods_name'], 'edit', 'goods');
+        
+        /* 更新上传后的商品图片 */
+        if ($proc_goods_img) {
+            if (isset($image_info)) {
+                $goods_image = new goods_image_data($image_info['name'], $image_info['tmpname'], $image_info['ext'], $goods_id);
+                if ($proc_thumb_img) {
+                    $goods_image->set_auto_thumb(false);
+                }
+                
+                $result = $goods_image->update_goods();
+                if (is_ecjia_error($result)) {
+                    return $this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+                }
+                
+            }
+        }
+        
+        /* 更新上传后的缩略图片 */
+        if ($proc_thumb_img) {
+            if (isset($thumb_info)) {
+                $thumb_image = new goods_image_data($thumb_info['name'], $thumb_info['tmpname'], $thumb_info['ext'], $goods_id);
+                $result = $thumb_image->update_thumb();
+                if (is_ecjia_error($result)) {
+                    return $this->showmessage($result->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+                }
+            }
+        }
+        
+        /* 记录上一次选择的分类和品牌 */
+        setcookie('ECSCP[last_choose]', $catgory_id . '|' . $brand_id, RC_Time::gmtime() + 86400);
+        
+        $link[] = array(
+            'href' => RC_Uri::url('goodslib/admin/init'),
+            'text' => '商品列表'
+        );
+        
+        return $this->showmessage(RC_Lang::get('goods::goods.edit_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', array('goods_id' => $goods_id))));
     }
 }
