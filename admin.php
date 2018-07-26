@@ -595,4 +595,61 @@ class admin extends ecjia_admin {
         
         return $this->showmessage(RC_Lang::get('goods::goods.edit_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', array('goods_id' => $goods_id))));
     }
+    
+    /**
+     * 修改商品价格
+     */
+    public function edit_goods_price() {
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        
+        $goods_id = intval($_POST['pk']);
+        $goods_price = floatval($_POST['value']);
+        $price_rate = floatval(ecjia::config('market_price_rate') * $goods_price);
+        $data = array(
+            'shop_price'	=> $goods_price,
+            'market_price'  => $price_rate,
+            'last_update'   => RC_Time::gmtime()
+        );
+        if ($goods_price < 0 || $goods_price == 0 && $_POST['val'] != "$goods_price") {
+            return $this->showmessage(RC_Lang::get('goods::goods.shop_price_invalid'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        } else {
+            RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
+            return $this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goodslib/admin/init'), 'content' => number_format($goods_price, 2, '.', '')));
+        }
+    }
+    
+    /**
+     * 修改上架状态
+     */
+    public function toggle_on_sale() {
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        
+        $goods_id = intval($_POST['id']);
+        $on_sale = intval($_POST['val']);
+        
+        $data = array(
+            'is_display' => $on_sale,
+            'last_update' => RC_Time::gmtime()
+        );
+        RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
+        
+        return $this->showmessage(RC_Lang::get('goods::goods.toggle_on_sale'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $on_sale));
+    }
+    
+    /**
+     * 修改商品排序
+     */
+    public function edit_sort_order() {
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        
+        $goods_id = intval($_POST['pk']);
+        $sort_order = intval($_POST['value']);
+        $data = array(
+            'sort_order' => $sort_order,
+            'last_update' => RC_Time::gmtime()
+        );
+        RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
+        
+        return $this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_uri::url('goodslib/admin/init', 'cat_id='.$_GET['cat_id'].'&brand_id='.$_GET['brand_id'].'&intro_type='.$_GET['intro_type'].'&page='.$_GET['page'].'&sort_by='.$_GET['sort_by'].'&sort_order='.$_GET['sort_order']), 'content' => $sort_order));
+    }
 }

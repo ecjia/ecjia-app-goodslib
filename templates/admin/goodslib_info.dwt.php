@@ -54,7 +54,7 @@
 											<div class="control-group control-group-small formSep">
 												<label class="control-label">{lang key='goods::goods.lab_goods_sn'}</label>
 												<div class="controls">
-													<input class="w330" type="text" name="goods_sn" value="{$goods.goods_sn|escape}" size="20" data-toggle="checkGoodsSn" data-id="{$goods.goods_id}" data-url="{url path='goods/admin/check_goods_sn'}"/>
+													<input class="w330" type="text" name="goods_sn" value="{$goods.goods_sn|escape}" size="20" data-toggle="checkGoodsSn" data-id="{$goods.goods_id}" data-url="{url path='goodslib/admin/check_goods_sn'}"/>
 													<label id="goods_sn_notice" class="error"></label>
 													<span class="help-block" id="noticeGoodsSN">{lang key='goods::goods.notice_goods_sn'}</span>
 												</div>

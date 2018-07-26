@@ -89,9 +89,7 @@
 						</a>
 					</td>
 					<td class="hide-edit-area ">
-						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin/edit_goods_name')}" data-name="goods_edit_name" data-pk="{$goods.goods_id}" data-title="请输入商品名称"> 
-							{$goods.goods_name|escape:html}
-						</span>
+						{$goods.goods_name|escape:html}
 						<br/>
 						<div class="edit-list">
 							<a class="data-pjax" href='{url path="goodslib/admin/edit" args="goods_id={$goods.goods_id}"}'>{lang key='system::system.edit'}</a>&nbsp;|&nbsp;
@@ -103,9 +101,7 @@
 					</td>	
 					
 					<td>
-						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin/edit_goods_sn')}" data-name="goods_edit_goods_sn" data-pk="{$goods.goods_id}" data-title="请输入商品货号">
-							{$goods.goods_sn} 
-						</span>
+						{$goods.goods_sn} 
 					</td>
 					<td align="right">
 						<span  class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin/edit_goods_price')}" data-name="goods_price" data-pk="{$goods.goods_id}" data-title="请输入商品价格"> 
@@ -113,15 +109,13 @@
 						</span> 
 					</td>
 					<td align="center">
-						<i class="{if $goods.is_on_sale}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goodslib/admin/toggle_on_sale')}" refresh-url="{RC_Uri::url('goodslib/admin/init')}
+						<i class="{if $goods.is_display}fontello-icon-ok cursor_pointer{else}fontello-icon-cancel cursor_pointer{/if}" data-trigger="toggle_on_sale" data-url="{RC_Uri::url('goodslib/admin/toggle_on_sale')}" refresh-url="{RC_Uri::url('goodslib/admin/init')}
 							{if $filter.type}&type={$filter.type}{/if}
 							{if $filter.cat_id}&cat_id={$filter.cat_id}{/if}
 							{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
 							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
-							{if $filter.merchant_keywords}&merchant_keywords={$filter.merchant_keywords}{/if}
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
 							{if $filter.review_status}&review_status={$filter.review_status}{/if}
-							{if $filter.store_id}&store_id={$filter.store_id}{/if}
 							" data-id="{$goods.goods_id}">
 						</i>
 					</td>
