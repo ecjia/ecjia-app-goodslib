@@ -209,13 +209,11 @@ class goods_image_data {
 	        return new ecjia_error('upload_thumb_error', RC_Lang::get('goods::goods.upload_thumb_error'));
 	    }
 	     
-	    $db_goods = RC_Model::model('goods/goods_model');
-	    
 	    /* 如果有上传图片，删除原来的商品图 */
-	    $row = $db_goods->field('goods_thumb')->find(array('goods_id' => $this->goods_id));
+	    $row =  RC_DB::table('goodslib')->select('goods_thumb')->where('goods_id', $this->goods_id)->first();
 	     
 	    $data = array('goods_thumb' => $goods_thumb);
-	    $db_goods->where(array('goods_id' => $this->goods_id))->update($data);
+	    RC_DB::table('goodslib')->where('goods_id', $this->goods_id)->update($data);
 	    
 	    /* 先存储新的图片，再删除原来的图片 */
 	    if ($row['goods_thumb'] != '') {
@@ -240,7 +238,6 @@ class goods_image_data {
 	        return new ecjia_error('upload_goods_gallery_error', RC_Lang::get('goods::goods.upload_goods_image_error'));
 	    }
 
-	    $db_goods_gallery = RC_Model::model('goods/goods_gallery_model');
 	    
 	    $data = array(
 	        'goods_id' 		=> $this->goods_id,
@@ -249,13 +246,13 @@ class goods_image_data {
 	        'thumb_url' 	=> $goods_thumb,
 	        'img_original' 	=> $goods_original . '?999',
 	    );
-	    $data['img_id'] = $db_goods_gallery->insert($data);
+	    $data['img_id'] = RC_DB::table('goodslib_gallery')->insert($data);
 	    
 // 	    goods_imageutils::deleteImage($this->file_path);
 	    
 	    /* 不保留商品原图的时候删除原图 */
 	    if (!ecjia::config('retain_original_img') && !empty($data['img_original'])) {
-	        $db_goods_gallery->where(array('goods_id' => $this->goods_id))->update(array('img_original' => ''));
+	        RC_DB::table('goodslib_gallery')->where('goods_id', $this->goods_id)->update(array('img_original' => ''));
 	        goods_imageutils::deleteImage(goods_imageutils::getAbsolutePath($data['img_original']));
 	    }
 	    
