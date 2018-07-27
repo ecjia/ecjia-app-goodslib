@@ -53,9 +53,9 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class goodslib_admin_purview_api extends Component_Event_Api {
     public function call(&$options) {
         $purviews = array(
-            array('action_name' => '商品库列表', 'action_code' => 'goodslib_manage', 'relevance' => ''),
-        	array('action_name' => '商品库更新', 'action_code' => 'goodslib_update', 'relevance' => ''),
-        	array('action_name' => '商品库删除', 'action_code' => 'goodslib_delete', 'relevance' => ''),
+            array('action_name' => '商品库商品列表', 'action_code' => 'goodslib_manage', 'relevance' => ''),
+        	array('action_name' => '商品库商品更新', 'action_code' => 'goodslib_update', 'relevance' => ''),
+        	array('action_name' => '商品库商品删除', 'action_code' => 'goodslib_delete', 'relevance' => ''),
         	
             array('action_name' => '商品规格', 'action_code' => 'goodslib_goods_type', 'relevance' => ''),
             array('action_name' => '商品规格更新', 'action_code' => 'goodslib_goods_type_update', 'relevance' => ''),

@@ -59,7 +59,7 @@ class admin_gallery extends ecjia_admin {
      * 商品相册
      */
     public function init() {
-        $this->admin_priv('goods_update');
+        $this->admin_priv('goodslib_update');
         
         RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/goods_list.js', __FILE__), array('ecjia-utils', 'smoke', 'jquery-validate', 'jquery-form', 'bootstrap-placeholder', 'jquery-wookmark', 'jquery-imagesloaded', 'jquery-colorbox'));
         RC_Script::enqueue_script('jquery-dropper', RC_Uri::admin_url() . '/statics/lib/dropper-upload/jquery.fs.dropper.js', array(), false, true);
@@ -159,7 +159,7 @@ class admin_gallery extends ecjia_admin {
      * 上传商品相册图片的方法
      */
     public function insert() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $step = isset($_GET['step']) ? trim($_GET['step']) : '';
         
@@ -200,7 +200,7 @@ class admin_gallery extends ecjia_admin {
 	* 删除图片
 	*/
 	public function drop_image() {
-		$this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
 		$img_id = empty($_GET['img_id']) ? 0 : intval($_GET['img_id']);
 		$goods_id = empty($_GET['goods_id']) ? 0 : intval($_GET['goods_id']);
 		
@@ -229,7 +229,7 @@ class admin_gallery extends ecjia_admin {
 	* 修改相册图片描述
 	*/
 	public function update_image_desc() {
-		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
 		$img_id = $_GET['img_id'];
 		$val = $_GET['val'];
 		
@@ -242,7 +242,7 @@ class admin_gallery extends ecjia_admin {
 	* 相册图片排序
 	*/
 	public function sort_image() {
-		$this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
 		
 		$sort = $_GET['info'];
 		$i = 1;

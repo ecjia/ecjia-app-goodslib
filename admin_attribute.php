@@ -77,7 +77,7 @@ class admin_attribute extends ecjia_admin {
 	 * 属性列表
 	 */
 	public function init() {
-		$this->admin_priv('attr_manage');
+		$this->admin_priv('goodslib_goods_type');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::attribute.goods_attribute')));
 		ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -112,7 +112,7 @@ class admin_attribute extends ecjia_admin {
 	 * 添加/编辑属性
 	 */
 	public function add() {
-		$this->admin_priv('attr_update');
+		$this->admin_priv('goodslib_goods_type_update');
 
 		/* 取得属性信息 */
 		$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
@@ -146,7 +146,7 @@ class admin_attribute extends ecjia_admin {
 	 * 插入/更新属性
 	 */
 	public function insert() {
-		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
 	
 		/* 检查该类型下名称是否重复 */
 		$cat_id = isset($_POST['cat_id']) ? intval($_POST['cat_id']) : 0;
@@ -187,7 +187,7 @@ class admin_attribute extends ecjia_admin {
 	 * 添加/编辑属性
 	 */
 	public function edit() {
-		$this->admin_priv('attr_update');
+		$this->admin_priv('goodslib_goods_type_update');
 		
 		$is_add = !empty($_GET['act']) ? 'add' : '';
 		$this->assign('form_act', $is_add ? 'insert' : 'update');
@@ -239,7 +239,7 @@ class admin_attribute extends ecjia_admin {
 	 * 插入/更新属性
 	 */
 	public function update() {
-		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
 	
 		$cat_id = isset($_REQUEST['cat_id']) ? intval($_REQUEST['cat_id']) : 0;
 		$attr_id = isset($_POST['attr_id']) ? intval($_POST['attr_id']) : 0;
@@ -276,7 +276,7 @@ class admin_attribute extends ecjia_admin {
 	 * 删除商品属性
 	 */
 	public function remove() {
-		$this->admin_priv('attr_delete', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_goods_type_delete', ecjia::MSGTYPE_JSON);
 
 		$id = intval($_GET['id']);
 		
@@ -290,7 +290,7 @@ class admin_attribute extends ecjia_admin {
 	 * 删除属性(一个或多个)
 	 */
 	public function batch() {
-		$this->admin_priv('attr_delete', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_goods_type_delete', ecjia::MSGTYPE_JSON);
 		
 		$cat_id = !empty($_GET['cat_id']) ? intval($_GET['cat_id']) : 0;
 		/* 取得要操作的编号 */
@@ -311,7 +311,7 @@ class admin_attribute extends ecjia_admin {
 	 * 编辑属性名称
 	 */
 	public function edit_attr_name() {
-		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
 	
 		$id = intval($_POST['pk']);
 		$val = trim($_POST['value']);
@@ -339,7 +339,7 @@ class admin_attribute extends ecjia_admin {
 	 * 编辑排序序号
 	 */
 	public function edit_sort_order() {
-		$this->admin_priv('attr_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
 	
 		$id = intval($_POST['pk']);
 		$val = trim($_POST['value']);

@@ -141,7 +141,7 @@ class admin extends ecjia_admin {
     }
     
     public function goods_spec() {
-        $this->admin_priv('goodslib_goods_type');
+        $this->admin_priv('goodslib_update');
         
         
         $this->display('goods_list.dwt');
@@ -151,7 +151,7 @@ class admin extends ecjia_admin {
      * 添加新商品
      */
     public function add() {
-        $this->admin_priv('goods_manage'); // 检查权限
+        $this->admin_priv('goodslib_update'); // 检查权限
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库',  RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('添加商品'));
         $this->assign('ur_here', '添加商品库商品');
@@ -196,7 +196,7 @@ class admin extends ecjia_admin {
     }
     
     public function insert() {
-        $this->admin_priv('goods_manage'); // 检查权限
+        $this->admin_priv('goodslib_update'); // 检查权限
         
         /* 检查货号是否重复 */
         if (trim($_POST['goods_sn'])) {
@@ -368,7 +368,7 @@ class admin extends ecjia_admin {
      * 编辑商品
      */
     public function edit() {
-        $this->admin_priv('goods_update');
+        $this->admin_priv('goodslib_update');
         
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库', RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('编辑商品'));
@@ -463,7 +463,7 @@ class admin extends ecjia_admin {
      * 编辑商品
      */
     public function update() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         $goods_id = $_POST['goods_id'];
         
         /* 检查货号是否重复 */
@@ -603,7 +603,7 @@ class admin extends ecjia_admin {
      * 放入回收站
      */
     public function remove() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_delete', ecjia::MSGTYPE_JSON);
         
         $goods_id = intval($_GET['id']);
         $goods_name = RC_DB::table('goodslib')->where('goods_id', $goods_id)->pluck('goods_name');
@@ -630,26 +630,26 @@ class admin extends ecjia_admin {
             /* 放入回收站 */
             if ($_GET['type'] == 'trash') {
                 /* 检查权限 */
-                $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+                $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
                 update_goodslib($goods_id, 'is_delete', '1');
                 $action = 'batch_trash';
             }
             /* 上架 */
             elseif ($_GET['type'] == 'on_sale') {
                 /* 检查权限 */
-                $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+                $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
                 update_goodslib($goods_id, 'is_display', '1');
             }
             /* 下架 */
             elseif ($_GET['type'] == 'not_on_sale') {
                 /* 检查权限 */
-                $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+                $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
                 update_goodslib($goods_id, 'is_display', '0');
             }
             /* 删除 */
             elseif ($_GET['type'] == 'drop') {
                 /* 检查权限 */
-                $this->admin_priv('goods_delete', ecjia::MSGTYPE_JSON);
+                $this->admin_priv('goodslib_delete', ecjia::MSGTYPE_JSON);
                 delete_goods($goods_id);
                 $action = 'batch_remove';
             }
@@ -678,7 +678,7 @@ class admin extends ecjia_admin {
      * 修改商品价格
      */
     public function edit_goods_price() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $goods_id = intval($_POST['pk']);
         $goods_price = floatval($_POST['value']);
@@ -700,7 +700,7 @@ class admin extends ecjia_admin {
      * 修改上架状态
      */
     public function toggle_on_sale() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $goods_id = intval($_POST['id']);
         $on_sale = intval($_POST['val']);
@@ -718,7 +718,7 @@ class admin extends ecjia_admin {
      * 修改商品排序
      */
     public function edit_sort_order() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $goods_id = intval($_POST['pk']);
         $sort_order = intval($_POST['value']);
@@ -735,7 +735,7 @@ class admin extends ecjia_admin {
      * 商品描述编辑页面
      */
     public function edit_goods_desc() {
-        $this->admin_priv('goods_update');
+        $this->admin_priv('goodslib_update');
         
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库',RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_desc')));
@@ -792,7 +792,7 @@ class admin extends ecjia_admin {
      * 商品属性
      */
     public function edit_goods_attr() {
-        $this->admin_priv('goods_update');
+        $this->admin_priv('goodslib_update');
         
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库', RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_attr')));
@@ -843,7 +843,7 @@ class admin extends ecjia_admin {
      * 商品属性页面 - 切换商品类型时，返回所需的属性菜单
      */
     public function get_attr() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $goods_id = empty($_GET['goods_id']) ? 0 : intval($_GET['goods_id']);
         $goods_type = empty($_GET['goods_type']) ? 0 : intval($_GET['goods_type']);
@@ -856,7 +856,7 @@ class admin extends ecjia_admin {
      * 更新商品属性
      */
     public function update_goods_attr() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $goods_type = isset($_POST['goods_type']) ? $_POST['goods_type'] : 0;
         $goods_id = isset($_GET['goods_id']) ? intval($_GET['goods_id']) : 0;
@@ -941,7 +941,7 @@ class admin extends ecjia_admin {
      * 货品列表
      */
     public function product_list() {
-        $this->admin_priv('goods_manage');
+        $this->admin_priv('goodslib_manage');
         
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库', RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品列表')));
@@ -1002,7 +1002,7 @@ class admin extends ecjia_admin {
      * 编辑货品
      */
     public function product_add_execute() {
-        $this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $product['goods_id'] 		= $_POST['goods_id'];
         $product['attr'] 		    = !empty($_POST['attr'])           	? $_POST['attr']          	: '';
@@ -1106,7 +1106,7 @@ class admin extends ecjia_admin {
      * 货品排序、分页、查询
      */
     public function product_query() {
-        $this->admin_priv('goods_manage', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         /* 是否存在商品id */
         if (empty($_REQUEST['goods_id'])) {
             return $this->showmessage(RC_Lang::get('goods::goods.product_id_null'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -1162,7 +1162,7 @@ class admin extends ecjia_admin {
      * 货品删除
      */
     public function product_remove() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
         
@@ -1178,7 +1178,7 @@ class admin extends ecjia_admin {
      * 修改货品货号
      */
     public function edit_product_sn() {
-        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         
         $product_id = intval($_POST['pk']);
