@@ -91,32 +91,13 @@ function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
     if (empty ($cat_id)) {
         return array();
     }
-    //SELECT a.attr_id,a.attr_name,a.attr_input_type,a.attr_type,a.attr_values,v.attr_value,v.attr_price 
-//     FROM `ecjia-cityo2o2`.ecjia_attribute AS a 
-//     LEFT JOIN ecjia_goods_attr AS v ON v.attr_id = a.attr_id AND v.goods_id = '618' 
-//     WHERE a.cat_id = "144" 
-//     ORDER BY a.sort_order asc, a.attr_type asc, a.attr_id asc, v.goods_attr_id asc 
-    
-    $row = RC_DB::table('goodslib_attr as ga')
-    ->leftJoin('goodslib_attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
-    ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
-    ->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id))
-    ->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
-    ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
-    ->get();
-//     $dbview->view = array(
-//         'goods_attr' => array(
-//             'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
-//             'alias' => 'v',
-//             'field' => 'a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, v.attr_value, v.attr_price',
-//             'on' 	=> "v.attr_id = a.attr_id AND v.goods_id = '$goods_id'"
-//         )
-//     );
-//     $row = $dbview
-//     ->where('a.cat_id = "' . intval($cat_id) . '"')
-//     // ->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.attr_price' => 'asc', 'v.goods_attr_id' => 'asc'))
-//     ->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.goods_attr_id' => 'asc'))
-//     ->select();
+    $row = RC_DB::table('goodslib_attribute as a')
+        ->leftJoin('goodslib_attr as ga', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+        ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
+        ->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id))
+        ->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
+        ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
+        ->get();
     return $row;
 }
 
@@ -247,13 +228,13 @@ function get_goodslib_type() {
     
     $field = 'gt.*, count(a.cat_id) as attr_count';
     $goods_type_list = $db_goods_type
-    ->leftJoin('goodslib_attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
-    ->selectRaw($field)
-    ->groupBy(RC_DB::Raw('gt.cat_id'))
-    ->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
-    ->take(15)
-    ->skip($page->start_id-1)
-    ->get();
+        ->leftJoin('goodslib_attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+        ->selectRaw($field)
+        ->groupBy(RC_DB::Raw('gt.cat_id'))
+        ->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
+        ->take(15)
+        ->skip($page->start_id-1)
+        ->get();
     
     if (!empty($goods_type_list)) {
         foreach ($goods_type_list AS $key=>$val) {
@@ -263,6 +244,51 @@ function get_goodslib_type() {
     return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
 }
 
+/**
+ * 根据属性数组创建属性的表单
+ *
+ * @access public
+ * @param int $cat_id
+ *            分类编号
+ * @param int $goods_id
+ *            商品编号
+ * @return string
+ */
+function goodslib_build_attr_html($cat_id, $goods_id = 0) {
+    $attr = get_goodslib_cat_attr_list($cat_id, $goods_id);
+    $html = '';
+    $spec = 0;
+    
+    if (!empty($attr)) {
+        foreach ($attr as $key => $val) {
+            $html .= "<div class='control-group formSep'><label class='control-label'>";
+            $html .= "$val[attr_name]</label><div class='controls'><input type='hidden' name='attr_id_list[]' value='$val[attr_id]' />";
+            if ($val ['attr_input_type'] == 0) {
+                $html .= '<input name="attr_value_list[]" type="text" value="' . htmlspecialchars($val ['attr_value']) . '" size="40" /> ';
+            } elseif ($val ['attr_input_type'] == 2) {
+                $html .= '<textarea name="attr_value_list[]" rows="3" cols="40">' . htmlspecialchars($val ['attr_value']) . '</textarea>';
+            } else {
+                $html .= '<select name="attr_value_list[]" autocomplete="off">';
+                $html .= '<option value="">' . RC_Lang::get('goods::goods.select_please') . '</option>';
+                $attr_values = explode("\n", $val ['attr_values']);
+                foreach ($attr_values as $opt) {
+                    $opt = trim(htmlspecialchars($opt));
+                    
+                    $html .= ($val ['attr_value'] != $opt) ? '<option value="' . $opt . '">' . $opt . '</option>' : '<option value="' . $opt . '" selected="selected">' . $opt . '</option>';
+                }
+                $html .= '</select> ';
+            }
+            $html .= ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) ? '<span class="m_l5 m_r5">' . RC_Lang::get('goods::goods.spec_price') . '</span>' . ' <input type="text" name="attr_price_list[]" value="' . $val ['attr_price'] . '" size="5" maxlength="10" />' : ' <input type="hidden" name="attr_price_list[]" value="0" />';
+            if ($val ['attr_type'] == 1 || $val ['attr_type'] == 2) {
+                $html .= ($spec != $val ['attr_id']) ? "<a class='m_l5' href='javascript:;' data-toggle='clone-obj' data-parent='.control-group'><i class='fontello-icon-plus'></i></a>" : "<a class='m_l5' href='javascript:;' data-trigger='toggleSpec'><i class='fontello-icon-minus'></i></a>";
+                $spec = $val ['attr_id'];
+            }
+            $html .= '</div></div>';
+        }
+    }
+    $html .= '';
+    return $html;
+}
 
 
 // end
