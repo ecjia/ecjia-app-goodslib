@@ -290,5 +290,304 @@ function goodslib_build_attr_html($cat_id, $goods_id = 0) {
     return $html;
 }
 
+/**
+ * 获得商品的货品列表
+ *
+ * @access public
+ * @param
+ *            s integer $goods_id
+ * @param
+ *            s string $conditions
+ * @return array
+ */
+function goodslib_product_list($goods_id, $conditions = '') {
+    /* 过滤条件 */
+    $param_str = '-' . $goods_id;
+    
+    $day 	= getdate();
+    $today 	= RC_Time::local_mktime(23, 59, 59, $day ['mon'], $day ['mday'], $day ['year']);
+    $filter ['goods_id'] 		= $goods_id;
+    $filter ['keyword'] 		= empty ($_REQUEST ['keyword']) ? '' : trim($_REQUEST ['keyword']);
+    $filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) ? 'product_id' : trim($_REQUEST ['sort_by']);
+    $filter ['sort_order'] 		= empty ($_REQUEST ['sort_order']) ? 'DESC' : trim($_REQUEST ['sort_order']);
+    $filter ['extension_code'] 	= empty ($_REQUEST ['extension_code']) ? '' : trim($_REQUEST ['extension_code']);
+    $filter ['page_count'] 		= isset ($filter ['page_count']) ? $filter ['page_count'] : 1;
+    
+    $where = '';
+    
+    /* 关键字 */
+    if (!empty ($filter ['keyword'])) {
+        $where .= " AND (product_sn LIKE '%" . $filter ['keyword'] . "%')";
+    }
+    
+    $where .= $conditions;
+    
+    /* 记录总数 */
+    $count = RC_DB::table('goodslib_products')->whereRaw('goods_id = ' . $goods_id . $where)->count();
+    $filter ['record_count'] = $count;
+    
+    $row = RC_DB::table('goodslib_products')
+    ->selectRaw('product_id, goods_id, goods_attr as goods_attr_str, goods_attr, product_sn')
+    ->whereRaw('goods_id = ' . $goods_id . $where)
+    ->orderBy($filter ['sort_by'], $filter['sort_order'])
+    ->get();
+    
+    /* 处理规格属性 */
+    $goods_attr = product_goodsattr_attr_list($goods_id);
+    if (!empty ($row)) {
+        foreach ($row as $key => $value) {
+            $_goods_attr_array = explode('|', $value ['goods_attr']);
+            if (is_array($_goods_attr_array)) {
+                $_temp = '';
+                foreach ($_goods_attr_array as $_goods_attr_value) {
+                    $_temp[] = $goods_attr [$_goods_attr_value];
+                }
+                $row [$key] ['goods_attr'] = $_temp;
+            }
+        }
+    }
+    return array(
+        'product'		=> $row,
+        'filter'		=> $filter,
+        'page_count'	=> $filter ['page_count'],
+        'record_count'	=> $filter ['record_count']
+    );
+}
+
+/**
+ * 获得商品的规格属性值列表
+ *
+ * @access public
+ * @param
+ *            s integer $goods_id
+ * @return array
+ */
+function product_goodsattr_attr_list($goods_id) {
+    $results = RC_DB::table('goodslib_attr')->select('goods_attr_id', 'attr_value')->where('goods_id', $goods_id)->get();
+    
+    $return_arr = array();
+    if (!empty ($results)) {
+        foreach ($results as $value) {
+            $return_arr [$value ['goods_attr_id']] = $value ['attr_value'];
+        }
+    }
+    return $return_arr;
+}
+
+/**
+ * 插入或更新商品属性
+ *
+ * @param int $goods_id
+ *            商品编号
+ * @param array $id_list
+ *            属性编号数组
+ * @param array $is_spec_list
+ *            是否规格数组 'true' | 'false'
+ * @param array $value_price_list
+ *            属性值数组
+ * @return array 返回受到影响的goods_attr_id数组
+ */
+function handle_goodslib_attr($goods_id, $id_list, $is_spec_list, $value_price_list) {
+    $goods_attr_id = array();
+    /* 循环处理每个属性 */
+    if (!empty($id_list)) {
+        foreach ($id_list as $key => $id) {
+            $is_spec = $is_spec_list [$key];
+            if ($is_spec == 'false') {
+                $value = $value_price_list [$key];
+                $price = '';
+            } else {
+                $value_list = array();
+                $price_list = array();
+                if ($value_price_list [$key]) {
+                    $vp_list = explode(chr(13), $value_price_list [$key]);
+                    foreach ($vp_list as $v_p) {
+                        $arr = explode(chr(9), $v_p);
+                        $value_list [] = $arr [0];
+                        $price_list [] = $arr [1];
+                    }
+                }
+                $value = join(chr(13), $value_list);
+                $price = join(chr(13), $price_list);
+            }
+            
+            // 插入或更新记录
+            $result_id = RC_DB::table('goodslib_attr')->where('goods_id', $goods_id)->where('attr_id', $id)->where('attr_value', $value)->pluck('goods_attr_id');
+            
+            if (!empty ($result_id)) {
+                $data = array(
+                    'attr_value' => $value
+                );
+                RC_DB::table('goodslib_attr')->where('goods_id', $goods_id)->where('attr_id', $id)->where('goods_attr_id', $result_id)->update($data);
+                
+                $goods_attr_id [$id] = $result_id;
+            } else {
+                $data = array(
+                    'goods_id' 		=> $goods_id,
+                    'attr_id' 		=> $id,
+                    'attr_value' 	=> $value,
+                    'attr_price' 	=> $price
+                );
+                $goods_attr_id [$id] = RC_DB::table('goodslib_attr')->insertGetId($data);
+            }
+        }
+    }
+    return $goods_attr_id;
+}
+
+/**
+ * 将 goods_attr_id 的序列按照 attr_id 重新排序
+ *
+ * 注意：非规格属性的id会被排除
+ *
+ * @access public
+ * @param array $goods_attr_id_array
+ *        	一维数组
+ * @param string $sort
+ *        	序号：asc|desc，默认为：asc
+ *
+ * @return string
+ */
+function sort_goodslib_attr_id_array($goods_attr_id_array, $sort = 'asc') {
+    if (empty($goods_attr_id_array)) {
+        return $goods_attr_id_array;
+    }
+    // 重新排序
+    $row = RC_DB::table('goodslib_attribute as a')
+    ->leftJoin('goodslib_attr as v', function($join){
+        $join->on(RC_DB::raw('v.attr_id'), '=', RC_DB::raw('a.attr_id'))->on(RC_DB::raw('a.attr_type'), '=', RC_DB::raw('1'));
+    })
+    ->selectRaw('a.attr_type, v.attr_value, v.goods_attr_id')
+    ->whereIn(RC_DB::raw('v.goods_attr_id'), $goods_attr_id_array)
+    ->orderby(RC_DB::raw('a.attr_id'), $sort)
+    ->get();
+    
+    $return_arr = array();
+    if (! empty($row)) {
+        foreach ($row as $value) {
+            $return_arr['sort'][] = $value['goods_attr_id'];
+            
+            $return_arr['row'][$value['goods_attr_id']] = $value;
+        }
+    }
+    return $return_arr;
+}
+
+/**
+ * 商品的货品规格是否存在
+ *
+ * @param string $goods_attr
+ *            商品的货品规格
+ * @param string $goods_id
+ *            商品id
+ * @param int $product_id
+ *            商品的货品id；默认值为：0，没有货品id
+ * @return bool true，重复；false，不重复
+ */
+function check_goodslib_attr_exist($goods_attr, $goods_id, $product_id = 0) {
+    $db_products = RC_DB::table('goodslib_products');
+    $goods_id = intval($goods_id);
+    if (strlen($goods_attr) == 0 || empty ($goods_id)) {
+        return true; // 重复
+    }
+    
+    $db_products->where('goods_attr', $goods_attr)->where('goods_id', $goods_id);
+    if (!empty ($product_id)) {
+        $db_products->where('product_id', '!=', $product_id);
+    }
+    $res = $db_products->pluck('product_id');
+    if (empty ($res)) {
+        return false; // 不重复
+    } else {
+        return true; // 重复
+    }
+}
+
+/**
+ * 商品货号是否重复
+ *
+ * @param string $goods_sn
+ *            商品货号；请在传入本参数前对本参数进行SQl脚本过滤
+ * @param int $goods_id
+ *            商品id；默认值为：0，没有商品id
+ * @return bool true，重复；false，不重复
+ */
+function check_goodslib_sn_exist($goods_sn, $goods_id = 0) {
+    $goods_sn = trim($goods_sn);
+    $goods_id = intval($goods_id);
+    
+    if (strlen($goods_sn) == 0) {
+        return true; // 重复
+    }
+    $db_goods = RC_DB::table('goodslib');
+    
+    $db_goods->where('goods_sn', $goods_sn);
+    if (!empty ($goods_id)) {
+        $db_goods->where('goods_id', '!=', $goods_id);
+    }
+    $res = $db_goods->first();
+    
+    if (empty ($res)) {
+        return false; // 不重复
+    } else {
+        return true; // 重复
+    }
+}
+
+/**
+ * 商品的货品货号是否重复
+ *
+ * @param string $product_sn
+ *            商品的货品货号；请在传入本参数前对本参数进行SQl脚本过滤
+ * @param int $product_id
+ *            商品的货品id；默认值为：0，没有货品id
+ * @return bool true，重复；false，不重复
+ */
+function check_goodslib_product_sn_exist($product_sn, $product_id = 0) {
+    $product_sn = trim($product_sn);
+    $product_id = intval($product_id);
+    
+    if (strlen($product_sn) == 0) {
+        return true; // 重复
+    }
+    
+    $query = RC_DB::table('goodslib')->where('goods_sn', $product_sn)->pluck('goods_id');
+    if ($query) {
+        return true; // 重复
+    }
+    $db_product = RC_DB::table('goodslib_products')->where('product_sn', $product_sn);
+    if (!empty($product_id)) {
+        $db_product->where('product_id', '!=', $product_id);
+    }
+    $res = $db_product->pluck('product_id');
+    
+    if (empty ($res)) {
+        return false; // 不重复
+    } else {
+        return true; // 重复
+    }
+}
+
+/**
+ * 取货品信息
+ *
+ * @access public
+ * @param int $product_id
+ *            货品id
+ * @param int $filed
+ *            字段
+ * @return array
+ */
+function get_goodslib_product_info($product_id, $field = '') {
+    $return_array = array();
+    if (empty ($product_id)) {
+        return $return_array;
+    }
+    $filed = trim($filed);
+    if (empty ($filed)) {
+        $filed = '*';
+    }
+    return RC_DB::table('goodslib_products')->selectRaw($field)->where('product_id', $product_id)->first();
+}
 
 // end

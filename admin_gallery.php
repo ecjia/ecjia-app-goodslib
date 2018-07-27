@@ -93,7 +93,7 @@ class admin_gallery extends ecjia_admin {
         	'integralPercent'	=> ecjia::config('integral_percent'),
         );
         RC_Script::localize_script('goods_list', 'admin_goodsList_lang', $goods_list_jslang );
-        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_list'), RC_Uri::url('goodslib/admin/init')));
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库', RC_Uri::url('goodslib/admin/init')));
 		$this->assign('ur_here', RC_Lang::get('goods::goods.edit_goods_photo'));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_photo')));
         ecjia_screen::get_current_screen()->add_help_tab(array(
