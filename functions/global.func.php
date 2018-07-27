@@ -590,4 +590,86 @@ function get_goodslib_product_info($product_id, $field = '') {
     return RC_DB::table('goodslib_products')->selectRaw($field)->where('product_id', $product_id)->first();
 }
 
+/**
+ * 修改商品某字段值
+ *
+ * @param string $goods_id
+ *            商品编号，可以为多个，用 ',' 隔开
+ * @param string $field
+ *            字段名
+ * @param string $value
+ *            字段值
+ * @return bool
+ */
+function update_goodslib($goods_id, $field, $value) {
+    if ($goods_id) {
+        $data = array(
+            $field 			=> $value,
+            'last_update' 	=> RC_Time::gmtime()
+        );
+        $db_goods = RC_DB::table('goodslib')->whereIn('goods_id', $goods_id);
+        $db_goods->update($data);
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 从回收站删除多个商品
+ *
+ * @param mix $goods_id
+ *            商品id列表：可以逗号格开，也可以是数组
+ * @return void
+ */
+function delete_goodslib($goods_id) {
+    if (empty($goods_id)) {
+        return;
+    }
+    $data = RC_DB::table('goodslib')->select('goods_thumb', 'goods_img', 'original_img')->whereIn('goods_id', $goods_id)->get();
+    
+    if (!empty($data)) {
+        $disk = RC_Filesystem::disk();
+        foreach ($data as $goods) {
+            if (!empty($goods['goods_thumb'])) {
+                $disk->delete(RC_Upload::upload_path() . $goods['goods_thumb']);
+            }
+            if (!empty($goods['goods_img'])) {
+                $disk->delete(RC_Upload::upload_path() . $goods['goods_img']);
+            }
+            if (!empty($goods['original_img'])) {
+                $disk->delete(RC_Upload::upload_path() . $goods['original_img']);
+            }
+        }
+    }
+    /* 删除商品 */
+    $db_goods = RC_DB::table('goodslib')->whereIn('goods_id', $goods_id)->delete();
+    
+    /* 删除商品的货品记录 */
+    RC_DB::table('goodslib_products')->whereIn('goods_id', $goods_id)->delete();
+    
+    /* 删除商品相册的图片文件 */
+    $data = RC_DB::table('goodslib_gallery')->select('img_url', 'thumb_url', 'img_original')->whereIn('goods_id', $goods_id)->get();
+    
+    if (!empty($data)) {
+        $disk = RC_Filesystem::disk();
+        foreach ($data as $row) {
+            if (!empty($row ['img_url'])) {
+                $disk->delete(RC_Upload::upload_path() . $row['img_url']);
+            }
+            if (!empty($row['thumb_url'])) {
+                $disk->delete(RC_Upload::upload_path() . $row['thumb_url']);
+            }
+            if (!empty($row['img_original'])) {
+                strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
+                $disk->delete(RC_Upload::upload_path() . $row['img_original']);
+            }
+        }
+    }
+    /* 删除商品相册 */
+    RC_DB::table('goodslib_gallery')->whereIn('goods_id', $goods_id)->delete();
+    
+    /* 删除相关表记录 */
+    RC_DB::table('goodslib_attr')->whereIn('goods_id', $goods_id)->delete();
+}
+
 // end

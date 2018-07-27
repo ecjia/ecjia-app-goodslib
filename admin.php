@@ -613,6 +613,66 @@ class admin extends ecjia_admin {
     }
     
     /**
+     * 批量操作
+     */
+    public function batch() {
+        /* 取得要操作的商品编号 */
+        $goods_id = !empty($_POST['checkboxes']) ? $_POST['checkboxes'] : 0;
+        if (!isset($_GET['type']) || $_GET['type'] == '') {
+            return $this->showmessage(RC_Lang::get('goods::goods.pls_choose_operate'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        }
+        $goods_id = explode(',', $goods_id);
+        $data = RC_DB::table('goodslib')->select('goods_name')->whereIn('goods_id', $goods_id)->get();
+        
+        if (isset($_GET['type'])) {
+            /* 放入回收站 */
+            if ($_GET['type'] == 'trash') {
+                /* 检查权限 */
+                $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+                update_goodslib($goods_id, 'is_delete', '1');
+                $action = 'batch_trash';
+            }
+            /* 上架 */
+            elseif ($_GET['type'] == 'on_sale') {
+                /* 检查权限 */
+                $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+                update_goodslib($goods_id, 'is_display', '1');
+            }
+            /* 下架 */
+            elseif ($_GET['type'] == 'not_on_sale') {
+                /* 检查权限 */
+                $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+                update_goodslib($goods_id, 'is_display', '0');
+            }
+            /* 删除 */
+            elseif ($_GET['type'] == 'drop') {
+                /* 检查权限 */
+                $this->admin_priv('goods_delete', ecjia::MSGTYPE_JSON);
+                delete_goods($goods_id);
+                $action = 'batch_remove';
+            }
+        }
+        
+        /* 记录日志 */
+        if (!empty($data) && $action) {
+            foreach ($data as $k => $v) {
+                ecjia_admin::admin_log($v['goods_name'], $action, 'goods');
+            }
+        }
+        
+        $page = empty($_GET['page']) ? '&page=1' : '&page='.$_GET['page'];
+        $is_on_sale = isset($_GET['is_on_sale']) ? $_GET['is_on_sale'] : '';
+        
+        if ($_GET['type'] == 'drop' || $_GET['type'] == 'restore') {
+            $pjaxurl = RC_Uri::url('goodslib/admin/trash', $page);
+        } else {
+            $pjaxurl = RC_Uri::url('goodslib/admin/init', 'is_on_sale='.$is_on_sale.$page);
+        }
+        
+        return $this->showmessage(RC_Lang::get('goods::goods.batch_handle_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+    }
+    
+    /**
      * 修改商品价格
      */
     public function edit_goods_price() {
