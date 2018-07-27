@@ -108,6 +108,8 @@ class admin extends ecjia_admin {
         $this->tags[ROUTE_A]['active'] = 1;
         
         $this->db_goods 			= RC_Model::model('goods/goods_model');
+        
+        ecjia_admin_log::instance()->add_object('goodslib', '商品库');
     }
     
     /**
@@ -312,7 +314,7 @@ class admin extends ecjia_admin {
                 $this->db_goods->where('goods_id='.$goods_id)->update($data);
             }
             /* 记录日志 */
-            ecjia_admin::admin_log($_POST['goods_name'], 'add', 'goods');
+            ecjia_admin::admin_log($_POST['goods_name'], 'add', 'goodslib');
             
             
             /* 更新上传后的商品图片 */
@@ -557,7 +559,7 @@ class admin extends ecjia_admin {
         );
         RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
         /* 记录日志 */
-        ecjia_admin::admin_log($_POST['goods_name'], 'edit', 'goods');
+        ecjia_admin::admin_log($_POST['goods_name'], 'edit', 'goodslib');
         
         /* 更新上传后的商品图片 */
         if ($proc_goods_img) {
@@ -608,7 +610,7 @@ class admin extends ecjia_admin {
         
         RC_DB::table('goodslib')->where('goods_id', $goods_id)->update(array('is_delete' => 1));
         
-        ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goods');
+        ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goodslib');
         return $this->showmessage(RC_Lang::get('goods::goods.trash_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
     }
     
@@ -656,7 +658,7 @@ class admin extends ecjia_admin {
         /* 记录日志 */
         if (!empty($data) && $action) {
             foreach ($data as $k => $v) {
-                ecjia_admin::admin_log($v['goods_name'], $action, 'goods');
+                ecjia_admin::admin_log($v['goods_name'], $action, 'goodslib');
             }
         }
         
@@ -776,7 +778,7 @@ class admin extends ecjia_admin {
         RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
         
         /* 记录日志 */
-//         ecjia_admin::admin_log($goods['goods_name'], 'edit', 'goods');
+        ecjia_admin::admin_log($goods['goods_name'], 'edit', 'goodslib');
         
         /* 提示页面 */
         $link[] = array(
@@ -1077,7 +1079,7 @@ class admin extends ecjia_admin {
 //                 $goods_id = explode(',', $product['goods_id']);
 //                 if (update_goods($goods_id, 'goods_number', $product_count)) {
                     //记录日志
-                    ecjia_admin::admin_log($product['goods_id'], 'update', 'goods');
+                    ecjia_admin::admin_log($product['goods_id'], 'update', 'goodslib');
 //                 }
             }
         }
@@ -1167,7 +1169,7 @@ class admin extends ecjia_admin {
         $result = RC_DB::table('goodslib_products')->where('product_id', $product_id)->delete();
         if ($result) {
             //记录日志
-//             ecjia_admin::admin_log('', 'trash', 'products');
+            ecjia_admin::admin_log('', 'trash', 'products');
         }
         return $this->showmessage('删除成功！', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
     }
