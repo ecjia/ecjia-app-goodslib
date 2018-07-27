@@ -598,6 +598,21 @@ class admin extends ecjia_admin {
     }
     
     /**
+     * 放入回收站
+     */
+    public function remove() {
+        $this->admin_priv('goods_update', ecjia::MSGTYPE_JSON);
+        
+        $goods_id = intval($_GET['id']);
+        $goods_name = RC_DB::table('goodslib')->where('goods_id', $goods_id)->pluck('goods_name');
+        
+        RC_DB::table('goodslib')->where('goods_id', $goods_id)->update(array('is_delete' => 1));
+        
+        ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goods');
+        return $this->showmessage(RC_Lang::get('goods::goods.trash_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+    }
+    
+    /**
      * 修改商品价格
      */
     public function edit_goods_price() {
