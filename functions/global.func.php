@@ -51,10 +51,218 @@ function goodslib_get_goods_info_nav($goods_id = 0, $extension_code = '') {
     return array(
         'edit'                  => array('name' => RC_Lang::get('goods::goods.tab_general'), 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/edit', "goods_id=$goods_id".$extension_code)),
         'edit_goods_desc'       => array('name' => RC_Lang::get('goods::goods.tab_detail'), 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/edit_goods_desc', "goods_id=$goods_id".$extension_code)),
-        'edit_goods_attr'       => array('name' => RC_Lang::get('goods::goods.tab_properties'), 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/edit_goods_attr', "goods_id=$goods_id".$extension_code)),
         'edit_goods_photo'      => array('name' => RC_Lang::get('goods::goods.tab_gallery'), 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin_gallery/init', "goods_id=$goods_id".$extension_code)),
+        'edit_goods_attr'       => array('name' => '规格属性', 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/edit_goods_attr', "goods_id=$goods_id".$extension_code)),
         'product_list'          => array('name' => RC_Lang::get('goods::goods.tab_product'), 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/product_list', "goods_id=$goods_id".$extension_code)),
     );
 }
+
+/**
+ * 获得商品已添加的规格列表
+ *
+ * @access public
+ * @param
+ *            s integer $goods_id
+ * @return array
+ */
+function get_goodslib_specifications_list($goods_id) {
+    if (empty($goods_id)) {
+        return array(); // $goods_id不能为空
+    }
+    return RC_DB::table('goodslib_attr as ga')
+    ->leftJoin('goodslib_attribute as a', RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
+    ->where('goods_id', $goods_id)
+    ->where(RC_DB::raw('a.attr_type'), 1)
+    ->selectRaw('ga.goods_attr_id, ga.attr_value, ga.attr_id, a.attr_name')
+    ->orderBy(RC_DB::raw('ga.attr_id'), 'asc')
+    ->get();
+}
+
+/**
+ * 取得通用属性和某分类的属性，以及某商品的属性值
+ *
+ * @param int $cat_id
+ *            分类编号
+ * @param int $goods_id
+ *            商品编号
+ * @return array 规格与属性列表
+ */
+function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
+    if (empty ($cat_id)) {
+        return array();
+    }
+    //SELECT a.attr_id,a.attr_name,a.attr_input_type,a.attr_type,a.attr_values,v.attr_value,v.attr_price 
+//     FROM `ecjia-cityo2o2`.ecjia_attribute AS a 
+//     LEFT JOIN ecjia_goods_attr AS v ON v.attr_id = a.attr_id AND v.goods_id = '618' 
+//     WHERE a.cat_id = "144" 
+//     ORDER BY a.sort_order asc, a.attr_type asc, a.attr_id asc, v.goods_attr_id asc 
+    
+    $row = RC_DB::table('goodslib_attr as ga')
+    ->leftJoin('goodslib_attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+    ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
+    ->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id))
+    ->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
+    ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
+    ->get();
+//     $dbview->view = array(
+//         'goods_attr' => array(
+//             'type' 	=> Component_Model_View::TYPE_LEFT_JOIN,
+//             'alias' => 'v',
+//             'field' => 'a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, v.attr_value, v.attr_price',
+//             'on' 	=> "v.attr_id = a.attr_id AND v.goods_id = '$goods_id'"
+//         )
+//     );
+//     $row = $dbview
+//     ->where('a.cat_id = "' . intval($cat_id) . '"')
+//     // ->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.attr_price' => 'asc', 'v.goods_attr_id' => 'asc'))
+//     ->order(array('a.sort_order' => 'asc', 'a.attr_type' => 'asc', 'a.attr_id' => 'asc', 'v.goods_attr_id' => 'asc'))
+//     ->select();
+    return $row;
+}
+
+/**
+ * 获取商品类型中包含规格的类型列表
+ *
+ * @access public
+ * @return array
+ */
+function get_goodslib_type_specifications() {
+    $row = RC_DB::table('goodslib_attribute')->selectRaw('DISTINCT cat_id')->where('attr_type', 1)->get();
+    $return_arr = array();
+    if (!empty($row)) {
+        foreach ($row as $value) {
+            $return_arr[$value['cat_id']] = $value['cat_id'];
+        }
+    }
+    return $return_arr;
+}
+
+/**
+ * 获取属性列表
+ *
+ * @return  array
+ */
+function get_goodslib_attr_list() {
+    $db_attribute = RC_DB::table('goodslib_attribute as a');
+    /* 查询条件 */
+    $filter = array();
+    $filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
+    $filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
+    $filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
+    
+    $where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
+    if (!empty($filter['cat_id'])) {
+        $db_attribute->whereRaw($where);
+    }
+    $count = $db_attribute->count('attr_id');
+    $page = new ecjia_page($count, 15, 5);
+    
+    $row = $db_attribute
+    ->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
+    ->selectRaw('a.*, t.cat_name')
+    ->orderby($filter['sort_by'], $filter['sort_order'])
+    ->take(15)->skip($page->start_id-1)->get();
+    
+    if (!empty($row)) {
+        foreach ($row AS $key => $val) {
+            $row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
+            $row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
+        }
+    }
+    return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
+}
+
+/**
+ * 获得指定的商品类型下所有的属性分组
+ *
+ * @param   integer     $cat_id     商品类型ID
+ *
+ * @return  array
+ */
+function get_goodslib_attr_groups($cat_id) {
+    $data = RC_DB::table('goodslib_type')->where('cat_id', $cat_id)->pluck('attr_group');
+    $grp = str_replace("\r", '', $data);
+    if ($grp) {
+        return explode("\n", $grp);
+    } else {
+        return array();
+    }
+}
+
+/**
+ * 获得店铺商品类型的列表
+ *
+ * @access  public
+ * @param   integer     $selected   选定的类型编号
+ * @param   integer     $store_id	店铺id
+ * @param   boolean		是否显示平台规格
+ * @return  string
+ */
+function goodslib_type_list($selected, $show_all = false) {
+    $db_goods_type = RC_DB::table('goodslib_type')->select('cat_id', 'cat_name');
+    
+    $data = $db_goods_type->get();
+    
+    $opt = '';
+    if (!empty($data)) {
+        foreach ($data as $row){
+            $opt .= "<option value='$row[cat_id]'";
+            $opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+            $opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+        }
+    }
+    return $opt;
+}
+
+/**
+ * 获得所有商品类型
+ *
+ * @access  public
+ * @return  array
+ */
+function get_goodslib_type() {
+    $filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
+    
+    $db_goods_type = RC_DB::table('goodslib_type as gt');
+    
+    
+    if (!empty($filter['keywords'])) {
+        $db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
+    }
+    
+    $filter_count = $db_goods_type
+    ->select(RC_DB::raw('count(*) as count'))
+    ->first();
+    
+    $filter['count']	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
+    $filter['self'] 	= $filter_count['self'] > 0 ? $filter_count['self'] : 0;
+    
+    $filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
+    if (!empty($filter['type'])) {
+        $db_goods_type->where(RC_DB::raw('s.manage_mode'), 'self');
+    }
+    
+    $count = $db_goods_type->count();
+    $page = new ecjia_page($count, 15, 5);
+    
+    $field = 'gt.*, count(a.cat_id) as attr_count';
+    $goods_type_list = $db_goods_type
+    ->leftJoin('goodslib_attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+    ->selectRaw($field)
+    ->groupBy(RC_DB::Raw('gt.cat_id'))
+    ->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
+    ->take(15)
+    ->skip($page->start_id-1)
+    ->get();
+    
+    if (!empty($goods_type_list)) {
+        foreach ($goods_type_list AS $key=>$val) {
+            $goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
+        }
+    }
+    return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+}
+
+
 
 // end
