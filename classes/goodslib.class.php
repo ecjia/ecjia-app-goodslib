@@ -135,7 +135,7 @@ class goodslib {
         $filter ['self'] 			= $filter_count['self'] > 0 ? $filter_count['self'] : 0;
         
         $sql = $db_goods
-        	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.goods_thumb, g.sort_order, g.review_status, g.is_display')
+        	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.market_price, g.goods_thumb, g.sort_order, g.review_status, g.is_display')
         	->orderBy($filter ['sort_by'], $filter['sort_order'])
         	->take(10)
         	->skip($page->start_id-1)

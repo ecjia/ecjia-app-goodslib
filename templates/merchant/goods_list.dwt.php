@@ -9,6 +9,98 @@
 
 <!-- {block name="home-content"} -->
 
+<div class="modal fade" id="insertGoods">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+			<div class="modal-header">
+				<button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+				<h4 class="modal-title">导入商品</h4>
+			</div>
+			<div class="modal-body" style="height:auto;">
+				<form class="form-horizontal" method="post" name="batchForm">
+					<div class="form-group">
+          				<label class="control-label col-lg-2">商品名称</label>
+          				<div class="col-lg-7">
+                        	<input class="form-control" name="goods_name" type="text" value="" />
+                      	</div>
+          			</div>
+          			<div class="form-group">
+          				<label class="control-label col-lg-2">商品货号</label>
+          				<div class="col-lg-7">
+                        	<input class="form-control" name="goods_sn" type="text" value="" />
+                      	</div>
+          			</div>
+          			<div class="form-group">
+          				<label class="control-label col-lg-2">本店售价</label>
+          				<div class="controls col-lg-7">
+                        	<input class="form-control" name="shop_price" type="text" value="" />
+                      	</div>
+                      	<div class="col-lg-2 p_l0">
+                          	<a class="btn btn-primary" data-toggle="marketPriceSetted">{lang key='goods::goods.compute_by_mp'}</a>
+						</div>
+						<span class="input-must m_l15">{lang key='system::system.require_field'}</span>
+          			</div>
+              			
+          			<div class="form-group">
+          				<label class="control-label col-lg-2">市场售价</label>
+          				<div class="col-lg-7">
+                        	<input class="form-control" name="market_price" type="text" value="" />
+                      	</div>
+                      	<div class="col-lg-2 p_l0">
+                          	<button class="btn btn-primary" type="button" data-toggle="integral_market_price">{lang key='goods::goods.integral_market_price'}</button>
+						</div>
+          			</div>
+              			
+          			<div class="form-group">
+          				<label class="control-label col-lg-2">库存数量</label>
+          				<div class="controls col-lg-7">
+                        	<input class="form-control" name="goods_number" type="text" value="{ecjia::config('default_storage')}" />
+                      	</div>
+                      	<span class="input-must">{lang key='system::system.require_field'}</span>
+          			</div>
+          			<div class="form-group">
+          				<label class="control-label col-lg-2">加入推荐</label>
+          				<div class="col-lg-10">
+          					<div class="checkbox">
+              					<input id="is_best" type="checkbox" name="is_best" value="1" {if $goods.store_best}checked{/if}>
+              					<label for="is_best">{lang key='goods::goods.is_best'}</label>
+                  				
+                  				<input id="is_new" type="checkbox" name="is_new" value="1" {if $goods.store_new}checked{/if}>
+                  				<label for="is_new">{lang key='goods::goods.is_new'}</label>
+                  				
+                  				<input id="is_hot" type="checkbox" name="is_hot" value="1" {if $goods.store_hot}checked{/if}>
+                  				<label for="is_hot">{lang key='goods::goods.is_hot'}</label>
+                  			</div>
+                   		</div>
+                  	</div>
+          			<div class="form-group">
+              			<label class="control-label col-lg-2">包邮</label>
+              			<div class="col-lg-10">
+              				<div class="checkbox">
+                            	<input id="is_shipping" type="checkbox" name="is_shipping" value="1" {if $goods.is_shipping}checked{/if}>
+                            	<label for="is_shipping">{lang key='goods::goods.free_shipping'}</label>
+                            </div>
+                   		</div>
+              		</div>
+              		<div class="form-group">
+          				<label class="control-label col-lg-2">上架</label>
+          				<div class="col-lg-10">
+              				<div class="checkbox">
+                     			<input id="is_on_sale" type="checkbox" name="is_on_sale" value="1" {if $goods.is_on_sale}checked{/if}>
+                       			<label for="is_on_sale">{lang key='goods::goods.on_sale_desc'}</label>
+                       		</div>
+                   		</div>
+                  	</div>
+                  	
+					<div class="form-group t_c">
+						<a class="btn btn-primary m_l5" data-toggle="ecjiabatch" data-idClass="" data-url="{$form_action}&type=move_to&" href="javascript:;" name="move_cat_ture">开始导入</a>
+					</div>
+				</form>
+           </div>
+		</div>
+	</div>
+</div>
+
 {if $step}
 <!-- #BeginLibraryItem "/library/goods_step.lbi" --><!-- #EndLibraryItem -->
 {/if}
@@ -84,26 +176,15 @@
 									<span class="ecjiaf-pre ecjiaf-wsn" data-text="textarea">{$goods.goods_name|escape:html}</span>
 									<br/>
 									<div class="edit-list">
-										<a class="data-pjax" href='{url path="goodslib/merchant/insert" args="goods_id={$goods.goods_id}"}'>导入商品</a>&nbsp;|&nbsp;
+										<a class="insert-goods-btn" href="javascript:;" data-href='{url path="goodslib/merchant/insert" args="goods_id={$goods.goods_id}"}' 
+										data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}">导入商品</a>&nbsp;|&nbsp;
 										<a target="_blank" href='{url path="goodslib/merchant/preview" args="id={$goods.goods_id}"}'>预览商品</a>
 									</div>
 								</td>	
 								
-								<td>
-									<span>
-										{$goods.goods_sn} 
-									</span>
-								</td>
-								<td align="center">
-									<span> 
-										{$goods.shop_price}
-									</span> 
-								</td>
-								<td align="center">
-									<span> 
-										{$goods.store_sort_order}
-									</span>
-								</td>
+								<td>{$goods.goods_sn}</td>
+								<td align="center">{$goods.shop_price}</td>
+								<td align="center">{$goods.store_sort_order}</td>
 							</tr>
 							<!-- {foreachelse}-->
 							<tr>

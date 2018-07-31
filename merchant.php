@@ -131,11 +131,11 @@ class merchant extends ecjia_merchant {
 		RC_Loader::load_app_func('admin_category', 'goods');
 		
 		RC_Loader::load_app_func('admin_user', 'user');
-// 		$goods_list_jslang = array(
-// 			'user_rank_list'	=> get_rank_list(),
-// 			'marketPriceRate'	=> ecjia::config('market_price_rate'),
-// 			'integralPercent'	=> ecjia::config('integral_percent'),
-// 		);
+		$goods_list_jslang = array(
+			'user_rank_list'	=> get_rank_list(),
+			'marketPriceRate'	=> ecjia::config('market_price_rate'),
+			'integralPercent'	=> ecjia::config('integral_percent'),
+		);
 		RC_Script::localize_script( 'goods_list', 'admin_goodsList_lang', $goods_list_jslang );
 		
 		$goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;

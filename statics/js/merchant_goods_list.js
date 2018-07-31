@@ -10,9 +10,10 @@
 			});
 			bath_url = $("a[name=move_cat_ture]").attr("data-url");
 			app.goods_list.search();
-			app.goods_list.batch_move_cat();
+			app.goods_list.insertGoods();
 			app.goods_info.previewImage();
-			app.goods_list.toggle_on_sale();
+			app.goods_list.integral_market_price();
+			app.goods_list.marketPriceSetted();
 		},
 
 		search: function() {
@@ -44,43 +45,92 @@
 			});
 		},
 
-		batch_move_cat: function() {},
-
-		toggle_on_sale: function() {
-			$('[data-trigger="toggle_on_sale"]').on('click', function(e) {
-				e.preventDefault();
+		insertGoods: function() {
+			$(".insert-goods-btn").on('click', function(e) {
 				var $this = $(this);
-				var url = $this.attr('data-url');
-				var id = $this.attr('data-id');
-				var val = $this.hasClass('fa-times') ? 1 : 0;
-				var type = $this.attr('data-type') ? $this.attr('data-type') : "POST";
-				var pjaxurl = $this.attr('refresh-url');
+				var goods_id = $this.attr('data-id');
+				var goods_name = $this.attr('data-name');
+				var goods_sn = $this.attr('data-sn');
+				var shop_price = $this.attr('data-shopprice');
+				var market_price = $this.attr('data-marketprice');
+				
+				$("input[name=goods_name]").val(goods_name);
+				$("input[name=goods_sn]").val(goods_sn);
+				$("input[name=shop_price]").val(shop_price);
+				$("input[name=market_price]").val(market_price);
+				
+				$('#insertGoods').modal('show');
+			});
+			$("a[name=move_cat_ture]").on('click', function(e) {
+				$('#insertGoods').modal('hide');
+			});
+			
+			
+			
+			$("select[name=target_cat]").on('change', function(e) {
+				var target_cat = $(this).val();
+				$("a[name=move_cat_ture]").attr("data-url", bath_url + '&target_cat=' + target_cat);
+			});
+		
+		},
 
-				var option = {
-					obj: $this,
-					url: url,
-					id: id,
-					val: val,
-					type: type
-				};
-
-				$.ajax({
-					url: option.url,
-					data: {
-						id: option.id,
-						val: option.val
-					},
-					type: option.type,
-					dataType: "json",
-					success: function(data) {
-						data.content ? option.obj.removeClass('fa-times').addClass('fa-check') : option.obj.removeClass('fa-check').addClass('fa-times');
-						ecjia.pjax(pjaxurl, function() {
-							ecjia.merchant.showmessage(data);
-						});
-					}
-				});
+		integral_market_price: function() {
+			$('[data-toggle="integral_market_price"]').on('click', function(e) {
+				e.preventDefault();
+				var init_val = parseInt($('[name="market_price"]').val());
+				$('[name="market_price"]').val(init_val); //'market_price'].value = parseInt(document.forms['theForm'].elements['market_price'].value);
+			});
+		},
+		marketPriceSetted: function() {
+			$('[data-toggle="marketPriceSetted"]').on('click', function(e) {
+				e.preventDefault();
+				var $this = $(this),
+					price = $('[name="market_price"]').val(),
+					options = {
+						price: price,
+						marketRate: 1 / admin_goodsList_lang.marketPriceRate,
+						integralPercent: admin_goodsList_lang.integralPercent,
+						shopPriceObj: $('[name="shop_price"]'),
+						integralObj: $('[name="integral"]')
+					};
+				app.goods_list.computePrice(options);
+				app.goods_list.set_allprice_note();
 			})
-		}
+		},
+
+		set_allprice_note: function() {
+			if (admin_goodsList_lang.user_rank_list) {
+				for (var i = admin_goodsList_lang.user_rank_list.length - 1; i >= 0; i--) {
+					var options = {
+						shop_price: $('[name="shop_price"]').val() || $('[name="market_price"]').val(),
+						discount: admin_goodsList_lang.user_rank_list[i].discount || 100,
+						rank_id: admin_goodsList_lang.user_rank_list[i].rank_id,
+					};
+					app.goods_list.set_price_note(options);
+				};
+			}
+		},
+		set_price_note: function(options) {
+			if (options.shop_price > 0 && options.discount && $('#rank_' + options.rank_id)) { // && parseInt($('#rank_' + options.rank_id).val()) == -1
+				var price = parseInt(options.shop_price * options.discount + 0.5) / 100;
+				$('#nrank_' + options.rank_id).length && $('#nrank_' + options.rank_id).html('(' + price + ')');
+			} else {
+				$('#nrank_' + options.rank_id).length && $('#nrank_' + options.rank_id).html('(未计算)')
+			}
+		},
+		computePrice: function(options) {
+			// 计算商店价格
+			var shopPrice = $.trim(options.price) != '' ? (parseFloat(options.price) * options.marketRate).toString() : '0';
+			shopPrice = shopPrice.lastIndexOf(".") > -1 ? shopPrice.substr(0, shopPrice.lastIndexOf(".") + 3) : shopPrice;
+			options.marketPriceObj && options.marketPriceObj.val(shopPrice);
+			options.shopPriceObj && options.shopPriceObj.val(shopPrice);
+			// 是否计算积分
+			if (options.integralObj && options.integralPercent) {
+				var integral = $.trim(options.price) != '' ? (parseFloat(options.price) * options.integralPercent / 100).toString() : '0';
+				integral = integral.lastIndexOf(".") > -1 ? integral.substr(0, integral.lastIndexOf(".") + 3) : integral;
+				options.integralObj.val(integral);
+			}
+		},
 	}
 
 	/* 编辑页 */
