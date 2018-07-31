@@ -18,57 +18,33 @@
 		search: function() {
 			$('.screen-btn').on('click', function(e) {
 				e.preventDefault();
-				var cat_id = $("select[name='cat_id']").val(); //分类
-				var intro_type = $("select[name='intro_type']").val(); //状态
 				var keywords = $("input[name='keywords']").val(); //关键字
 
 				var url = $("form[name='search_form']").attr('action');
 
-				if (cat_id == 'undefind') cat_id = '';
-				if (intro_type == 'undefind') intro_type = '';
+				if (keywords == 'undefind') keywords = '';
+				if (keywords != '') {
+					url += '&keywords=' + keywords;
+				}
+
+				ecjia.pjax(url);
+			});
+
+			$("form[name='search_form']").on('submit', function(e) {
+				e.preventDefault();
+				var keywords = $("input[name='keywords']").val(); //关键字
+				var url = $("form[name='search_form']").attr('action');
+
 				if (keywords == 'undefind') keywords = '';
 
-				ecjia.pjax(url + '&cat_id=' + cat_id + '&intro_type=' + intro_type + '&keywords=' + keywords);
-			});
-
-			$('.filter-btn').on('click', function(e) {
-				e.preventDefault();
-				var review_status = $("select[name='review_status']").val(); //审核状态
-
-				var url = $("form[name='filter_form']").attr('action');
-				if (review_status == 'undefind' || review_status < 0) review_status = '';
-
-				ecjia.pjax(url + '&review_status=' + review_status);
+				if (keywords != '') {
+					url += '&keywords=' + keywords;
+				}
+				ecjia.pjax(url);
 			});
 		},
 
-		batch_move_cat: function() {
-			$(".batch-move-btn").on('click', function(e) {
-				var checkboxes = [];
-				$(".checkbox:checked").each(function() {
-					checkboxes.push($(this).val());
-				});
-				if (checkboxes == '') {
-					smoke.alert(js_lang.choose_select_goods);
-					return false;
-				} else {
-					$('#movetype').modal('show');
-				}
-			});
-			$("a[name=move_cat_ture]").on('click', function(e) {
-				$('#movetype').modal('hide');
-			});
-			$("select[name=target_cat]").on('change', function(e) {
-				var target_cat = $(this).val();
-				if (target_cat == 0) {
-					$('a[name="move_cat_ture"]').addClass('disabled');
-					return false;
-				} else {
-					$('a[name="move_cat_ture"]').removeClass('disabled');
-				}
-				$("a[name=move_cat_ture]").attr("data-url", bath_url + '&target_cat=' + target_cat);
-			});
-		},
+		batch_move_cat: function() {},
 
 		toggle_on_sale: function() {
 			$('[data-trigger="toggle_on_sale"]').on('click', function(e) {
@@ -213,195 +189,13 @@
 
 		previewImage: function(file) {},
 
-		submit_info: function() {
-			$('button[type="submit"]').on('click', function() {
-				$form = $('form[name="theForm"]');
-				
-				//判断是否点击直接完成按钮
-				var bool = $(this).hasClass('complete');
-				var complete = 0;
-				if (bool) {
-					complete = 1;
-				}
-				$('.complete').attr('data-complete', complete);
-				
-				var option = {
-					rules: {
-						goods_name: {
-							required: true
-						},
-						shop_price: {
-							required: true,
-							min: 0
-						},
-						goods_number: {
-							required: true,
-							min: 0
-						},
-						merchant_cat_id: {
-							required: true,
-							min: 1
-						}
-					},
-					messages: {
-						goods_name: {
-							required: js_lang.goods_name_required
-						},
-						shop_price: {
-							required: js_lang.shop_price_required,
-							min: js_lang.shop_price_limit
-						},
-						goods_number: {
-							required: js_lang.goods_number_required,
-							min: js_lang.goods_number_limit
-						},
-						merchant_cat_id: {
-							required: js_lang.category_id_select,
-							min: js_lang.category_id_select
-						}
-					},
-					submitHandler: function() {
-						$form.ajaxSubmit({
-							dataType: "json",
-							success: function(data) {
-								var bool = $('.complete').attr('data-complete');
-								if (bool == 1) {
-									var pjaxurl = $('.complete').attr('data-url');
-									var url = pjaxurl + '&goods_id=' + data.goods_id;
-									app.goods_info.complete(url);
-									return false;
-								}
-								if (data.message) {
-									ecjia.merchant.showmessage(data);
-								} else {
-									ecjia.pjax(data.url);
-								}
-							}
-						});
-					}
-				}
-				var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
-				$form.validate(options);
-			})
-		},
+		submit_info: function() {},
 
-		term_meta: function() {
-			$('[data-toggle="add_term_meta"]').on('click', function(e) {
-				e.preventDefault();
-				var $add = $('.term_meta_add'),
-					key = $add.find('[name="term_meta_key"]').val(),
-					value = $add.find('[name="term_meta_value"]').val(),
-					id = $add.attr('data-id'),
-					extension_code = $add.attr('data-extension-code'),
-					active = $add.attr('data-active');
+		term_meta: function() {},
 
-				$.post(active, 'goods_id=' + id + '&extension_code=' + extension_code + '&key=' + key + '&value=' + value, function(data) {
-					ecjia.merchant.showmessage(data);
-				}, 'JSON')
+		term_meta_key: function() {},
 
-			});
-			$('[data-toggle="edit_term_meta"]').on('click', function(e) {
-				e.preventDefault();
-				var $this = $(this),
-					$tr = $this.parents('tr'),
-					$edit = $('.term_meta_edit'),
-					key = $tr.find('[name="term_meta_key"]').val(),
-					value = $tr.find('[name="term_meta_value"]').val(),
-					meta_id = $tr.find('[name="term_meta_id"]').val(),
-					id = $edit.attr('data-id'),
-					extension_code = $edit.attr('data-extension-code'),
-					active = $edit.attr('data-active');
-
-				$.post(active, 'goods_id=' + id + '&meta_id=' + meta_id + '&extension_code=' + extension_code + '&key=' + key + '&value=' + value, function(data) {
-					ecjia.merchant.showmessage(data);
-				}, 'JSON')
-			});
-		},
-
-		term_meta_key: function() {
-			$('select[data-toggle="change_term_meta_key"]').on('change', function(e) {
-				e.preventDefault();
-				var $this = $(this),
-					$input = $this.parents('.term_meta_add').find('input[name="term_meta_key"]'),
-					$checked = $this.find(':checked'),
-					value = $checked.val();
-				$input.val(value);
-			});
-			$('[data-toggle="add_new_term_meta"]').on('click', function(e) {
-				e.preventDefault();
-				var $this = $(this),
-					$form = $this.parents('.term_meta_add'),
-					$select = $form.find('select[data-toggle="change_term_meta_key"]'),
-					value = $select.find(':checked').val(),
-					$input = $form.find('input[name="term_meta_key"]');
-
-				if ($this.hasClass('new')) {
-					$this.removeClass('new').text(js_lang.add_new_mate);
-					// $this.parent().removeClass('p_t5');
-					$input.addClass('hide').val(value);
-					$select.next('.chzn-container').removeClass('hide');
-				} else {
-					$this.addClass('new').text(js_lang.back_select_mate);
-					// $this.parent().addClass('p_t5');
-					$input.removeClass('hide').val('');
-					$select.next('.chzn-container').addClass('hide');
-				}
-			});
-		},
-
-		add_cat: function() {
-			$('.add_cat_link').on('click', function(e) {
-				e.preventDefault();
-				$(this).hide();
-				$('.add_cat_div').show();
-			});
-
-			$('.add_cat_ok').on('click', function(e) {
-				e.preventDefault();
-
-				var cat_name = $('input[name="cat_name"]').val(),
-					cat_id = $('select[name="cat_id"]').val(),
-					url = $('div.add_cat_div').attr('data-url'),
-					info = {
-						cat_name: cat_name,
-						cat_id: cat_id,
-					};
-				if (cat_name.replace(/^\s+|\s+$/g, '') == '') {
-					smoke.alert(js_lang.cat_name_empty);
-					return false;
-				}
-				$.post(url, info, function(data) {
-					if (data.state == 'success') {
-						var content = '<option value="0">' + js_lang.pls_select + '</option>';
-						content += data.content;
-						$('select[name="cat_id"]').html('').append(content).trigger("liszt:updated").trigger("change");
-
-						var opt = data.opt;
-						if (opt !== '') {
-							var parent_id = '.cat_' + opt.parent_id;
-							var padding = (opt.level * 20) + 'px';
-							var label_class = 'cat_' + opt.cat_id;
-							var label = '<label style=padding-left:' + padding + ' class=' + label_class + '><input type="checkbox" checked name="other_cat[]" value=' + opt.cat_id + ' style="opacity: 0;"><span class="m_l5">' + opt.cat_name + '</span></label>';
-							if (opt.parent_id != 0) {
-								$('.goods-cat').children('.goods-span').find(parent_id).after(label);
-							} else {
-								$('.goods-cat').children('.goods-span').prepend(label);
-							}
-							$('.goods-cat').children('.goods-span').find('input[name="other_cat[]"]').uniform();
-						}
-						$('.add_cat_cancel').trigger('click');
-					}
-					ecjia.merchant.showmessage(data);
-				}, 'json');
-			});
-
-			$('.add_cat_cancel').on('click', function(e) {
-				e.preventDefault();
-				$('input[name="cat_name"]').val('');
-				$('.add_cat_link').show();
-				$('.add_cat_div').hide();
-			});
-		},
+		add_cat: function() {},
 
 		complete: function(url) {
 			var data = {

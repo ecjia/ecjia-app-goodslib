@@ -40,7 +40,7 @@
 		           	</ul>
 				</div> -->
 				
-				<form class="form-inline f_l" action="{RC_Uri::url('goodslib/merchant/add')}" method="post" name="search_form">
+				<form class="form-inline f_l" action='{RC_Uri::url("goodslib/merchant/add", "cat_id={$smarty.get.cat_id}")}' method="post" name="search_form">
 					<div class="screen f_l">
 						<div class="form-group">
 							<input type="text" class="form-control" name="keywords" value="{$smarty.get.keywords}" placeholder="{lang key='goods::goods.enter_goods_keywords'}">
