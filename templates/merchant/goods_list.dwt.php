@@ -9,36 +9,9 @@
 
 <!-- {block name="home-content"} -->
 
-<div class="modal fade" id="movetype">
-	<div class="modal-dialog">
-    	<div class="modal-content">
-			<div class="modal-header">
-				<button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-				<h4 class="modal-title">{lang key='goods::goods.move_to_cat'}</h4>
-			</div>
-			<div class="modal-body h400">
-				<form class="form-horizontal" method="post" name="batchForm">
-					<div class="form-group ecjiaf-tac">
-						<div>
-							<select class="noselect w200 ecjiaf-ib form-control" size="15" name="target_cat">
-							<!-- {if $cat_list} -->
-								<!-- {foreach from=$cat_list item=cat} -->
-								<option value="{$cat.cat_id}" {if $cat.level}style="padding-left:{$cat.level * 20}px"{/if}>{$cat.cat_name}</option>
-								<!-- {/foreach} -->
-							<!-- {else} -->
-								<option value="0">暂无任何分类</option>
-							<!-- {/if} -->
-							</select>
-						</div>
-					</div>
-					<div class="form-group t_c">
-						<a class="btn btn-primary m_l5 disabled" data-toggle="ecjiabatch" data-idClass=".checkbox:checked" data-url="{$form_action}&type=move_to&" data-msg="{lang key='goods::goods.move_confirm'}" data-noSelectMsg="{lang key='goods::goods.select_move_goods'}" href="javascript:;" name="move_cat_ture">{lang key='goods::goods.start_move'}</a>
-					</div>
-				</form>
-           </div>
-		</div>
-	</div>
-</div>
+{if $step}
+<!-- #BeginLibraryItem "/library/goods_step.lbi" --><!-- #EndLibraryItem -->
+{/if}
 
 <div class="page-header">
 	<div class="pull-left">
@@ -111,7 +84,7 @@
 									<span class="ecjiaf-pre ecjiaf-wsn" data-text="textarea">{$goods.goods_name|escape:html}</span>
 									<br/>
 									<div class="edit-list">
-										<a class="data-pjax" href='{url path="goodslib/merchant/edit" args="goods_id={$goods.goods_id}"}'>导入商品</a>&nbsp;|&nbsp;
+										<a class="data-pjax" href='{url path="goodslib/merchant/insert" args="goods_id={$goods.goods_id}"}'>导入商品</a>&nbsp;|&nbsp;
 										<a target="_blank" href='{url path="goodslib/merchant/preview" args="id={$goods.goods_id}"}'>预览商品</a>
 									</div>
 								</td>	

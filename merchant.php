@@ -255,6 +255,173 @@ class merchant extends ecjia_merchant {
         $this->display('goods_list.dwt');
 	}
 	
+	/**
+	 * 导入
+	 */
+	public function insert() {
+	    //规格属性货品
+	    //主表
+	    
+// 	    $id = !empty($_POST['goods_id']) 		? intval($_POST['goods_id']) 		: 0;
+	    $id = !empty($_GET['goods_id']) 		? intval($_GET['goods_id']) 		: 0;
+	    if(empty($id)) {
+	        return $this->showmessage('请先选择分类', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('pjaxurl' => RC_Uri::url('goods/merchant/select_cat')));
+	    }
+	    
+	    $manage_mode = RC_DB::table('store_franchisee')->where('store_id', $_SESSION['store_id'])->pluck('manage_mode');
+	    
+	    /* 商品信息 */
+	    $goods = RC_DB::table('goodslib')->where('goods_id', $id)->first();
+	    if (empty($goods)) {
+	        return $this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => RC_Lang::get('goods::goods.return_last_page'), 'href' => 'javascript:history.go(-1)'))));
+	    }
+	    
+	    $count_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods['goods_sn'])->where('goods_sn', $_SESSION['store_id'])->where('is_delete', 0)->count();
+	    if($count_goods_sn) {
+	        $goods['goods_sn'] = '';
+	    }
+	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);
+	    $goods['store_id'] = $_SESSION['store_id'];
+	    $goods['is_on_sale'] = 0;
+	    
+	    $new_id = RC_DB::table('goods')->insertGetId($goods);
+	    RC_DB::table('goodslib')->where('goods_id', $id)->increment('used_count');
+	    if(!empty($goods['goods_thumb'])) {
+	        
+	    }
+	    if(!empty($goods['goods_desc'])) {
+	        
+	    }
+	    $goods_gallery = RC_DB::table('goodslib_gallery')->where('goods_id', $id)->get();
+	    if (!empty($goods_gallery)) {
+	        
+	        RC_DB::table('goods_gallery')->insert($goods_gallery);
+	        //TODO复制图片-重命名
+	    }
+	    
+	    /* 获取商品类型存在规格的类型 */
+// 	    $specifications = get_goods_type_specifications();
+// 	    if (isset($specifications[$goods['goods_type']])) {
+// 	        $goods['specifications_id'] = $specifications[$goods['goods_type']];
+// 	    }
+// 	    $_attribute = get_goodslib_specifications_list($id);
+// 	    _dump($specifications,1);
+	    if ($goods['goods_type']) {
+	        $goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $id)->get();
+	        if($goods_attr) {
+	            $attr_arr = [];
+	            foreach ($goods_attr as $row) {
+	                $attr_arr[] = $row['attr_id'];
+	            }
+	            $attr_arr = array_unique($attr_arr);
+	            
+	            $goods_attribute = RC_DB::table('goodslib_attribute')->whereIn('attr_id', $attr_arr)->get();
+	            if ($goods_attribute) {
+	                $cat_id = $goods_attribute[0]['cat_id'];
+	            }
+	            
+	            $goods_type = RC_DB::table('goodslib_type')->where('cat_id', $cat_id)->first();
+	            if($goods_type) {
+	                //判断有无
+	                if ($manage_mode == 'self') {
+	                    $goods_type_store = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])
+	                    ->where(function ($query) {
+	                           $query->where('store_id', $_SESSION['store_id'])
+	                           ->orWhere('store_id', 0);
+    	                    })->first();
+	                } else {
+	                    $goods_type_store = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->where('store_id', $_SESSION['store_id'])->first();
+	                }
+	                //goods_type
+	                if($goods_type_store) {
+	                    if($goods_type_store['enabled'] == 0) {
+	                        RC_DB::table('goods_type')->where('cat_id', $goods_type_store['cat_id'])->update(array('enabled' => 1));
+	                    }
+	                    RC_DB::table('goods')->where('goods_id', $new_id)->where('store_id', $_SESSION['store_id'])->update(array('goods_type' => $goods_type_store['cat_id']));
+	                    //attribute
+	                    $goods_attribute_store = RC_DB::table('attribute')->whereIn('cat_id', $goods_type_store['cat_id'])->get();
+	                    //判断和商品库是否一致
+	                    foreach ($goods_attribute as $row) {
+	                        unset($row['attr_id']);unset($row['cat_id']);
+	                        $have_attr = 0;
+	                        foreach ($goods_attribute_store as $row_store) {
+	                            unset($row_store['attr_id']);unset($row_store['cat_id']);
+	                            if ($row == $row_store) {
+	                                $have_attr = 1;
+	                                break;
+	                            }
+	                        }
+	                        if ($have_attr == 0) {
+	                            $row['cat_id'] = $goods_type_store['cat_id'];
+	                            RC_DB::table('attribute')->insert($row);
+	                        }
+	                    }
+	                    
+	                    //goods_attr attr_id
+	                    foreach ($goods_attr as $row) {
+	                        unset($row['goods_attr_id']);
+	                        $row_attr = RC_DB::table('goodslib_attribute')->where('attr_id', $row['attr_id'])->first();
+	                        $attr_id = RC_DB::table('attribute')->where('cat_id', $goods_type_store['cat_id'])->where('attr_name', $row_attr['attr_name'])->where('attr_values', $row_attr['attr_values'])->pluck('attr_id');
+	                        $row['goods_id'] = $new_id;
+	                        $row['attr_id'] = $attr_id;
+	                        RC_DB::table('goods_attr')->insert($row);
+	                    }
+	                    
+	                    //product
+	                    
+	                    
+	                } else {
+	                    unset($goods_type['cat_id']);
+	                    $goods_type['store_id'] = $_SESSION['store_id'];
+	                    $cat_id_new = RC_DB::table('goods_type')->insertGetId($goods_type);
+	                    RC_DB::table('goods')->where('goods_id', $new_id)->where('store_id', $_SESSION['store_id'])->update(array('goods_type' => $cat_id_new));
+	                    
+	                    foreach ($goods_attribute as $row) {
+	                        unset($row['attr_id']);unset($row['cat_id']);
+	                        $row['cat_id'] = $cat_id_new;
+	                        RC_DB::table('attribute')->insert($row);
+	                    }
+	                    
+	                    //goods_attr attr_id
+	                    foreach ($goods_attr as $row) {
+	                        unset($row['goods_attr_id']);
+	                        $row_attr = RC_DB::table('goodslib_attribute')->where('attr_id', $row['attr_id'])->first();
+	                        $attr_id = RC_DB::table('attribute')->where('cat_id', $cat_id_new)->where('attr_name', $row_attr['attr_name'])->where('attr_values', $row_attr['attr_values'])->pluck('attr_id');
+	                        $row['goods_id'] = $new_id;
+	                        $row['attr_id'] = $attr_id;
+	                        RC_DB::table('goods_attr')->insert($row);
+	                    }
+	                    
+	                    //product
+	                    
+	                    
+	                }
+	                
+	                
+	                
+	            }
+	            
+	        }
+	    }
+	    
+	       
+	    
+	    
+	    $url = RC_Uri::url('goodslib/merchant/done', array());
+	    return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'goods_id' => $new_id));
+	    
+	}
+	
+	public function done() {
+	    $ur_here = '导入成功';
+	    $this->assign('step', 3);
+	    
+	    
+	    $this->assign('ur_here', $ur_here);
+	    ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+	    
+	    $this->display('done.dwt');
+	}
 	
 	
 	/**
