@@ -216,7 +216,7 @@ class merchant extends ecjia_merchant {
 	    $new_id = RC_DB::table('goods')->insertGetId($goods);
 	    RC_DB::table('goodslib')->where('goods_id', $id)->increment('used_count');
 	    if(!empty($goods['goods_thumb'])) {
-	        
+	        //TODO复制图片-重命名
 	    }
 	    if(!empty($goods['goods_desc'])) {
 	        
@@ -271,7 +271,7 @@ class merchant extends ecjia_merchant {
 	                    }
 	                    RC_DB::table('goods')->where('goods_id', $new_id)->where('store_id', $_SESSION['store_id'])->update(array('goods_type' => $goods_type_store['cat_id']));
 	                    //attribute
-	                    $goods_attribute_store = RC_DB::table('attribute')->whereIn('cat_id', $goods_type_store['cat_id'])->get();
+	                    $goods_attribute_store = RC_DB::table('attribute')->where('cat_id', $goods_type_store['cat_id'])->get();
 	                    //判断和商品库是否一致
 	                    foreach ($goods_attribute as $row) {
 	                        unset($row['attr_id']);unset($row['cat_id']);
