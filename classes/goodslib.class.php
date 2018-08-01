@@ -58,7 +58,7 @@ class goodslib {
      *            s integer $conditions
      * @return array
      */
-    public static function goods_list($is_delete, $conditions = '') {
+    public static function goods_list($is_delete, $conditions = '', $page_size = 10) {
         /* 过滤条件 */
         $param_str 	= '-' . $is_delete;
         $day 		= getdate();
@@ -127,7 +127,12 @@ class goodslib {
         $db_goods = RC_DB::table('goodslib as g');
         /* 记录总数 */
         $count = $db_goods->whereRaw('is_delete = ' . $is_delete . '' . $where)->count('goods_id');
-        $page = new ecjia_page ($count, 10, 5);
+        if ($_SESSION['store_id']) {
+            $page = new ecjia_merchant_page ($count, $page_size, 3);
+        } else {
+            $page = new ecjia_page ($count, $page_size, 5);
+        }
+        
         $filter ['record_count'] 	= $count;
         $filter ['count_goods_num'] = $filter_count['count_goods_num'] > 0 ? $filter_count['count_goods_num'] : 0;
         $filter ['count_on_sale'] 	= $filter_count['count_on_sale'] > 0 ? $filter_count['count_on_sale'] : 0;
@@ -137,7 +142,7 @@ class goodslib {
         $sql = $db_goods
         	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.market_price, g.goods_thumb, g.sort_order, g.review_status, g.is_display')
         	->orderBy($filter ['sort_by'], $filter['sort_order'])
-        	->take(10)
+        	->take($page_size)
         	->skip($page->start_id-1)
         	->get();
         	

@@ -388,7 +388,25 @@
 				$(file).siblings('.fileupload-btn').addClass('preview-img').css("filter", "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src='" + file.value + "'");
 			}
 		},
+		checkGoodsSn: function() {
+			$('[data-toggle="checkGoodsSn"]').on('blur', function(e) {
+				e.preventDefault();
+				var $this = $(this),
+					goods_id = $this.attr('data-id'),
+					goods_url = $this.attr('data-url'),
+					goods_sn = $this.val() || '',
+					info = {
+						goods_id: goods_id,
+						goods_sn: goods_sn
+					};
 
+				goods_sn == '' && $('#goods_sn_notice').html('');
+
+				$.get(goods_url, info, function(data) {
+					data.state == 'success' ? $('#goods_sn_notice').html('').parent().removeClass('f_error') : $('#goods_sn_notice').html(data.message).parent().addClass('f_error');
+				}, "JSON");
+			})
+		},
 		submit_info: function() {
 			var $this = $('form[name="theForm"]');
 
