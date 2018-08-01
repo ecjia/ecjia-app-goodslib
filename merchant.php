@@ -50,52 +50,13 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *  ECJIA 商品管理程序
  */
 class merchant extends ecjia_merchant {
-    private $db_link_goods;
-    private $db_group_goods;
-    
-    private $db_goods;
-    private $db_goods_article;
-    private $db_goods_attr;
-    private $db_goods_attr_view;
-    private $db_goods_cat;
-    private $db_goods_gallery;
-    
-    private $db_attribute;
-    private $db_products;
-    private $db_brand;
-    private $db_category;
-    
-    private $db_term_meta;
-    private $db_term_relationship;
-    
-    private $tags;
 
 	public function __construct() {
 		parent::__construct();
 		
-		$this->db_link_goods 		= RC_Model::model('goods/link_goods_model');
-		$this->db_group_goods 		= RC_Model::model('goods/group_goods_model');
-		
-		$this->db_goods 			= RC_Model::model('goods/goods_model');
-		$this->db_goods_article 	= RC_Model::model('goods/goods_article_model');
-		$this->db_goods_attr 		= RC_Model::model('goods/goods_attr_model');
-		$this->db_goods_attr_view 	= RC_Model::model('goods/goods_attr_viewmodel');
-		$this->db_goods_cat 		= RC_Model::model('goods/goods_cat_model');
-		$this->db_goods_gallery 	= RC_Model::model('goods/goods_gallery_model');
-		
-		$this->db_attribute 		= RC_Model::model('goods/attribute_model');
-		$this->db_products 			= RC_Model::model('goods/products_model');
-		$this->db_brand 			= RC_Model::model('goods/brand_model');
-		$this->db_category 			= RC_Model::model('goods/category_model');
-		
-		$this->db_term_meta 		= RC_Loader::load_sys_model('term_meta_model');
-		$this->db_term_relationship = RC_Model::model('goods/term_relationship_model');
-		
 		RC_Style::enqueue_style('jquery-placeholder');
 		RC_Script::enqueue_script('jquery-imagesloaded');
 		RC_Script::enqueue_script('jquery-dropper', RC_Uri::admin_url('/statics/lib/dropper-upload/jquery.fs.dropper.js'), array(), false, true);
-		RC_Style::enqueue_style('goods-colorpicker-style', RC_Uri::admin_url() . '/statics/lib/colorpicker/css/colorpicker.css');
-		RC_Script::enqueue_script('goods-colorpicker-script', RC_Uri::admin_url('/statics/lib/colorpicker/bootstrap-colorpicker.js'), array());
 		
 		RC_Script::enqueue_script('jq_quicksearch', RC_Uri::admin_url() . '/statics/lib/multi-select/js/jquery.quicksearch.js', array('jquery'), false, true);
 // 		RC_Script::enqueue_script('ecjia-region', RC_Uri::admin_url('statics/ecjia.js/ecjia.region.js'), array('jquery'), false, true);
@@ -116,7 +77,6 @@ class merchant extends ecjia_merchant {
 		
 		RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
 		RC_Script::enqueue_script('goods_list', RC_App::apps_url('statics/js/merchant_goods_list.js', __FILE__), array(), false, true);
-// 		RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/merchant_product.js', __FILE__), array(), false, true);
 		
 		RC_Script::localize_script('goods_list', 'js_lang', RC_Lang::get('goods::goods.js_lang'));
 		
@@ -137,12 +97,6 @@ class merchant extends ecjia_merchant {
 			'integralPercent'	=> ecjia::config('integral_percent'),
 		);
 		RC_Script::localize_script( 'goods_list', 'admin_goodsList_lang', $goods_list_jslang );
-		
-		$goods_id = isset($_REQUEST['goods_id']) ? $_REQUEST['goods_id'] : 0;
-		$extension_code = isset($_GET['extension_code']) ? '&extension_code='.$_GET['extension_code'] : '';
-		
-// 		$this->tags = get_merchant_goods_info_nav($goods_id, $extension_code);
-// 		$this->tags[ROUTE_A]['active'] = 1;
 		
 		ecjia_merchant_screen::get_current_screen()->set_parentage('goods', 'goods/merchant.php');
 		ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_manage'), RC_Uri::url('goods/merchant/init')));
