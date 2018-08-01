@@ -55,24 +55,6 @@
 								      	</dd>
 							    	</dl>
 							    	
-							    	{if $goods.is_promote_now}
-							    	<dl class="tm-promo-panel tm-promo-cur">
-								     	<dt class="tb-metatit">促销价格</dt>
-								      	<dd>
-								        	<div class="tm-promo-price">
-								          		<em class="tm-yen">¥</em>
-								          		<span class="tm-price">{$goods.promote_price}</span>&nbsp;&nbsp;
-								          	</div>
-								      	</dd>
-							    	</dl>
-							    	
-							    	<dl class="tm-promo-panel tm-promo-cur">
-								     	<dt class="tb-metatit">促销时间</dt>
-								      	<dd>
-								          	<span class="tm-price">{$goods.promote_start_time} 至 {$goods.promote_end_time}</span>
-								      	</dd>
-							    	</dl>
-							    	{/if}
 							  	</div>
 							  	<div class="tb-key">
 							    	<div class="tb-skin">
