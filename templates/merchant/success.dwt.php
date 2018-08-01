@@ -24,13 +24,17 @@
   	<div class="clearfix"></div>
 </div>
 
-<div class="row-fluid edit-page">
+<div class="row-fluid success-page">
    <div class="panel">
-        <div class="panel-body">
-			<div class="span12">
-				<div class="tabbable">
-				成功
-				</div>
+        <div class="panel-body text-center">
+			<div class="panel-body ">
+				<span class="glyphicon glyphicon-ok-sign"></span>
+			</div>
+			<div class="panel-body ">
+				<h4>恭喜您，导入成功！</h4>
+			</div>
+			<div class="panel-body ">
+				<a class="btn btn-info" href="{url path='goods/merchant/init'}">查看商品列表</a>
 			</div>
 		</div>
 	</div>
