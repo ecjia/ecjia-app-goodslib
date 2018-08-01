@@ -201,6 +201,16 @@
 				</section>
 				<!-- {$goods_list.page} -->
 			</div>
+			<div class="panel">
+    			<div class="form-group">
+    				<fieldset class="t_c">
+    					<input type="hidden" name="goods_id" value="{$goods_id}" />
+    					<input type="hidden" name="cat_id" />
+    					<a class="btn btn-info" href='{url path="goodslib/merchant/init"}'>上一步</a>
+    					<button class="btn btn-info m_l20 batchInsert" type="button" data-url='{url path="goodslib/merchant/add"}'>开始导入</button>
+    				</fieldset>
+    			</div>
+    		</div>
 		</div>
 	</div>
 </div>

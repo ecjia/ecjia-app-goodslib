@@ -116,7 +116,7 @@
 								$(".insertSubmit").removeAttr('disabled');
 								$(".insertSubmit").html('开始导入');
 								//ecjia.merchant.showmessage(data);
-								return;
+								return false;
 							}
 							//成功界面
 							$('#insertGoods').modal('hide');
@@ -137,7 +137,47 @@
 			}
 
 			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
-			$this.validate(options);			
+			$this.validate(options);
+			
+			//下一步
+			$(".batchInsert").on('click', function(e) {
+				var ids = [];
+				var url = $('form[name="insertForm"]').attr('action');
+				$(".checkbox:checked").each(function() {
+					ids.push($(this).val());
+				});
+				if (ids == '') {
+					smoke.alert("请选择需要导入的商品");
+					return false;
+				} else {
+					$(".batchInsert").attr('disabled', true);
+					$(".batchInsert").html('导入中 <i class="fa fa-circle-o-notch fa-spin"></i>');
+					$.ajax({
+						type: "POST",
+						url: url,
+						data: {
+							goods_ids : ids
+						},
+						dataType: "json",
+						success: function(data){
+							if (data.state == 'error') {
+								smoke.alert(data.message);
+								$(".insertSubmit").removeAttr('disabled');
+								$(".insertSubmit").html('开始导入');
+								//ecjia.merchant.showmessage(data);
+								return false;
+							}
+							//成功界面
+							ecjia.pjax(data.url);
+						},
+						error: function() {
+							$(".insertSubmit").removeAttr('disabled');
+							$(".insertSubmit").html('开始导入');
+						}
+					});
+
+				}
+			});
 			
 		},
 

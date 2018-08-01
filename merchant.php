@@ -164,34 +164,52 @@ class merchant extends ecjia_merchant {
 	    //规格属性货品
 	    //主表
 	    //type batch 批量
-	    $id = isset($_POST['goods_id']) 		? intval($_POST['goods_id']) 		: 0;
-	    $goods_name = isset($_POST['goods_name']) 		? $_POST['goods_name'] 		: '';
-	    $goods_sn = isset($_POST['goods_sn']) 		? $_POST['goods_sn'] 		: '';
-	    $shop_price = isset($_POST['shop_price']) 		? $_POST['shop_price'] 		: 0;
-	    $market_price = isset($_POST['market_price']) 		? $_POST['market_price'] 		: 0;
-	    $goods_number = isset($_POST['goods_number']) 		? intval($_POST['goods_number']) : ecjia::config('default_storage');
-	    $is_best = isset($_POST['is_best']) 		? intval($_POST['is_best']) 		: 0;
-	    $is_new = isset($_POST['is_new']) 		? intval($_POST['is_new']) 		: 0;
-	    $is_hot = isset($_POST['is_hot']) 		? intval($_POST['is_hot']) 		: 0;
-	    $is_shipping = isset($_POST['is_shipping']) 		? intval($_POST['is_shipping']) 		: 0;
-	    $is_on_sale = isset($_POST['is_on_sale']) 		? intval($_POST['is_on_sale']) 		: 0;
-	    if(empty($id)) {
-	        return $this->showmessage('请选择导入的商品', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	    
+	    if(isset($_POST['goods_ids'])) {
+	        if (empty($_POST['goods_ids'])) {
+	            return $this->showmessage('请选择导入的商品', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	        }
+	        
+	        foreach ($_POST['goods_ids'] as $goods_id) {
+	            $rs = $this->insert_goods($goods_id);
+	        }
+	    } else {
+	        $id = isset($_POST['goods_id']) 		? intval($_POST['goods_id']) 		: 0;
+	        $goods_name = isset($_POST['goods_name']) 		? $_POST['goods_name'] 		: '';
+	        $goods_sn = isset($_POST['goods_sn']) 		? $_POST['goods_sn'] 		: '';
+	        $shop_price = isset($_POST['shop_price']) 		? $_POST['shop_price'] 		: 0;
+	        $market_price = isset($_POST['market_price']) 		? $_POST['market_price'] 		: 0;
+	        $goods_number = isset($_POST['goods_number']) 		? intval($_POST['goods_number']) : ecjia::config('default_storage');
+	        if(empty($id)) {
+	            return $this->showmessage('请选择导入的商品', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	        }
+	        if(empty($goods_name)) {
+	            return $this->showmessage('请填写商品名称', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	        }
+	        if(empty($shop_price)) {
+	            return $this->showmessage('请填写商品价格', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	        }
+	        
+	        $rs = $this->insert_goods($id, $_POST);
 	    }
-	    if(empty($goods_name)) {
-	        return $this->showmessage('请填写商品名称', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-	    }
-	    if(empty($shop_price)) {
-	        return $this->showmessage('请填写商品价格', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	    if(is_ecjia_error($rs)) {
+	        return $this->showmessage($rs->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	    }
 	    
-	    $manage_mode = RC_DB::table('store_franchisee')->where('store_id', $_SESSION['store_id'])->pluck('manage_mode');
 	    
+	    $url = RC_Uri::url('goodslib/merchant/success', array());
+	    return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'goods_id' => $new_id));
+	    
+	}
+	
+	private function insert_goods($id, $ext_info = array()) {
 	    /* 商品信息 */
 	    $goods = RC_DB::table('goodslib')->where('goods_id', $id)->first();
 	    if (empty($goods)) {
-	        return $this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	        return new ecjia_error('no_goods', RC_Lang::get('goods::goods.no_goods'));
 	    }
+	    
+	    $manage_mode = RC_DB::table('store_franchisee')->where('store_id', $_SESSION['store_id'])->pluck('manage_mode');
 	    
 	    $count_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods['goods_sn'])->where('goods_sn', $_SESSION['store_id'])->where('is_delete', 0)->count();
 	    if($count_goods_sn) {
@@ -199,17 +217,30 @@ class merchant extends ecjia_merchant {
 	    }
 	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);
 	    $goods['store_id'] = $_SESSION['store_id'];
-	    $goods['is_on_sale'] = $is_on_sale;
-	    $goods['goods_name'] = $goods_name;
-	    $goods['goods_sn'] = $goods_sn;
-	    $goods['shop_price'] = $shop_price;
-	    $goods['market_price'] = $market_price;
-	    $goods['goods_number'] = $goods_number;
-	    $goods['store_best'] = $is_best;
-	    $goods['store_new'] = $is_new;
-	    $goods['store_hot'] = $is_hot;
-	    $goods['is_shipping'] = $is_shipping;
-	    $goods['is_on_sale'] = $is_on_sale;
+	    if(!empty($ext_info)) {
+	        $goods_name = isset($ext_info['goods_name']) 		? $ext_info['goods_name'] 		: '';
+	        $goods_sn = isset($ext_info['goods_sn']) 		? $ext_info['goods_sn'] 		: '';
+	        $shop_price = isset($ext_info['shop_price']) 		? $ext_info['shop_price'] 		: 0;
+	        $market_price = isset($ext_info['market_price']) 		? $ext_info['market_price'] 		: 0;
+	        $goods_number = isset($ext_info['goods_number']) 		? intval($ext_info['goods_number']) : ecjia::config('default_storage');
+	        $is_best = isset($ext_info['is_best']) 		? intval($ext_info['is_best']) 		: 0;
+	        $is_new = isset($ext_info['is_new']) 		? intval($ext_info['is_new']) 		: 0;
+	        $is_hot = isset($ext_info['is_hot']) 		? intval($ext_info['is_hot']) 		: 0;
+	        $is_shipping = isset($ext_info['is_shipping']) 		? intval($ext_info['is_shipping']) 		: 0;
+	        $is_on_sale = isset($ext_info['is_on_sale']) 		? intval($ext_info['is_on_sale']) 		: 0;
+	        
+	        $goods['is_on_sale'] = $is_on_sale;
+	        $goods['goods_name'] = $goods_name;
+	        $goods['goods_sn'] = $goods_sn;
+	        $goods['shop_price'] = $shop_price;
+	        $goods['market_price'] = $market_price;
+	        $goods['goods_number'] = $goods_number;
+	        $goods['store_best'] = $is_best;
+	        $goods['store_new'] = $is_new;
+	        $goods['store_hot'] = $is_hot;
+	        $goods['is_shipping'] = $is_shipping;
+	        $goods['is_on_sale'] = $is_on_sale;
+	    }
 	    
 	    $goods['goodslib_id'] = $id;//关联id
 	    
@@ -232,12 +263,12 @@ class merchant extends ecjia_merchant {
 	    }
 	    
 	    /* 获取商品类型存在规格的类型 */
-// 	    $specifications = get_goods_type_specifications();
-// 	    if (isset($specifications[$goods['goods_type']])) {
-// 	        $goods['specifications_id'] = $specifications[$goods['goods_type']];
-// 	    }
-// 	    $_attribute = get_goodslib_specifications_list($id);
-// 	    _dump($specifications,1);
+	    // 	    $specifications = get_goods_type_specifications();
+	    // 	    if (isset($specifications[$goods['goods_type']])) {
+	    // 	        $goods['specifications_id'] = $specifications[$goods['goods_type']];
+	    // 	    }
+	    // 	    $_attribute = get_goodslib_specifications_list($id);
+	    // 	    _dump($specifications,1);
 	    if ($goods['goods_type']) {
 	        $goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $id)->get();
 	        if($goods_attr) {
@@ -253,14 +284,15 @@ class merchant extends ecjia_merchant {
 	            }
 	            
 	            $goods_type = RC_DB::table('goodslib_type')->where('cat_id', $cat_id)->first();
+	            
 	            if($goods_type) {
 	                //判断有无
 	                if ($manage_mode == 'self') {
 	                    $goods_type_store = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])
 	                    ->where(function ($query) {
-	                           $query->where('store_id', $_SESSION['store_id'])
-	                           ->orWhere('store_id', 0);
-    	                    })->first();
+	                        $query->where('store_id', $_SESSION['store_id'])
+	                        ->orWhere('store_id', 0);
+	                    })->first();
 	                } else {
 	                    $goods_type_store = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->where('store_id', $_SESSION['store_id'])->first();
 	                }
@@ -326,20 +358,13 @@ class merchant extends ecjia_merchant {
 	                    
 	                    //product
 	                    
-	                    
 	                }
 	                
-	                
-	                
 	            }
-	            
 	        }
 	    }
 	    
-	    
-	    $url = RC_Uri::url('goodslib/merchant/success', array());
-	    return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'goods_id' => $new_id));
-	    
+	    return true;
 	}
 	
 	public function success() {
