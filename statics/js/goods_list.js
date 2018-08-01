@@ -293,13 +293,7 @@
 				$(this).attr('checked') || $(this).val() > 0 ? $('[name="promote_end_date"]').prop('disabled', false) : $('[name="promote_end_date"]').attr('disabled', true);
 			})
 		},
-		integral_market_price: function() {
-			$('[data-toggle="integral_market_price"]').on('click', function(e) {
-				e.preventDefault();
-				var init_val = parseInt($('[name="market_price"]').val());
-				$('[name="market_price"]').val(init_val); //'market_price'].value = parseInt(document.forms['theForm'].elements['market_price'].value);
-			});
-		},
+		
 		parseint_input: function() {
 			$('[data-toggle="parseint_input"]').on('blur', function(e) {
 				e.preventDefault();
@@ -324,6 +318,13 @@
 				app.goods_info.set_allprice_note();
 			});
 		},
+		integral_market_price: function() {
+			$('[data-toggle="integral_market_price"]').on('click', function(e) {
+				e.preventDefault();
+				var init_val = parseInt($('[name="market_price"]').val());
+				$('[name="market_price"]').val(init_val); //'market_price'].value = parseInt(document.forms['theForm'].elements['market_price'].value);
+			});
+		},
 		marketPriceSetted: function() {
 			$('[data-toggle="marketPriceSetted"]').on('click', function(e) {
 				e.preventDefault();
@@ -338,25 +339,6 @@
 					};
 				app.goods_info.computePrice(options);
 				app.goods_info.set_allprice_note();
-			})
-		},
-		checkGoodsSn: function() {
-			$('[data-toggle="checkGoodsSn"]').on('blur', function(e) {
-				e.preventDefault();
-				var $this = $(this),
-					goods_id = $this.attr('data-id'),
-					goods_url = $this.attr('data-url'),
-					goods_sn = $this.val() || '',
-					info = {
-						goods_id: goods_id,
-						goods_sn: goods_sn
-					};
-
-				goods_sn == '' && $('#goods_sn_notice').html('');
-
-				$.get(goods_url, info, function(data) {
-					data.state == 'success' ? $('#goods_sn_notice').html('').parent().removeClass('f_error') : $('#goods_sn_notice').html(data.message).parent().addClass('f_error');
-				}, "JSON");
 			})
 		},
 

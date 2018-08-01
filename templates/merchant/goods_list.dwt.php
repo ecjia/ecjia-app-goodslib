@@ -17,18 +17,20 @@
 				<h4 class="modal-title">导入商品</h4>
 			</div>
 			<div class="modal-body" style="height:auto;">
-				<form class="form-horizontal" method="post" name="batchForm">
+				<form class="form-horizontal" action="{$form_action}" method="post" name="insertForm">
 					<div class="form-group">
           				<label class="control-label col-lg-2">商品名称</label>
-          				<div class="col-lg-7">
+          				<div class="controls col-lg-7">
                         	<input class="form-control" name="goods_name" type="text" value="" />
                       	</div>
+                      	<span class="input-must m_l15">{lang key='system::system.require_field'}</span>
           			</div>
           			<div class="form-group">
           				<label class="control-label col-lg-2">商品货号</label>
-          				<div class="col-lg-7">
+          				<div class="controls col-lg-7">
                         	<input class="form-control" name="goods_sn" type="text" value="" />
                       	</div>
+                      	<span class="input-must m_l15">{lang key='system::system.require_field'}</span>
           			</div>
           			<div class="form-group">
           				<label class="control-label col-lg-2">本店售价</label>
@@ -91,9 +93,10 @@
                        		</div>
                    		</div>
                   	</div>
+                  	<input type="hidden" name="goods_id" value="" />
                   	
 					<div class="form-group t_c">
-						<a class="btn btn-primary m_l5" data-toggle="ecjiabatch" data-idClass="" data-url="{$form_action}&type=move_to&" href="javascript:;" name="move_cat_ture">开始导入</a>
+						<a class="btn btn-primary insertSubmit" href="javascript:;">开始导入</a>
 					</div>
 				</form>
            </div>
@@ -154,9 +157,10 @@
 									</div>
 								</th>
 								<th class="w100 text-center">{lang key='goods::goods.thumb'}</th>
-								<th data-toggle="sortby" data-sortby="goods_id">{lang key='goods::goods.goods_name'}</th>
+								<th class="w200" data-toggle="sortby" data-sortby="goods_id">{lang key='goods::goods.goods_name'}</th>
 								<th class="w200 sorting" data-toggle="sortby" data-sortby="goods_sn">{lang key='goods::goods.goods_sn'}</th>
-								<th class="w200 sorting text-center" data-toggle="sortby" data-sortby="shop_price">{lang key='goods::goods.shop_price'}</th>
+								<th class="w130 sorting text-center" data-toggle="sortby" data-sortby="shop_price">{lang key='goods::goods.shop_price'}</th>
+								<th class="w130 sorting text-center" >市场价</th>
 								<th class="w70 sorting text-center" data-toggle="sortby" data-sortby="store_sort_order">排序</th>
 							</tr>
 						</thead>
@@ -184,6 +188,7 @@
 								
 								<td>{$goods.goods_sn}</td>
 								<td align="center">{$goods.shop_price}</td>
+								<td align="center">{$goods.market_price}</td>
 								<td align="center">{$goods.store_sort_order}</td>
 							</tr>
 							<!-- {foreachelse}-->

@@ -1,14 +1,12 @@
 // JavaScript Document
 ;
 (function(app, $) {
-	var bath_url; /* 列表页 */
 	app.goods_list = {
 		init: function() {
 			$(".no_search").chosen({
 				allow_single_deselect: false,
 				disable_search: true
 			});
-			bath_url = $("a[name=move_cat_ture]").attr("data-url");
 			app.goods_list.search();
 			app.goods_list.insertGoods();
 			app.goods_info.previewImage();
@@ -47,6 +45,12 @@
 
 		insertGoods: function() {
 			$(".insert-goods-btn").on('click', function(e) {
+				$("div.form-group").removeClass("error");
+				$("div.form-group").removeClass("f_error");
+				$("label.error").remove();
+				$(".insertSubmit").removeAttr('disabled');
+				$(".insertSubmit").html('开始导入');
+				
 				var $this = $(this);
 				var goods_id = $this.attr('data-id');
 				var goods_name = $this.attr('data-name');
@@ -54,6 +58,7 @@
 				var shop_price = $this.attr('data-shopprice');
 				var market_price = $this.attr('data-marketprice');
 				
+				$("input[name=goods_id]").val(goods_id);
 				$("input[name=goods_name]").val(goods_name);
 				$("input[name=goods_sn]").val(goods_sn);
 				$("input[name=shop_price]").val(shop_price);
@@ -61,17 +66,80 @@
 				
 				$('#insertGoods').modal('show');
 			});
-			$("a[name=move_cat_ture]").on('click', function(e) {
-				$('#insertGoods').modal('hide');
+			$(".insertSubmit").on('click', function(e) {
+				$(".insertSubmit").attr('disabled', true);
+				$(".insertSubmit").html('导入中 <i class="fa fa-circle-o-notch fa-spin"></i>');
+				$("form[name='insertForm']").submit();
+				//$('#insertGoods').modal('hide');
+			});	
+			
+			$("form[name='insertForm']").on('submit', function(e) {
+				e.preventDefault();
 			});
 			
 			
+			var $this = $('form[name="insertForm"]');
+			var option = {
+				rules: {
+					goods_name: {
+						required: true
+					},
+					goods_sn: {
+						required: true
+					},
+					shop_price: {
+						required: true
+					},
+					goods_number: {
+						required: true
+					}
+				},
+				messages: {
+					goods_name: {
+						required: '请填写商品名称'
+					},
+					goods_sn: {
+						required: '请填写商品货号'
+					},
+					shop_price: {
+						required: '请填写价格'
+					},
+					goods_number: {
+						required: '请填写库存'
+					}
+				},
+				submitHandler: function() {
+					$this.ajaxSubmit({
+						dataType: "json",
+						success: function(data) {
+							if (data.state == 'error') {
+								smoke.alert(data.message);
+								$(".insertSubmit").removeAttr('disabled');
+								$(".insertSubmit").html('开始导入');
+								//ecjia.merchant.showmessage(data);
+								return;
+							}
+							//成功界面
+							$('#insertGoods').modal('hide');
+							ecjia.pjax(data.url);
+						},
+						error: function(data) {
+							$(".insertSubmit").removeAttr('disabled');
+							$(".insertSubmit").html('开始导入');
+						}
+					});
+				},
+				showErrors : function(errorMap, errorList) {
+					$(".insertSubmit").removeAttr('disabled');
+					$(".insertSubmit").html('开始导入');
+			        
+			        this.defaultShowErrors();
+			    },
+			}
+
+			var options = $.extend(ecjia.merchant.defaultOptions.validate, option);
+			$this.validate(options);			
 			
-			$("select[name=target_cat]").on('change', function(e) {
-				var target_cat = $(this).val();
-				$("a[name=move_cat_ture]").attr("data-url", bath_url + '&target_cat=' + target_cat);
-			});
-		
 		},
 
 		integral_market_price: function() {
