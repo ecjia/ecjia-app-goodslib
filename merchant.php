@@ -204,7 +204,7 @@ class merchant extends ecjia_merchant {
 	
 	private function insert_goods($id, $ext_info = array()) {
 	    /* 商品信息 */
-	    $goods = RC_DB::table('goodslib')->where('goods_id', $id)->first();
+	    $goods = RC_DB::table('goodslib')->where('goods_id', $id)->where('is_display', 1)->where('is_delete', 0)->first();
 	    if (empty($goods)) {
 	        return new ecjia_error('no_goods', RC_Lang::get('goods::goods.no_goods'));
 	    }

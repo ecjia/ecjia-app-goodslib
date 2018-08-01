@@ -85,6 +85,15 @@
 													</select>
 												</div>
 											</div>
+											
+											<div class="control-group control-group-small formSep">
+												<label class="control-label">{lang key='goods::goods.lab_is_on_sale'}</label>
+												<div class="controls">
+													<input type="checkbox" name="is_display" value="1" style="opacity: 0;" {if $goods.is_display}checked="checked"{/if}>
+													<span>打勾表示商家可见此商品，并允许商家将此商品导入店铺，否则不显示并不可导入</span>
+												</div>
+											</div>
+											
 										</div>
 										<div class="foldable-list move-mod-group" id="goods_info_sort_seo">
 											<div class="accordion-group">
@@ -115,26 +124,17 @@
 												</div>
 											</div>
 										</div>
+										
+										<div class="row-fluid">
+											<label class="control-label"></label>
+    										<input type="hidden" name="goods_id" value="{$goods.goods_id}"/>
+    										<input type="hidden" name="goods_copyid" value="{$goods.goods_copyid}"/>
+    										<button class="btn btn-gebo" type="submit">{if $goods.goods_id}{lang key='goods::goods.update'}{else}{lang key='goods::goods.next_step'}{/if}</button>
+    										<input type="hidden" id="type" value="{$link.type}"/>
+    									</div>
 									</div>
 									<!-- 选填信息 -->
 									<div class="right-bar move-mod">
-										<div class="foldable-list move-mod-group" id="goods_info_sort_submit">
-											<div class="accordion-group">
-												<div class="accordion-heading">
-													<a class="accordion-toggle collapsed move-mod-head" data-toggle="collapse" data-target="#goods_info_area_submit">
-													<strong>{lang key='goods::goods.issue'}</strong>
-													</a>
-												</div>
-												<div class="accordion-body in collapse" id="goods_info_area_submit">
-													<div class="accordion-inner">
-														<input type="hidden" name="goods_id" value="{$goods.goods_id}"/>
-														<input type="hidden" name="goods_copyid" value="{$goods.goods_copyid}"/>
-														<button class="btn btn-gebo" type="submit">{if $goods.goods_id}{lang key='goods::goods.update'}{else}{lang key='goods::goods.next_step'}{/if}</button>
-														<input type="hidden" id="type" value="{$link.type}"/>
-													</div>
-												</div>
-											</div>
-										</div>
 										<div class="foldable-list move-mod-group" id="goods_info_sort_cat">
 											<div class="accordion-group">
 												<div class="accordion-heading">
