@@ -209,6 +209,11 @@ class merchant extends ecjia_merchant {
 	        return new ecjia_error('no_goods', RC_Lang::get('goods::goods.no_goods'));
 	    }
 	    
+	    $is_exist_goodslib = RC_DB::table('goods')->where('goodslib_id', $id)->first();
+	    if($is_exist_goodslib) {
+	        return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
+	    }
+	    
 	    $manage_mode = RC_DB::table('store_franchisee')->where('store_id', $_SESSION['store_id'])->pluck('manage_mode');
 	    
 	    $count_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods['goods_sn'])->where('goods_sn', $_SESSION['store_id'])->where('is_delete', 0)->count();
