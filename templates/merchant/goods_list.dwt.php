@@ -174,7 +174,7 @@
 									</div>
 								</td>						
 								<td>
-									<img class="w80 h80" alt="{$goods.goods_name}" src="{$goods.goods_thumb}">
+									<a target="_blank" href='{url path="goodslib/merchant/preview" args="id={$goods.goods_id}"}'><img class="w80 h80" alt="{$goods.goods_name}" src="{$goods.goods_thumb}"></a>
 								</td>
 								<td class="hide-edit-area ">
 									<span class="ecjiaf-pre ecjiaf-wsn" data-text="textarea">{$goods.goods_name|escape:html}</span>

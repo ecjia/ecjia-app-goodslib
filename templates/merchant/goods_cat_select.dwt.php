@@ -7,7 +7,10 @@
 </script>
 <!-- {/block} -->
 <!-- {block name="home-content"} -->
-
+<div class="alert alert-info">
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true"><i class="fa fa-times" data-original-title="" title=""></i></button>
+	<strong>温馨提示：</strong>为减少操作流程，您可选择使用“一键导入”，将平台商品库里的商品导入店铺内。
+</div>
 {if $step}
 <!-- #BeginLibraryItem "/library/goods_step.lbi" --><!-- #EndLibraryItem -->
 {/if}
