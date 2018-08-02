@@ -672,4 +672,58 @@ function delete_goodslib($goods_id) {
     RC_DB::table('goodslib_attr')->whereIn('goods_id', $goods_id)->delete();
 }
 
+function copy_goodslib_images($goodlib_id, $goods_id, $images_data = array()) {
+    if (empty($images_data)) {
+        $images_data = RC_DB::table('goodslib')->where('goods_id', $goodlib_id)->select('goods_thumb', 'goods_img', 'original_img')->first();
+    }
+    
+    if ($images_data) {
+        foreach ($images_data as $key => $img) {
+            if (!in_array($key, array('goods_img', 'goods_thumb', 'original_img'))) {
+                return false;
+            }
+            $img_new = create_new_filename($img, $goods_id);
+            $img_path = RC_Upload::upload_path($img);
+            $rs = goods_imageutils::copyImage($img_path, $img_new['path']);
+            if ($rs) {
+                update_goods_field($goods_id, array($key => $img_new['relative_path']));
+            }
+        }
+    }
+    
+    return true;
+    
+}
+
+function copy_goodslib_gallery($goodlib_id, $goods_id, $images_data = array()) {
+    
+}
+
+function create_new_filename($goods_img, $goods_id) {
+    $goods_img_path = RC_Upload::upload_path($goods_img);
+    //                 [dirname] => D:\www\ecjia-cityo2o\content\uploads\images\201807\goods_img
+    //                 [basename] => 9_P_1532556136009.jpg
+    //                 [extension] => jpg
+    //                 [filename] => 9_P_1532556136009
+    $path_info = pathinfo($goods_img_path);
+    $filename = explode('_', $path_info['filename']);
+    $filename[0] = $goods_id;
+    $new_filename = implode('_', $filename);
+    
+    $new_file = array(
+        'path' => $path_info['dirname'] . '/' . $new_filename . '.' . $path_info['extension'],
+        'basename' => $new_filename . '.' . $path_info['extension'],
+    );
+    
+    $new_file['relative_path'] = RC_Upload::relative_upload_path($new_file['path']);
+    $new_file['relative_path'] = substr($new_file['relative_path'], 1);
+    
+    return $new_file;
+}
+
+function update_goods_field($goods_id, $data = array()) {
+    return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+}
+
+
 // end

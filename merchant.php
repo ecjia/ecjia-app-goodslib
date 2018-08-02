@@ -255,8 +255,14 @@ class merchant extends ecjia_merchant {
 	    
 	    $new_id = RC_DB::table('goods')->insertGetId($goods);
 	    RC_DB::table('goodslib')->where('goods_id', $id)->increment('used_count');
-	    if(!empty($goods['goods_thumb'])) {
-	        //TODO复制图片-重命名
+	    if(!empty($goods['goods_img'])) {
+	        //复制图片-重命名
+	        $img_data = array(
+	            'goods_img' => $goods['goods_img'], 
+	            'goods_thumb' => $goods['goods_thumb'], 
+	            'original_img' => $goods['original_img']
+	        );
+	        copy_goodslib_images($id, $new_id, $img_data);
 	    }
 	    if(!empty($goods['goods_desc'])) {
 	        
@@ -433,9 +439,6 @@ class merchant extends ecjia_merchant {
 	    if (!empty($goods['last_update'])) {
 	        $goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
 	    }
-	    
-	    $code = isset($_GET['extension_code']) ? 'virtual_card' : '';
-	    $this->assign('code', $code);
 	    
 	    $images_url = RC_App::apps_url('statics/images', __FILE__);
 	    $this->assign('images_url', $images_url);
