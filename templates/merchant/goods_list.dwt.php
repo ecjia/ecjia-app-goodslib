@@ -30,7 +30,6 @@
           				<div class="controls col-lg-7">
                         	<input class="form-control" name="goods_sn" type="text" value="" />
                       	</div>
-                      	<span class="input-must m_l15">{lang key='system::system.require_field'}</span>
           			</div>
           			<div class="form-group">
           				<label class="control-label col-lg-2">本店售价</label>

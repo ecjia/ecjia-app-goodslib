@@ -50,9 +50,13 @@ defined('IN_ECJIA') or exit('No permission resources.');
  *  ECJIA 商品管理程序
  */
 class merchant extends ecjia_merchant {
+    
+    private $db_goods;
 
 	public function __construct() {
 		parent::__construct();
+		
+		$this->db_goods 			= RC_Model::model('goods/goods_model');
 		
 		RC_Style::enqueue_style('jquery-placeholder');
 		RC_Script::enqueue_script('jquery-imagesloaded');
@@ -189,6 +193,23 @@ class merchant extends ecjia_merchant {
 	        if(empty($shop_price)) {
 	            return $this->showmessage('请填写商品价格', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	        }
+	        /* 如果没有输入商品货号则自动生成一个商品货号 */
+	        if (empty($goods_sn)) {
+	            $max_id = $this->db_goods->goods_find('', 'MAX(goods_id) + 1|max');
+	            if (empty($max_id['max'])) {
+	                $goods_sn_bool = true;
+	                $goods_sn = '';
+	            } else {
+	                $goods_sn = generate_goods_sn($max_id['max']);
+	            }
+	            $_POST['goods_sn'] = $goods_sn;
+	        } else {
+	            /* 检查货号是否重复 */
+	            $count = $this->db_goods->is_only(array('goods_sn' => $goods_sn, 'is_delete' => 0, 'store_id' => $_SESSION['store_id']));
+	            if ($count > 0) {
+	                return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	            }
+	        }
 	        
 	        $rs = $this->insert_goods($id, $_POST);
 	    }
@@ -245,6 +266,18 @@ class merchant extends ecjia_merchant {
 	        $goods['store_hot'] = $is_hot;
 	        $goods['is_shipping'] = $is_shipping;
 	        $goods['is_on_sale'] = $is_on_sale;
+	    }
+	    if($goods['goods_sn']) {
+	        $count = $this->db_goods->is_only(array('goods_sn' => $goods['goods_sn'], 'is_delete' => 0, 'store_id' => $_SESSION['store_id']));
+	        if ($count > 0) {
+	            $max_id = $this->db_goods->goods_find('', 'MAX(goods_id) + 1|max');
+	            if (empty($max_id['max'])) {
+	                $goods_sn_bool = true;
+	                $goods['goods_sn'] = '';
+	            } else {
+	                $goods['goods_sn'] = generate_goods_sn($max_id['max']);
+	            }
+	        }
 	    }
 	    
 	    $time = RC_Time::gmtime();

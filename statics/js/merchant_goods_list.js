@@ -83,9 +83,6 @@
 					goods_name: {
 						required: true
 					},
-					goods_sn: {
-						required: true
-					},
 					shop_price: {
 						required: true
 					},
@@ -96,9 +93,6 @@
 				messages: {
 					goods_name: {
 						required: '请填写商品名称'
-					},
-					goods_sn: {
-						required: '请填写商品货号'
 					},
 					shop_price: {
 						required: '请填写价格'
