@@ -209,7 +209,7 @@ class merchant extends ecjia_merchant {
 	        return new ecjia_error('no_goods', RC_Lang::get('goods::goods.no_goods'));
 	    }
 	    
-	    $is_exist_goodslib = RC_DB::table('goods')->where('goodslib_id', $id)->first();
+	    $is_exist_goodslib = RC_DB::table('goods')->where('goodslib_id', $id)->where('is_delete', 0)->first();
 	    if($is_exist_goodslib) {
 	        return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
 	    }
@@ -265,16 +265,12 @@ class merchant extends ecjia_merchant {
 	        copy_goodslib_images($id, $new_id, $img_data);
 	    }
 	    if(!empty($goods['goods_desc'])) {
-	        
+	        //复制图片-重命名
 	    }
 	    $goods_gallery = RC_DB::table('goodslib_gallery')->where('goods_id', $id)->get();
 	    if (!empty($goods_gallery)) {
-	        foreach($goods_gallery as $row) {
-	            unset($row['img_id']);
-	            $row['goods_id'] = $new_id;
-	            RC_DB::table('goods_gallery')->insert($row);
-	            //TODO复制图片-重命名
-	        }
+	        //复制图片-重命名
+	        copy_goodslib_gallery($id, $new_id, $goods_gallery);
 	    }
 	    
 	    /* 获取商品类型存在规格的类型 */
