@@ -247,7 +247,11 @@ class merchant extends ecjia_merchant {
 	        $goods['is_on_sale'] = $is_on_sale;
 	    }
 	    
+	    $time = RC_Time::gmtime();
+	    $goods['add_time'] = $time;
+	    $goods['last_update'] = $time;
 	    $goods['goodslib_id'] = $id;//关联id
+	    $goods['goodslib_update_time'] = $time;//同步时间
 	    
 	    $new_id = RC_DB::table('goods')->insertGetId($goods);
 	    RC_DB::table('goodslib')->where('goods_id', $id)->increment('used_count');
