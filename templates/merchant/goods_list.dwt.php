@@ -161,7 +161,7 @@
 								<th class="w200 sorting" data-toggle="sortby" data-sortby="goods_sn">{lang key='goods::goods.goods_sn'}</th>
 								<th class="w130 sorting text-center" data-toggle="sortby" data-sortby="shop_price">{lang key='goods::goods.shop_price'}</th>
 								<th class="w130 sorting text-center" >市场价</th>
-								<th class="w70 sorting text-center" data-toggle="sortby" data-sortby="store_sort_order">排序</th>
+								<!-- <th class="w70 sorting text-center" data-toggle="sortby" data-sortby="store_sort_order">排序</th> -->
 							</tr>
 						</thead>
 						<tbody>
@@ -189,7 +189,7 @@
 								<td>{$goods.goods_sn}</td>
 								<td align="center">{$goods.shop_price}</td>
 								<td align="center">{$goods.market_price}</td>
-								<td align="center">{$goods.store_sort_order}</td>
+								<!-- <td align="center">{$goods.store_sort_order}</td> -->
 							</tr>
 							<!-- {foreachelse}-->
 							<tr>

@@ -72,8 +72,8 @@ class goodslib {
         $filter ['suppliers_id'] 	= isset ($_REQUEST ['suppliers_id']) 	? (empty ($_REQUEST ['suppliers_id']) ? '' : trim($_REQUEST ['suppliers_id'])) : '';
         $filter ['type'] 			= !empty($_REQUEST ['type']) 			? $_REQUEST ['type'] : '';
     
-        $filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) 		? 'goods_id' 	: trim($_REQUEST ['sort_by']);
-        $filter ['sort_order'] 		= empty ($_REQUEST ['sort_order']) 		? 'DESC' 		: trim($_REQUEST ['sort_order']);
+        $filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) 		? 'sort_order' 	: trim($_REQUEST ['sort_by']);
+        $filter ['sort_order'] 		= empty ($_REQUEST ['sort_order']) 		? 'ASC' 		: trim($_REQUEST ['sort_order']);
         $filter ['extension_code'] 	= empty ($_REQUEST ['extension_code']) 	? '' 			: trim($_REQUEST ['extension_code']);
         $filter ['is_delete'] 		= $is_delete;
         
@@ -198,7 +198,7 @@ class goodslib {
     	$filter ['suppliers_id'] 	= isset ($_REQUEST ['suppliers_id']) 	? (empty ($_REQUEST ['suppliers_id']) ? '' : trim($_REQUEST ['suppliers_id'])) : '';
     	$filter ['type'] 			= !empty($_REQUEST ['type']) 			? $_REQUEST ['type'] : '';
     
-    	$filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) 		? 'store_sort_order' 	: trim($_REQUEST ['sort_by']);
+    	$filter ['sort_by'] 		= empty ($_REQUEST ['sort_by']) 		? 'sort_order' 	: trim($_REQUEST ['sort_by']);
     	$filter ['sort_order'] 		= empty ($_REQUEST ['sort_order']) 		? 'asc' 				: trim($_REQUEST ['sort_order']);
     	$filter ['extension_code'] 	= empty ($_REQUEST ['extension_code']) 	? '' 					: trim($_REQUEST ['extension_code']);
     	$filter ['is_delete'] 		= $is_delete;

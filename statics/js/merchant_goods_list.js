@@ -162,8 +162,8 @@
 						success: function(data){
 							if (data.state == 'error') {
 								smoke.alert(data.message);
-								$(".insertSubmit").removeAttr('disabled');
-								$(".insertSubmit").html('开始导入');
+								$(".batchInsert").removeAttr('disabled');
+								$(".batchInsert").html('开始导入');
 								//ecjia.merchant.showmessage(data);
 								return false;
 							}
@@ -171,8 +171,8 @@
 							ecjia.pjax(data.url);
 						},
 						error: function() {
-							$(".insertSubmit").removeAttr('disabled');
-							$(".insertSubmit").html('开始导入');
+							$(".batchInsert").removeAttr('disabled');
+							$(".batchInsert").html('开始导入');
 						}
 					});
 
