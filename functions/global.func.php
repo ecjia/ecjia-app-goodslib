@@ -789,5 +789,14 @@ function update_goods_field($goods_id, $data = array()) {
     return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 }
 
+function array_change_key($arr, $new_key) {
+    $formate_arr = [];
+    foreach ($arr as $row) {
+        $formate_arr[$row[$new_key]] = $row;
+    }
+    
+    return $formate_arr;
+}
+
 
 // end
