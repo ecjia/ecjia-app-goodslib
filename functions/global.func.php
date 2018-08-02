@@ -728,7 +728,37 @@ function copy_goodslib_gallery($goodlib_id, $goods_id, $images_data = array()) {
     return true;
 }
 
+function copy_goods_desc($goodlib_id, $goods_id, $goods_desc = '') {
+    if (empty($goods_desc)) {
+        $goods_desc = RC_DB::table('goodslib')->where('goods_id', $goodlib_id)->pluck('goods_desc');
+    }
+    
+    if ($goods_desc) {
+        $goods_desc = stripslashes($goods_desc);
+        //复制替换图
+        preg_match_all('/<\s*img\s+[^>]*?src\s*=\s*(\'|\")(.*?)\\1[^>]*?\/?\s*>/i', $goods_desc, $match);
+        //复制重命名原图
+        foreach($match[2] as $key => $img_url) {
+            $new_file = create_new_filename($img_url, $goods_id);
+            $goods_img = str_replace(RC_Upload::upload_url(), '', $img_url);
+            goods_imageutils::copyImage(RC_Upload::upload_path($goods_img), $new_file['path']);
+            
+            $new_match[$key] = $new_file['url'];
+        }
+        //替换更新数据
+        $goods_desc = str_replace($match[2], $new_match, $goods_desc);
+        return update_goods_field($goods_id, array('goods_desc' => $goods_desc));
+    }
+    
+    return true;
+}
+
 function create_new_filename($goods_img, $goods_id) {
+    
+    if (strpos($goods_img, 'http://') !== false || strpos($goods_img, 'https://') !== false) {
+        $goods_img = str_replace(RC_Upload::upload_url(), '', $goods_img);
+    }
+    
     $goods_img_path = RC_Upload::upload_path($goods_img);
     //                 [dirname] => D:\www\ecjia-cityo2o\content\uploads\images\201807\goods_img
     //                 [basename] => 9_P_1532556136009.jpg
@@ -736,8 +766,12 @@ function create_new_filename($goods_img, $goods_id) {
     //                 [filename] => 9_P_1532556136009
     $path_info = pathinfo($goods_img_path);
     $filename = explode('_', $path_info['filename']);
-    $filename[0] = $goods_id;
-    $new_filename = implode('_', $filename);
+    if(count($filename) == 1) {
+        $new_filename = $filename[0] . '_' . $goods_id;
+    } else {
+        $filename[0] = $goods_id;
+        $new_filename = implode('_', $filename);
+    }
     
     $new_file = array(
         'path' => $path_info['dirname'] . '/' . $new_filename . '.' . $path_info['extension'],
@@ -746,6 +780,7 @@ function create_new_filename($goods_img, $goods_id) {
     
     $new_file['relative_path'] = RC_Upload::relative_upload_path($new_file['path']);
     $new_file['relative_path'] = substr($new_file['relative_path'], 1);
+    $new_file['url'] = RC_Upload::upload_url($new_file['relative_path']);
     
     return $new_file;
 }

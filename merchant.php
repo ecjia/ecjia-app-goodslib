@@ -266,6 +266,7 @@ class merchant extends ecjia_merchant {
 	    }
 	    if(!empty($goods['goods_desc'])) {
 	        //复制图片-重命名
+	        copy_goods_desc($id, $new_id, $goods['goods_desc']);
 	    }
 	    $goods_gallery = RC_DB::table('goodslib_gallery')->where('goods_id', $id)->get();
 	    if (!empty($goods_gallery)) {
