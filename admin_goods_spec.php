@@ -140,7 +140,7 @@ class admin_goods_spec extends ecjia_admin {
 		$goods_type['attr_group']	= RC_String::sub_str($_POST['attr_group'], 255);
 		$goods_type['enabled']		= intval($_POST['enabled']);
 		
-		$count = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->count();
+		$count = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->where('store_id', 0)->count();
 		if ($count > 0 ){
 			return $this->showmessage(RC_Lang::get('goods::goods_spec.repeat_type_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {

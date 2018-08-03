@@ -112,6 +112,51 @@ function get_goods_type_info($cat_id) {
     return RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
 }
 
+
+/**
+ * 获得商品已添加的规格列表
+ *
+ * @access public
+ * @param
+ *            s integer $goods_id
+ * @return array
+ */
+function get_goodslib_specifications_list($goods_id) {
+    if (empty($goods_id)) {
+        return array(); // $goods_id不能为空
+    }
+    return RC_DB::table('goodslib_attr as ga')
+    ->leftJoin('attribute as a', RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
+    ->where('goods_id', $goods_id)
+    ->where(RC_DB::raw('a.attr_type'), 1)
+    ->selectRaw('ga.goods_attr_id, ga.attr_value, ga.attr_id, a.attr_name')
+    ->orderBy(RC_DB::raw('ga.attr_id'), 'asc')
+    ->get();
+}
+
+/**
+ * 取得通用属性和某分类的属性，以及某商品的属性值
+ *
+ * @param int $cat_id
+ *            分类编号
+ * @param int $goods_id
+ *            商品编号
+ * @return array 规格与属性列表
+ */
+function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
+    if (empty ($cat_id)) {
+        return array();
+    }
+    $row = RC_DB::table('attribute as a')
+    ->leftJoin('goodslib_attr as ga', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+    ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
+    ->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id))
+    ->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
+    ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
+    ->get();
+    return $row;
+}
+
 /**
  * 根据属性数组创建属性的表单
  *
@@ -123,7 +168,7 @@ function get_goods_type_info($cat_id) {
  * @return string
  */
 function goodslib_build_attr_html($cat_id, $goods_id = 0) {
-    $attr = get_cat_attr_list($cat_id, $goods_id);
+    $attr = get_goodslib_cat_attr_list($cat_id, $goods_id);
     $html = '';
     $spec = 0;
     
@@ -657,11 +702,21 @@ function update_goods_field($goods_id, $data = array()) {
     return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 }
 
-function array_change_key($arr, $new_key, $new_key_second = '') {
+function array_change_key($arr, $new_key) {
     $formate_arr = [];
     foreach ($arr as $row) {
-        if ($new_key_second) {
-            $formate_arr[$row[$new_key].'_'.$row[$new_key_second]] = $row;
+        if (is_array($new_key)) {
+            $key = '';
+            $i = 0;
+            foreach ($new_key as $val) {
+                if ($i > 0) {
+                    $key .= '_' . $row[$val];
+                } else {
+                    $key .= $row[$val];
+                }
+                $i++;
+            }
+            $formate_arr[$key] = $row;
         } else {
             $formate_arr[$row[$new_key]] = $row;
         }

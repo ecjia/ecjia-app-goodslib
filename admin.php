@@ -813,13 +813,13 @@ class admin extends ecjia_admin {
             $goods = array('goods_type' => 0); 	// 商品类型
         }
         /* 获取所有属性列表 */
-        $attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
+        $attr_list = get_goodslib_cat_attr_list($goods['goods_type'], $goods_id);
         $specifications = get_goods_type_specifications();
         
         if (isset($specifications[$goods['goods_type']])) {
             $goods['specifications_id'] = $specifications[$goods['goods_type']];
         }
-        $_attribute = get_goods_specifications_list($goods['goods_id']);
+        $_attribute = get_goodslib_specifications_list($goods['goods_id']);
         $goods['_attribute'] = empty($_attribute) ? '' : 1;
         
         //设置选中状态,并分配标签导航
@@ -956,7 +956,7 @@ class admin extends ecjia_admin {
         //获取商品的信息
         $goods = $db_goods->select(RC_DB::raw('goods_sn, goods_name, goods_type, shop_price'))->first();
         //获得商品已经添加的规格列表
-        $attribute = get_goods_specifications_list($goods_id);
+        $attribute = get_goodslib_specifications_list($goods_id);
         
         $_attribute = array();
         if (!empty($attribute)) {
