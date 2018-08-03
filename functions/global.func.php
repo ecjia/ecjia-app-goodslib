@@ -58,67 +58,6 @@ function goodslib_get_goods_info_nav($goods_id = 0, $extension_code = '') {
 }
 
 /**
- * 获得商品已添加的规格列表
- *
- * @access public
- * @param
- *            s integer $goods_id
- * @return array
- */
-function get_goodslib_specifications_list($goods_id) {
-    if (empty($goods_id)) {
-        return array(); // $goods_id不能为空
-    }
-    return RC_DB::table('goodslib_attr as ga')
-    ->leftJoin('goodslib_attribute as a', RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
-    ->where('goods_id', $goods_id)
-    ->where(RC_DB::raw('a.attr_type'), 1)
-    ->selectRaw('ga.goods_attr_id, ga.attr_value, ga.attr_id, a.attr_name')
-    ->orderBy(RC_DB::raw('ga.attr_id'), 'asc')
-    ->get();
-}
-
-/**
- * 取得通用属性和某分类的属性，以及某商品的属性值
- *
- * @param int $cat_id
- *            分类编号
- * @param int $goods_id
- *            商品编号
- * @return array 规格与属性列表
- */
-function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
-    if (empty ($cat_id)) {
-        return array();
-    }
-    $row = RC_DB::table('goodslib_attribute as a')
-        ->leftJoin('goodslib_attr as ga', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
-        ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
-        ->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id))
-        ->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
-        ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
-        ->get();
-    return $row;
-}
-
-/**
- * 获取商品类型中包含规格的类型列表
- *
- * @access public
- * @return array
- */
-function get_goodslib_type_specifications() {
-    $row = RC_DB::table('goodslib_attribute')->selectRaw('DISTINCT cat_id')->where('attr_type', 1)->get();
-    $return_arr = array();
-    if (!empty($row)) {
-        foreach ($row as $value) {
-            $return_arr[$value['cat_id']] = $value['cat_id'];
-        }
-    }
-    return $return_arr;
-}
-
-/**
  * 获得所有商品类型
  *
  * @access  public
@@ -184,7 +123,7 @@ function get_goods_type_info($cat_id) {
  * @return string
  */
 function goodslib_build_attr_html($cat_id, $goods_id = 0) {
-    $attr = get_goodslib_cat_attr_list($cat_id, $goods_id);
+    $attr = get_cat_attr_list($cat_id, $goods_id);
     $html = '';
     $spec = 0;
     
@@ -382,7 +321,7 @@ function sort_goodslib_attr_id_array($goods_attr_id_array, $sort = 'asc') {
         return $goods_attr_id_array;
     }
     // 重新排序
-    $row = RC_DB::table('goodslib_attribute as a')
+    $row = RC_DB::table('attribute as a')
     ->leftJoin('goodslib_attr as v', function($join){
         $join->on(RC_DB::raw('v.attr_id'), '=', RC_DB::raw('a.attr_id'))->on(RC_DB::raw('a.attr_type'), '=', RC_DB::raw('1'));
     })

@@ -387,7 +387,7 @@ class admin extends ecjia_admin {
         if (isset($specifications[$goods['goods_type']])) {
             $goods['specifications_id'] = $specifications[$goods['goods_type']];
         }
-        $_attribute = get_goodslib_specifications_list($goods['goods_id']);
+        $_attribute = get_goods_specifications_list($goods['goods_id']);
         $goods['_attribute'] = empty($_attribute) ? '' : 1;
         
         if (empty($goods) === true) {
@@ -813,13 +813,13 @@ class admin extends ecjia_admin {
             $goods = array('goods_type' => 0); 	// 商品类型
         }
         /* 获取所有属性列表 */
-        $attr_list = get_goodslib_cat_attr_list($goods['goods_type'], $goods_id);
-        $specifications = get_goodslib_type_specifications();
+        $attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
+        $specifications = get_goods_type_specifications();
         
         if (isset($specifications[$goods['goods_type']])) {
             $goods['specifications_id'] = $specifications[$goods['goods_type']];
         }
-        $_attribute = get_goodslib_specifications_list($goods['goods_id']);
+        $_attribute = get_goods_specifications_list($goods['goods_id']);
         $goods['_attribute'] = empty($_attribute) ? '' : 1;
         
         //设置选中状态,并分配标签导航
@@ -828,7 +828,7 @@ class admin extends ecjia_admin {
         $href = RC_Uri::url('goodslib/admin/init');
         
         $this->assign('action_link', array('href' => $href, 'text' => RC_Lang::get('system::system.01_goods_list')));
-        $this->assign('goods_type_list', goodslib_type_list($goods['goods_type'], $goods['store_id']));
+        $this->assign('goods_type_list', goods_type_list($goods['goods_type']));
         
         $this->assign('goods_attr_html', goodslib_build_attr_html($goods['goods_type'], $goods_id));
         $this->assign('ur_here', RC_Lang::get('goods::goods.edit_goods_attr'));
@@ -864,7 +864,7 @@ class admin extends ecjia_admin {
         if ((isset($_POST['attr_id_list']) && isset($_POST['attr_value_list'])) || (empty($_POST['attr_id_list']) && empty($_POST['attr_value_list']))) {
             // 取得原有的属性值
             $goods_attr_list = array();
-            $data = RC_DB::table('goodslib_attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
+            $data = RC_DB::table('attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
             $attr_list = array();
             if (is_array($data)) {
                 foreach ($data as $key => $row) {
@@ -872,7 +872,7 @@ class admin extends ecjia_admin {
                 }
             }
             $query = RC_DB::table('goodslib_attr as ga')
-                ->leftJoin('goodslib_attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+                ->leftJoin('attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
                 ->where(RC_DB::raw('ga.goods_id'), $goods_id)->get();
             if (is_array($query)) {
                 foreach ($query as $key => $row) {
@@ -956,7 +956,7 @@ class admin extends ecjia_admin {
         //获取商品的信息
         $goods = $db_goods->select(RC_DB::raw('goods_sn, goods_name, goods_type, shop_price'))->first();
         //获得商品已经添加的规格列表
-        $attribute = get_goodslib_specifications_list($goods_id);
+        $attribute = get_goods_specifications_list($goods_id);
         
         $_attribute = array();
         if (!empty($attribute)) {
@@ -1126,7 +1126,7 @@ class admin extends ecjia_admin {
         $this->assign('goods_sn', sprintf(RC_Lang::get('goods::goods.products_title_2'), $goods['goods_sn']));
         
         /* 获取商品规格列表 */
-        $attribute = get_goodslib_specifications_list($goods_id);
+        $attribute = get_goods_specifications_list($goods_id);
         if (empty($attribute)) {
             return $this->showmessage(RC_Lang::get('system::system.sys.wrong'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
