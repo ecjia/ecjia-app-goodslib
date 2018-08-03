@@ -789,10 +789,15 @@ function update_goods_field($goods_id, $data = array()) {
     return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
 }
 
-function array_change_key($arr, $new_key) {
+function array_change_key($arr, $new_key, $new_key_second = '') {
     $formate_arr = [];
     foreach ($arr as $row) {
-        $formate_arr[$row[$new_key]] = $row;
+        if ($new_key_second) {
+            $formate_arr[$row[$new_key].'_'.$row[$new_key_second]] = $row;
+        } else {
+            $formate_arr[$row[$new_key]] = $row;
+        }
+        
     }
     
     return $formate_arr;

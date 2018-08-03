@@ -314,18 +314,20 @@ class merchant extends ecjia_merchant {
 	    // 	    $_attribute = get_goodslib_specifications_list($id);
 	    // 	    _dump($specifications,1);
 	    if ($goods['goods_type']) {
+	        $cat_id = $goods['goods_type'];
 	        $goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $id)->get();
 	        if($goods_attr) {
-	            $attr_arr = [];
-	            foreach ($goods_attr as $row) {
-	                $attr_arr[] = $row['attr_id'];
-	            }
-	            $attr_arr = array_unique($attr_arr);
+// 	            $attr_arr = [];
+// 	            foreach ($goods_attr as $row) {
+// 	                $attr_arr[] = $row['attr_id'];
+// 	            }
+// 	            $attr_arr = array_unique($attr_arr);
 	            
-	            $goods_attribute = RC_DB::table('goodslib_attribute')->whereIn('attr_id', $attr_arr)->get();
-	            if ($goods_attribute) {
-	                $cat_id = $goods_attribute[0]['cat_id'];
-	            }
+	            $goods_attribute = RC_DB::table('goodslib_attribute')->where('cat_id', $cat_id)->get();
+	            $goods_attribute_formate = array_change_key($goods_attribute, 'attr_id');
+// 	            if ($goods_attribute) {
+// 	                $cat_id = $goods_attribute[0]['cat_id'];
+// 	            }
 	            
 	            $goods_type = RC_DB::table('goodslib_type')->where('cat_id', $cat_id)->first();
 	            
@@ -342,12 +344,13 @@ class merchant extends ecjia_merchant {
 	                }
 	                //goods_type
 	                if($goods_type_store) {
+	                    $cat_id_new = $goods_type_store['cat_id'];
 	                    if($goods_type_store['enabled'] == 0) {
-	                        RC_DB::table('goods_type')->where('cat_id', $goods_type_store['cat_id'])->update(array('enabled' => 1));
+	                        RC_DB::table('goods_type')->where('cat_id', $cat_id_new)->update(array('enabled' => 1));
 	                    }
-	                    RC_DB::table('goods')->where('goods_id', $new_id)->where('store_id', $_SESSION['store_id'])->update(array('goods_type' => $goods_type_store['cat_id']));
+	                    RC_DB::table('goods')->where('goods_id', $new_id)->where('store_id', $_SESSION['store_id'])->update(array('goods_type' => $cat_id_new));
 	                    //attribute
-	                    $goods_attribute_store = RC_DB::table('attribute')->where('cat_id', $goods_type_store['cat_id'])->get();
+	                    $goods_attribute_store = RC_DB::table('attribute')->where('cat_id', $cat_id_new)->get();
 	                    //判断和商品库是否一致
 	                    foreach ($goods_attribute as $row) {
 	                        unset($row['attr_id']);unset($row['cat_id']);
@@ -360,7 +363,7 @@ class merchant extends ecjia_merchant {
 	                            }
 	                        }
 	                        if ($have_attr == 0) {
-	                            $row['cat_id'] = $goods_type_store['cat_id'];
+	                            $row['cat_id'] = $cat_id_new;
 	                            RC_DB::table('attribute')->insert($row);
 	                        }
 	                    }
@@ -370,7 +373,7 @@ class merchant extends ecjia_merchant {
 	                    foreach ($goods_attr as $row) {
 	                        unset($row['goods_attr_id']);
 	                        $row_attr = RC_DB::table('goodslib_attribute')->where('attr_id', $row['attr_id'])->first();
-	                        $attr_id = RC_DB::table('attribute')->where('cat_id', $goods_type_store['cat_id'])->where('attr_name', $row_attr['attr_name'])->where('attr_values', $row_attr['attr_values'])->pluck('attr_id');
+	                        $attr_id = RC_DB::table('attribute')->where('cat_id', $cat_id_new)->where('attr_name', $row_attr['attr_name'])->where('attr_values', $row_attr['attr_values'])->pluck('attr_id');
 	                        $row['goods_id'] = $new_id;
 	                        $row['attr_id'] = $attr_id;
 	                        RC_DB::table('goods_attr')->insert($row);
@@ -380,7 +383,7 @@ class merchant extends ecjia_merchant {
 	                    $goodslib_products = RC_DB::table('goodslib_products')->where('goods_id', $id)->get();
 	                    $goods_attr_formate = array_change_key($goods_attr, 'goods_attr_id');
 	                    $goods_attr_store = RC_DB::table('goods_attr')->where('goods_id', $new_id)->get();
-	                    $goods_attr_store_formate = array_change_key($goods_attr_store, 'attr_value');
+	                    $goods_attr_store_formate = array_change_key($goods_attr_store, 'attr_value', 'attr_id');
 	                    if($goodslib_products) {
 	                        //$goods_attr_formate
 	                        
@@ -389,8 +392,15 @@ class merchant extends ecjia_merchant {
 	                            $goodslib_products[$product_k]['goods_id'] = $new_id;
 	                            $product_attr = explode('|', $product['goods_attr']);
 	                            $new_attr_id = [];
-	                            foreach ($product_attr as $attr_id) {
-	                                $new_attr_id[] = $goods_attr_store_formate[$goods_attr_formate[$attr_id]['attr_value']]['goods_attr_id'];
+	                            foreach ($product_attr as $goods_attr_id) {
+	                                //goods_attr_id goods_id attr_id attr_value
+	                                //组合唯一 attr_id*attr_value
+	                                $attr_id = $goods_attr_formate[$goods_attr_id]['attr_id'];
+	                                $attr_value = $goods_attr_formate[$goods_attr_id]['attr_value'];
+	                                $attr_name = $goods_attribute_formate[$attr_id]['attr_name'];
+	                                $attr_id_store = RC_DB::table('attribute')->where('cat_id', $cat_id_new)->where('attr_name', $attr_name)->pluck('attr_id');
+	                                
+	                                $new_attr_id[] = $goods_attr_store_formate[$attr_value.'_'.$attr_id_store]['goods_attr_id'];
 	                            }
 	                            $goodslib_products[$product_k]['goods_attr'] = implode('|', $new_attr_id);
 	                            $goodslib_products[$product_k]['product_sn'] = '';
@@ -429,7 +439,7 @@ class merchant extends ecjia_merchant {
 	                    $goodslib_products = RC_DB::table('goodslib_products')->where('goods_id', $id)->get();
 	                    $goods_attr_formate = array_change_key($goods_attr, 'goods_attr_id');
 	                    $goods_attr_store = RC_DB::table('goods_attr')->where('goods_id', $new_id)->get();
-	                    $goods_attr_store_formate = array_change_key($goods_attr_store, 'attr_value');
+	                    $goods_attr_store_formate = array_change_key($goods_attr_store, 'attr_value', 'attr_id');
 	                    if($goodslib_products) {
 	                        //$goods_attr_formate
 	                        
@@ -438,10 +448,18 @@ class merchant extends ecjia_merchant {
 	                            $goodslib_products[$product_k]['goods_id'] = $new_id;
 	                            $product_attr = explode('|', $product['goods_attr']);
 	                            $new_attr_id = [];
-	                            foreach ($product_attr as $attr_id) {
-	                                $new_attr_id[] = $goods_attr_store_formate[$goods_attr_formate[$attr_id]['attr_value']]['goods_attr_id'];
+	                            foreach ($product_attr as $goods_attr_id) {
+	                                //goods_attr_id goods_id attr_id attr_value
+	                                //组合唯一 attr_id*attr_value
+	                                $attr_id = $goods_attr_formate[$goods_attr_id]['attr_id'];
+	                                $attr_value = $goods_attr_formate[$goods_attr_id]['attr_value'];
+	                                $attr_name = $goods_attribute_formate[$attr_id]['attr_name'];
+	                                $attr_id_store = RC_DB::table('attribute')->where('cat_id', $cat_id_new)->where('attr_name', $attr_name)->pluck('attr_id');
+	                                
+	                                $new_attr_id[] = $goods_attr_store_formate[$attr_value.'_'.$attr_id_store]['goods_attr_id'];
 	                            }
 	                            $goodslib_products[$product_k]['goods_attr'] = implode('|', $new_attr_id);
+	                            $goodslib_products[$product_k]['product_sn'] = '';
 	                            $goodslib_products[$product_k]['product_number'] = ecjia::config('default_storage');
 	                            
 	                            $product_id = RC_DB::table('products')->insertGetId($goodslib_products[$product_k]);
