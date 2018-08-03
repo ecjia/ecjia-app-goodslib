@@ -57,9 +57,13 @@ class goodslib_admin_purview_api extends Component_Event_Api {
         	array('action_name' => '商品库商品更新', 'action_code' => 'goodslib_update', 'relevance' => ''),
         	array('action_name' => '商品库商品删除', 'action_code' => 'goodslib_delete', 'relevance' => ''),
         	
-            array('action_name' => '商品规格', 'action_code' => 'goodslib_goods_type', 'relevance' => ''),
-            array('action_name' => '商品规格更新', 'action_code' => 'goodslib_goods_type_update', 'relevance' => ''),
-            array('action_name' => '商品规格删除', 'action_code' => 'goodslib_goods_type_delete', 'relevance' => ''),
+            array('action_name' => RC_Lang::get('goods::goods.attr_manage'), 'action_code' => 'attr_manage', 'relevance' => ''),
+            array('action_name' => RC_Lang::get('goods::goods.attr_update'), 'action_code' => 'attr_update', 'relevance' => ''),
+            array('action_name' => RC_Lang::get('goods::goods.attr_delete'), 'action_code' => 'attr_delete', 'relevance' => ''),
+            
+            array('action_name' => RC_Lang::get('goods::goods.goods_type'), 'action_code' => 'goods_type', 'relevance' => ''),
+            array('action_name' => RC_Lang::get('goods::goods.goods_type_update'), 'action_code' => 'goods_type_update', 'relevance' => ''),
+            array('action_name' => RC_Lang::get('goods::goods.goods_type_delete'), 'action_code' => 'goods_type_delete', 'relevance' => ''),
             
         );
         return $purviews;

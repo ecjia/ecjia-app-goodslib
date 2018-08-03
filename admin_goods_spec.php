@@ -55,6 +55,7 @@ class admin_goods_spec extends ecjia_admin {
 
 		RC_Loader::load_app_func('global', 'goods');
 		RC_Loader::load_app_func('global', 'goodslib');
+		RC_Loader::load_app_func('admin_goods', 'goods');
 		
 		RC_Script::enqueue_script('jquery-validate');
 		RC_Script::enqueue_script('jquery-form');
@@ -76,7 +77,7 @@ class admin_goods_spec extends ecjia_admin {
 	 * 管理界面
 	 */
 	public function init() {
-		$this->admin_priv('goodslib_goods_type');
+		$this->admin_priv('goods_type');
 		
 		ecjia_screen::get_current_screen()->remove_last_nav_here();
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库规格'));
@@ -92,7 +93,7 @@ class admin_goods_spec extends ecjia_admin {
 		);
 		
 		$type = !empty($_GET['type']) ? $_GET['type'] : '';
-		$goods_type_list = get_goodslib_type();
+		$goods_type_list = get_goods_type();
 
 		$this->assign('goods_type_list',	$goods_type_list);
 		$this->assign('filter',				$goods_type_list['filter']);
@@ -108,7 +109,7 @@ class admin_goods_spec extends ecjia_admin {
 	 * 添加商品类型
 	 */
 	public function add() {
-		$this->admin_priv('goodslib_goods_type_update');
+		$this->admin_priv('goods_type_update');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_spec.add_goods_spec')));
 		ecjia_screen::get_current_screen()->add_help_tab(array(
@@ -133,17 +134,17 @@ class admin_goods_spec extends ecjia_admin {
 	}
 		
 	public function insert() {
-		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
 
 		$goods_type['cat_name']		= RC_String::sub_str($_POST['cat_name'], 60);
 		$goods_type['attr_group']	= RC_String::sub_str($_POST['attr_group'], 255);
 		$goods_type['enabled']		= intval($_POST['enabled']);
 		
-		$count = RC_DB::table('goodslib_type')->where('cat_name', $goods_type['cat_name'])->count();
+		$count = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->count();
 		if ($count > 0 ){
 			return $this->showmessage(RC_Lang::get('goods::goods_spec.repeat_type_name'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		} else {
-			$cat_id = RC_DB::table('goodslib_type')->insertGetId($goods_type);
+			$cat_id = RC_DB::table('goods_type')->insertGetId($goods_type);
 			if ($cat_id) {
 				$links = array(array('href' => RC_Uri::url('goodslib/admin_goods_spec/init'), 'text' => RC_Lang::get('goods::goods_spec.back_list')), array('href' => RC_Uri::url('goodslib/admin_goods_spec/add'), 'text' => RC_Lang::get('goods::goods_spec.continue_add')));
 				return $this->showmessage(RC_Lang::get('goods::goods_spec.add_goodstype_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goodslib/admin_goods_spec/edit', 'cat_id='.$cat_id), 'links' => $links));
@@ -157,13 +158,13 @@ class admin_goods_spec extends ecjia_admin {
 	 * 编辑商品类型
 	 */
 	public function edit() {
-		$this->admin_priv('goodslib_goods_type_update');
+		$this->admin_priv('goods_type_update');
 		
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods_spec.edit_goods_spec')));
 		if (empty($_GET['cat_id'])) {
 		    return $this->showmessage('参数丢失', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
-		$goods_type = RC_DB::table('goodslib_type')->where('cat_id', intval($_GET['cat_id']))->first();
+		$goods_type = RC_DB::table('goods_type')->where('cat_id', intval($_GET['cat_id']))->first();
 		if (empty($goods_type)) {
 			return $this->showmessage(RC_Lang::get('goods::goods_spec.cannot_found_goodstype'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 		}
@@ -188,7 +189,7 @@ class admin_goods_spec extends ecjia_admin {
 	
 	
 	public function update() {
-		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
 		
 		$goods_type['cat_name']		= RC_String::sub_str($_POST['cat_name'], 60);
 		$goods_type['attr_group']	= RC_String::sub_str($_POST['attr_group'], 255);
@@ -196,10 +197,10 @@ class admin_goods_spec extends ecjia_admin {
 		$cat_id						= intval($_POST['cat_id']);
 		$old_groups					= get_attr_groups($cat_id);
 		
-		$count = RC_DB::table('goodslib_type')->where('cat_name', $goods_type['cat_name'])->where('cat_id', '!=', $cat_id)->count();
+		$count = RC_DB::table('goods_type')->where('cat_name', $goods_type['cat_name'])->where('cat_id', '!=', $cat_id)->count();
 
 		if (empty($count)) {
-			RC_DB::table('goodslib_type')->where('cat_id', $cat_id)->update($goods_type);
+			RC_DB::table('goods_type')->where('cat_id', $cat_id)->update($goods_type);
 			/* 对比原来的分组 */
 			$new_groups = explode("\n", str_replace("\r", '', $goods_type['attr_group']));  // 新的分组
 			if (!empty($old_groups)) {
@@ -226,21 +227,21 @@ class admin_goods_spec extends ecjia_admin {
 	 * 删除商品类型
 	 */
 	public function remove() {
-		$this->admin_priv('goodslib_goods_type_delete', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_delete', ecjia::MSGTYPE_JSON);
 		
 		$id = intval($_GET['id']);
 		if(empty($id)) {
 		    return $this->showmessage('请选择要删除的记录',  ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
 		}
-		$name = RC_DB::table('goodslib_type')->where('cat_id', $id)->pluck('cat_name');
+		$name = RC_DB::table('goods_type')->where('cat_id', $id)->pluck('cat_name');
 		
-		if (RC_DB::table('goodslib_type')->where('cat_id', $id)->delete()) {
+		if (RC_DB::table('goods_type')->where('cat_id', $id)->delete()) {
 			ecjia_admin::admin_log(addslashes($name), 'remove', 'goods_type');
 			/* 清除该类型下的所有属性 */
-			$arr = RC_DB::table('goodslib_attribute')->where('cat_id', $id)->lists('attr_id');
+			$arr = RC_DB::table('attribute')->where('cat_id', $id)->lists('attr_id');
 			if (!empty($arr)) {
 
-				RC_DB::table('goodslib_attribute')->whereIn('attr_id', $arr)->delete();
+				RC_DB::table('attribute')->whereIn('attr_id', $arr)->delete();
 				RC_DB::table('goodslib_attr')->whereIn('attr_id', $arr)->delete();
 			}
 			return $this->showmessage(RC_Lang::get('goods::goods_spec.remove_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
@@ -253,15 +254,15 @@ class admin_goods_spec extends ecjia_admin {
 	 * 修改商品类型名称
 	 */
 	public function edit_type_name() {
-		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type_update', ecjia::MSGTYPE_JSON);
 		$type_id   = !empty($_POST['pk'])  		? intval($_POST['pk'])	: 0;
 		$type_name = !empty($_POST['value']) 	? trim($_POST['value'])	: '';
 
 		/* 检查名称是否重复 */
 		if(!empty($type_name)) {
-			$is_only = RC_DB::table('goodslib_type')->where('cat_name', $type_name)->count();
+			$is_only = RC_DB::table('goods_type')->where('cat_name', $type_name)->count();
 			if ($is_only == 0) {
-				RC_DB::table('goodslib_type')->where('cat_id', $type_id)->update(array('cat_name' => $type_name));
+				RC_DB::table('goods_type')->where('cat_id', $type_id)->update(array('cat_name' => $type_name));
 				
 				ecjia_admin::admin_log($type_name, 'edit', 'goods_type');
 				return $this->showmessage(RC_Lang::get('goods::goods_spec.edit_success'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => stripslashes($type_name)));
@@ -277,13 +278,13 @@ class admin_goods_spec extends ecjia_admin {
 	 * 切换启用状态
 	 */
 	public function toggle_enabled() {
-		$this->admin_priv('goodslib_goods_type_update', ecjia::MSGTYPE_JSON);
+		$this->admin_priv('goods_type', ecjia::MSGTYPE_JSON);
 		
 		$id		= intval($_POST['id']);				
 		$val    = intval($_POST['val']);
 		$data 	= array('enabled' => $val);
 		
-		RC_DB::table('goodslib_type')->where('cat_id', $id)->update($data);
+		RC_DB::table('goods_type')->where('cat_id', $id)->update($data);
 		
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 	}

@@ -119,129 +119,58 @@ function get_goodslib_type_specifications() {
 }
 
 /**
- * 获取属性列表
- *
- * @return  array
- */
-function get_goodslib_attr_list() {
-    $db_attribute = RC_DB::table('goodslib_attribute as a');
-    /* 查询条件 */
-    $filter = array();
-    $filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
-    $filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
-    $filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
-    
-    $where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
-    if (!empty($filter['cat_id'])) {
-        $db_attribute->whereRaw($where);
-    }
-    $count = $db_attribute->count('attr_id');
-    $page = new ecjia_page($count, 15, 5);
-    
-    $row = $db_attribute
-    ->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
-    ->selectRaw('a.*, t.cat_name')
-    ->orderby($filter['sort_by'], $filter['sort_order'])
-    ->take(15)->skip($page->start_id-1)->get();
-    
-    if (!empty($row)) {
-        foreach ($row AS $key => $val) {
-            $row[$key]['attr_input_type_desc'] = RC_Lang::get('goods::attribute.value_attr_input_type.'.$val['attr_input_type']);
-            $row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
-        }
-    }
-    return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
-}
-
-/**
- * 获得指定的商品类型下所有的属性分组
- *
- * @param   integer     $cat_id     商品类型ID
- *
- * @return  array
- */
-function get_goodslib_attr_groups($cat_id) {
-    $data = RC_DB::table('goodslib_type')->where('cat_id', $cat_id)->pluck('attr_group');
-    $grp = str_replace("\r", '', $data);
-    if ($grp) {
-        return explode("\n", $grp);
-    } else {
-        return array();
-    }
-}
-
-/**
- * 获得店铺商品类型的列表
- *
- * @access  public
- * @param   integer     $selected   选定的类型编号
- * @param   integer     $store_id	店铺id
- * @param   boolean		是否显示平台规格
- * @return  string
- */
-function goodslib_type_list($selected, $show_all = false) {
-    $db_goods_type = RC_DB::table('goodslib_type')->select('cat_id', 'cat_name');
-    
-    $data = $db_goods_type->get();
-    
-    $opt = '';
-    if (!empty($data)) {
-        foreach ($data as $row){
-            $opt .= "<option value='$row[cat_id]'";
-            $opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
-            $opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
-        }
-    }
-    return $opt;
-}
-
-/**
  * 获得所有商品类型
  *
  * @access  public
  * @return  array
  */
-function get_goodslib_type() {
-    $filter['keywords'] = !empty($_GET['keywords']) ? trim($_GET['keywords']) : '';
-    
-    $db_goods_type = RC_DB::table('goodslib_type as gt');
-    
-    
-    if (!empty($filter['keywords'])) {
-        $db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
-    }
-    
-    $filter_count = $db_goods_type
-    ->select(RC_DB::raw('count(*) as count'))
-    ->first();
-    
-    $filter['count']	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
-    $filter['self'] 	= $filter_count['self'] > 0 ? $filter_count['self'] : 0;
-    
-    $filter['type'] = isset($_GET['type']) ? $_GET['type'] : '';
-    if (!empty($filter['type'])) {
-        $db_goods_type->where(RC_DB::raw('s.manage_mode'), 'self');
-    }
-    
-    $count = $db_goods_type->count();
-    $page = new ecjia_page($count, 15, 5);
-    
-    $field = 'gt.*, count(a.cat_id) as attr_count';
-    $goods_type_list = $db_goods_type
-        ->leftJoin('goodslib_attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
-        ->selectRaw($field)
-        ->groupBy(RC_DB::Raw('gt.cat_id'))
-        ->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
-        ->take(15)
-        ->skip($page->start_id-1)
-        ->get();
-    
-    if (!empty($goods_type_list)) {
-        foreach ($goods_type_list AS $key=>$val) {
-            $goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
-        }
-    }
-    return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+function get_goods_type() {
+	$filter['merchant_keywords']= !empty($_GET['merchant_keywords'])	? trim($_GET['merchant_keywords']) 	: '';
+	$filter['keywords'] 		= !empty($_GET['keywords']) 			? trim($_GET['keywords']) 			: '';
+
+	$db_goods_type = RC_DB::table('goods_type as gt')->where(RC_DB::raw('gt.store_id'), 0);
+
+	if (!empty($filter['keywords'])) {
+		$db_goods_type->where(RC_DB::raw('gt.cat_name'), 'like', '%'.mysql_like_quote($filter['keywords']).'%');
+	}
+
+	$filter_count = $db_goods_type
+		->select(RC_DB::raw('count(*) as count'))
+		->first();
+
+	$filter['count']	= $filter_count['count'] > 0 ? $filter_count['count'] : 0;
+
+	$count = $db_goods_type->count();
+	$page = new ecjia_page($count, 15, 5);
+
+	$field = 'gt.*, count(a.cat_id) as attr_count';
+	$goods_type_list = $db_goods_type
+		->leftJoin('attribute as a', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('gt.cat_id'))
+		->selectRaw($field)
+		->groupBy(RC_DB::Raw('gt.cat_id'))
+		->orderby(RC_DB::Raw('gt.cat_id'), 'desc')
+		->take(15)
+		->skip($page->start_id-1)
+		->get();
+
+	if (!empty($goods_type_list)) {
+		foreach ($goods_type_list AS $key=>$val) {
+			$goods_type_list[$key]['attr_group'] = strtr($val['attr_group'], array("\r" => '', "\n" => ", "));
+		}
+	}
+	return array('item' => $goods_type_list, 'filter' => $filter, 'page' => $page->show(2), 'desc' => $page->page_desc());
+}
+
+
+/**
+ * 获得指定的商品类型的详情
+ *
+ * @param   integer     $cat_id 分类ID
+ *
+ * @return  array
+ */
+function get_goods_type_info($cat_id) {
+    return RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
 }
 
 /**
