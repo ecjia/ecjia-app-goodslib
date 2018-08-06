@@ -82,11 +82,11 @@
 				var merchant_keywords = $("input[name='merchant_keywords']").val(); //商家关键字
 				var url = $("form[name='searchForm']").attr('action');
 
-				if (cat_id == 'undefind') cat_id = '';
-				if (brand_id == 'undefind') brand_id = '';
-				if (intro_type == 'undefind') intro_type = '';
-				if (keywords == 'undefind') keywords = '';
-				if (merchant_keywords == 'undefind') merchant_keywords = '';
+				if (typeof(cat_id) == 'undefined') cat_id = '';
+				if (typeof(brand_id) == 'undefined') brand_id = '';
+				if (typeof(intro_type) == 'undefined') intro_type = '';
+				if (typeof(keywords) == 'undefined') keywords = '';
+				if (typeof(merchant_keywords) == 'undefined') merchant_keywords = '';
 
 				if (cat_id != '') {
 					url += '&cat_id=' + cat_id;
@@ -116,12 +116,12 @@
 				var merchant_keywords = $("input[name='merchant_keywords']").val(); //商家关键字
 				var url = $("form[name='filterForm']").attr('action');
 
-				if (cat_id == 'undefind') cat_id = '';
-				if (brand_id == 'undefind') brand_id = '';
-				if (intro_type == 'undefind') intro_type = '';
-				if (keywords == 'undefind') keywords = '';
-				if (merchant_keywords == 'undefind') merchant_keywords = '';
-
+				if (typeof(cat_id) == 'undefined') cat_id = '';
+				if (typeof(brand_id) == 'undefined') brand_id = '';
+				if (typeof(intro_type) == 'undefined') intro_type = '';
+				if (typeof(keywords) == 'undefined') keywords = '';
+				if (typeof(merchant_keywords) == 'undefined') merchant_keywords = '';
+				
 				if (cat_id != '') {
 					url += '&cat_id=' + cat_id;
 				}
