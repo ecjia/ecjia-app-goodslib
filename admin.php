@@ -364,6 +364,67 @@ class admin extends ecjia_admin {
             return $this->showmessage(RC_Lang::lang('add_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array( 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', "goods_id=$goods_id"), 'links' => $link, 'max_id' => $goods_id));
     }
     
+    //导出
+    public function export() {
+        $this->admin_priv('goodslib_download');
+        
+        $filter['cat_id'] = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
+        $filter['brand_id'] = empty($_GET['brand_id']) ? 0 : intval($_GET['brand_id']);
+        $filter['keywords'] = empty ($_GET['keywords']) ? '' : trim($_GET['keywords']);
+        
+//         $bill_list = $this->db_store_bill->get_bill_list(0, 0, 0, $filter);
+        $goods_list = goodslib::get_export_goods_list(0);
+        if(empty($goods_list['goods'])) {
+            
+        }
+        $goods = $goods_list['goods'];
+//         $goods = [];
+//         foreach ($goods_list['goods'] as $row) {
+//             $goods[] = array(
+//                 'goods_sn' => $row['goods_sn'],
+//                 'goods_name' => $row['goods_name'],
+//                 'shop_price' => $row['shop_price'],
+//                 'market_price' => $row['market_price'],
+//                 'goods_weight' => $row['goods_weight'],
+//                 'keywords' => $row['keywords'],
+//                 'goods_brief' => $row['goods_brief'],
+//                 'goods_desc' => $row['goods_desc'],
+//                 'brand_id' => $row['goods_weight'],
+//                 'cat_id' => $row['goods_weight'],
+//             );
+//         }
+        
+        RC_Excel::create('商品列表'.RC_Time::local_date('Ymd'), function($excel) use ($goods){
+            $excel->sheet('First sheet', function($sheet) use ($goods) {
+             $sheet->setAutoSize(true);
+             $sheet->setWidth('B', 20);
+             $sheet->setWidth('E', 30);
+             $sheet->setWidth('G', 15);
+             $sheet->setWidth('H', 15);
+             $sheet->setWidth('M', 15);
+             $sheet->row(1, array(
+                 '货号', '商品名称', '价格', '市场价', '重量',
+                 '关键字', '简单描述', '商品描述', '品牌', '分类'
+             ));
+             foreach ($goods as $item) {
+                $sheet->appendRow($item);
+             }
+             });
+         })->download('xls');
+        
+//         RC_Excel::load(RC_APP_PATH . 'commission' . DIRECTORY_SEPARATOR .'statics/bill.xls', function($excel) use ($bill_list){
+//             $excel->sheet('First sheet', function($sheet) use ($bill_list) {
+//                 foreach ($bill_list as $key => $item) {
+//                     $sheet->appendRow($key+2, $item);
+//                 }
+//             });
+//         })->download('xls');
+    }
+    
+    public function import() {
+        
+    }
+    
     /**
      * 编辑商品
      */
