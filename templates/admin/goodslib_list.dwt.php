@@ -16,11 +16,11 @@
 			<i class="fontello-icon-plus"></i>{$action_link.text}
 		</a>{/if}
 		<a href="{url path='goodslib/admin/import'}" class="btn data-pjax plus_or_reply" id="">
-			批量导入
+			<i class="splashy-upload"></i> 批量导入
 		</a>
 		<a href="{url path='goodslib/admin/export' args="{if $smarty.get.cat_id}&cat_id={$smarty.get.cat_id}{/if}{if $smarty.get.brand_id}&brand_id={$smarty.get.brand_id}{/if}{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}"}" 
 			class="btn plus_or_reply goodslib_download" id="">
-			批量导出
+			<i class="splashy-download"></i> 导出结果
 		</a>
 	</h3>
 </div>
