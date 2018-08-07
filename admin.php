@@ -396,31 +396,31 @@ class admin extends ecjia_admin {
         //             );
         //         }
         
-        RC_Excel::create('商品列表'.RC_Time::local_date('Ymd'), function($excel) use ($goods){
+//         RC_Excel::create('商品列表'.RC_Time::local_date('Ymd'), function($excel) use ($goods){
+//             $excel->sheet('First sheet', function($sheet) use ($goods) {
+//                 $sheet->setAutoSize(true);
+//                 $sheet->setWidth('B', 20);
+//                 $sheet->setWidth('C', 30);
+//                 $sheet->setWidth('D', 15);
+//                 $sheet->setWidth('E', 15);
+//                 $sheet->setWidth('F', 15);
+//                 $sheet->row(1, array(
+//                     '货号', '商品名称', '价格', '市场价', '重量',
+//                     '关键字', '简单描述', '商品描述', '品牌', '分类'
+//                 ));
+//                 foreach ($goods as $item) {
+//                     $sheet->appendRow($item);
+//                 }
+//             });
+//         })->download('xls');
+        
+        RC_Excel::load(RC_APP_PATH . 'goodslib' . DIRECTORY_SEPARATOR .'statics/files/goodslib.xls', function($excel) use ($goods){
             $excel->sheet('First sheet', function($sheet) use ($goods) {
-                $sheet->setAutoSize(true);
-                $sheet->setWidth('B', 20);
-                $sheet->setWidth('C', 30);
-                $sheet->setWidth('D', 15);
-                $sheet->setWidth('E', 15);
-                $sheet->setWidth('F', 15);
-                $sheet->row(1, array(
-                    '货号', '商品名称', '价格', '市场价', '重量',
-                    '关键字', '简单描述', '商品描述', '品牌', '分类'
-                ));
-                foreach ($goods as $item) {
-                    $sheet->appendRow($item);
+                foreach ($goods as $key => $item) {
+                    $sheet->appendRow($key+2, $item);
                 }
             });
         })->download('xls');
-        
-        //         RC_Excel::load(RC_APP_PATH . 'commission' . DIRECTORY_SEPARATOR .'statics/bill.xls', function($excel) use ($bill_list){
-        //             $excel->sheet('First sheet', function($sheet) use ($bill_list) {
-        //                 foreach ($bill_list as $key => $item) {
-        //                     $sheet->appendRow($key+2, $item);
-        //                 }
-        //             });
-        //         })->download('xls');
     }
     
     public function import() {

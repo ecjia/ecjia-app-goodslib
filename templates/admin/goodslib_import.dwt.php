@@ -47,11 +47,17 @@
 		<div class="control-group control-group-small formSep">
 			<label class="control-label">上传文件：</label>
 			<div class="controls">
-			<!-- <span class="btn btn-file">
-					<span class="fileupload-new">上传文件</span>
-					<input type="file" name="cat_img" />
-				</span> -->
-				<input class="" type="file" name="goodslib" value=""/>
+				<div class="fileupload fileupload-new" data-provides="fileupload">
+					<div class="fileupload-preview fileupload-exists thumbnail"></div>
+					<div>
+						<span class="btn btn-file">
+							<span class="fileupload-new">选择文件</span>
+							<span class="fileupload-exists">更换文件</span>
+							<input type="file" name="goodslib" />
+						</span>
+						<a class="btn fileupload-exists" data-dismiss="fileupload" href="javascript:;" >{lang key='system::system.drop'}</a>
+					</div>
+				</div>
 				<span class="help-block" id="">{lang key='goods::goods.notice_goods_sn'}</span>
 			</div>
 		</div>
