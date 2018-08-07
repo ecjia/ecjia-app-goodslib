@@ -56,8 +56,8 @@ class goodslib_admin_purview_api extends Component_Event_Api {
             array('action_name' => '商品库商品列表', 'action_code' => 'goodslib_manage', 'relevance' => ''),
             array('action_name' => '商品库商品更新', 'action_code' => 'goodslib_update', 'relevance' => ''),
         	array('action_name' => '商品库商品删除', 'action_code' => 'goodslib_delete', 'relevance' => ''),
-            array('action_name' => '商品库商品导入', 'action_code' => 'goodslib_upload', 'relevance' => ''),
-            array('action_name' => '商品库商品导出', 'action_code' => 'goodslib_download', 'relevance' => ''),
+            array('action_name' => '商品库商品导入', 'action_code' => 'goodslib_import', 'relevance' => ''),
+            array('action_name' => '商品库商品导出', 'action_code' => 'goodslib_export', 'relevance' => ''),
         	
             array('action_name' => RC_Lang::get('goods::goods.attr_manage'), 'action_code' => 'attr_manage', 'relevance' => ''),
             array('action_name' => RC_Lang::get('goods::goods.attr_update'), 'action_code' => 'attr_update', 'relevance' => ''),
