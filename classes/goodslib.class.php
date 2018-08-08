@@ -269,7 +269,7 @@ class goodslib {
                                     'goods_attr' => $goods_pro[$k_p]['goods_attr_name'],
                                     'product_sn' => $r_p['product_sn'],
                                 ];
-                                $rows[$k]['goods_product_export'] .= $goods_pro[$k_p]['goods_attr_name'].','.$r_p['product_sn']."\r\n";
+                                $rows[$k]['goods_product_export'] .= $goods_pro[$k_p]['goods_attr_name'].';'.$r_p['product_sn']."\r\n";
                             }
                         }
                     }
