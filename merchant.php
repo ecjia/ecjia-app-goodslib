@@ -234,8 +234,6 @@ class merchant extends ecjia_merchant {
 	        return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
 	    }
 	    
-	    $manage_mode = RC_DB::table('store_franchisee')->where('store_id', $_SESSION['store_id'])->pluck('manage_mode');
-	    
 	    $count_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods['goods_sn'])->where('goods_sn', $_SESSION['store_id'])->where('is_delete', 0)->count();
 	    if($count_goods_sn) {
 	        $goods['goods_sn'] = '';
@@ -311,31 +309,9 @@ class merchant extends ecjia_merchant {
 	        $goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $id)->get();
 	        if($goods_attr) {
 	            
-	            $goods_attribute = RC_DB::table('attribute')->where('cat_id', $cat_id)->get();
-	            
 	            $goods_type = RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
 	            
 	            if($goods_type) {
-	                //判断有无
-	                //goods_type
-                    //attribute
-                    $goods_attribute_store = RC_DB::table('attribute')->where('cat_id', $cat_id)->get();
-                    //判断和商品库是否一致
-                    foreach ($goods_attribute as $row) {
-                        unset($row['attr_id']);unset($row['cat_id']);
-                        $have_attr = 0;
-                        foreach ($goods_attribute_store as $row_store) {
-                            unset($row_store['attr_id']);unset($row_store['cat_id']);
-                            if ($row == $row_store) {
-                                $have_attr = 1;
-                                break;
-                            }
-                        }
-                        if ($have_attr == 0) {
-                            $row['cat_id'] = $cat_id;
-                            RC_DB::table('attribute')->insert($row);
-                        }
-                    }
 	                    
 	                //goods_attr attr_id
 	                foreach ($goods_attr as $row) {
