@@ -374,7 +374,6 @@ class admin extends ecjia_admin {
         $filter['brand_id'] = empty($_GET['brand_id']) ? 0 : intval($_GET['brand_id']);
         $filter['keywords'] = empty ($_GET['keywords']) ? '' : trim($_GET['keywords']);
         
-        //         $bill_list = $this->db_store_bill->get_bill_list(0, 0, 0, $filter);
         $goods_list = goodslib::get_export_goods_list(0);
         if(empty($goods_list['goods'])) {
             
@@ -420,6 +419,7 @@ class admin extends ecjia_admin {
                     $sheet->appendRow($key+2, $item);
                 }
             });
+//             $excel->setTitle('商品库');
         })->download('xls');
     }
     
@@ -476,20 +476,20 @@ class admin extends ecjia_admin {
                     $data['keywords'] = $value[5] == null ? '' : trim($value[5]);
                     $data['goods_brief'] = $value[6] == null ? '' : trim($value[6]);
                     $data['goods_desc'] = $value[7] == null ? '' : trim($value[7]);
-                    //                     $data['brand_id'] = $value[3] == null ? '' : trim($value[3]);
-                    //                     $data['cat_id'] = $value[3] == null ? '' : trim($value[3]);
+                    $data['brand_id'] = $value[8] == null ? '' : trim($value[8]);
+                    $data['cat_id'] = $value[10] == null ? '' : trim($value[10]);
                     $res = RC_DB::table('goodslib')->insertGetId($data);
                 }
             }
         });
-            //导入成功后删除
-            $upload->remove($temp_file);
-            
-            $link[] = array(
-                'href' => RC_Uri::url('goodslib/admin/init'),
-                'text' => '商品列表'
-            );
-            return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
+        //导入成功后删除
+        $upload->remove($temp_file);
+        
+        $link[] = array(
+            'href' => RC_Uri::url('goodslib/admin/init'),
+            'text' => '商品列表'
+        );
+        return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
     }
     
     /**
