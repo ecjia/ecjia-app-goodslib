@@ -148,7 +148,7 @@ class merchant extends ecjia_merchant {
         $ur_here = '选择商品';
         $this->assign('step', 2);
         
-        $goods_list = goodslib::goods_list(0);
+        $goods_list = goodslib::goods_list(0, " AND is_display = 1 ");
         
         $this->assign('goods_list', $goods_list);
         $this->assign('filter', $goods_list['filter']);
