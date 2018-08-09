@@ -55,9 +55,12 @@ class goodslib_merchant_hooks {
     	 
     	$menus->add_submenu($menu);
 
-    	foreach ($menus->submenus() as $menu) {
-            if ($menu->sort == 10) {
-                $menu->add_purview('goodslib_manage');
+    	$submenus = $menus->submenus();
+    	if ( !empty($submenus) ) {
+            foreach ($menus->submenus() as $menu) {
+                if ($menu->sort == 10) {
+                    $menu->add_purview('goodslib_manage');
+                }
             }
         }
 
