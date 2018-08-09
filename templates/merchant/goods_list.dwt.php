@@ -148,7 +148,7 @@
 				<section class="panel">
 					<table class="table table-striped table-hover table-hide-edit ecjiaf-tlf">
 						<thead>
-							<tr data-sorthref='{RC_Uri::url("goodslib/merchant/init", "{if $smarty.get.type}&type={$smarty.get.type}{/if}")}'>
+							<tr data-sorthref='{RC_Uri::url("goodslib/merchant/add", "{if $smarty.get.cat_id}&cat_id={$smarty.get.cat_id}{/if}{if $smarty.get.keywords}&keywords={$smarty.get.keywords}{/if}")}'>
 								<th class="table_checkbox check-list w30">
 									<div class="check-item">
 										<input id="checkall" type="checkbox" name="select_rows" data-toggle="selectall" data-children=".checkbox"/>
