@@ -586,6 +586,10 @@ function delete_goodslib($goods_id) {
 }
 
 function copy_goodslib_images($goodlib_id, $goods_id, $images_data = array()) {
+    RC_Logger::getlogger('info')->info('copy_goodslib_images');
+    RC_Logger::getlogger('info')->info($goodlib_id);
+    RC_Logger::getlogger('info')->info($goods_id);
+    RC_Logger::getlogger('info')->info($images_data);
     if (empty($images_data)) {
         $images_data = RC_DB::table('goodslib')->where('goods_id', $goodlib_id)->select('goods_thumb', 'goods_img', 'original_img')->first();
     }
@@ -596,6 +600,7 @@ function copy_goodslib_images($goodlib_id, $goods_id, $images_data = array()) {
                 return false;
             }
             $img_new = create_new_filename($img, $goods_id);
+            RC_Logger::getlogger('info')->info($img_new);
             $img_path = RC_Upload::upload_path($img);
             $rs = goods_imageutils::copyImage($img_path, $img_new['path']);
             if ($rs) {
@@ -627,12 +632,12 @@ function copy_goodslib_gallery($goodlib_id, $goods_id, $images_data = array()) {
             $thumb_url = create_new_filename($row['thumb_url'], $goods_id);
             $thumb_url_path = RC_Upload::upload_path($row['thumb_url']);
             if(goods_imageutils::copyImage($thumb_url_path, $thumb_url['path'])) {
-                $row['thumb_url'] = $img_url['relative_path'];
+                $row['thumb_url'] = $thumb_url['relative_path'];
             }
             $img_original = create_new_filename($row['img_original'], $goods_id);
             $img_original_path = RC_Upload::upload_path($row['img_original']);
             if(goods_imageutils::copyImage($img_original_path, $img_original['path'])) {
-                $row['img_original'] = $img_url['relative_path'];
+                $row['img_original'] = $img_original['relative_path'];
             }
             
             RC_DB::table('goods_gallery')->insert($row);
@@ -671,8 +676,10 @@ function create_new_filename($goods_img, $goods_id) {
     if (strpos($goods_img, 'http://') !== false || strpos($goods_img, 'https://') !== false) {
         $goods_img = str_replace(RC_Upload::upload_url(), '', $goods_img);
     }
+    RC_Logger::getlogger('info')->info($goods_img);
     
     $goods_img_path = RC_Upload::upload_path($goods_img);
+    RC_Logger::getlogger('info')->info($goods_img_path);
     //                 [dirname] => D:\www\ecjia-cityo2o\content\uploads\images\201807\goods_img
     //                 [basename] => 9_P_1532556136009.jpg
     //                 [extension] => jpg
@@ -692,8 +699,9 @@ function create_new_filename($goods_img, $goods_id) {
     );
     
     $new_file['relative_path'] = RC_Upload::relative_upload_path($new_file['path']);
-    $new_file['relative_path'] = substr($new_file['relative_path'], 1);
+//     $new_file['relative_path'] = substr($new_file['relative_path'], 1);
     $new_file['url'] = RC_Upload::upload_url($new_file['relative_path']);
+    RC_Logger::getlogger('info')->info($new_file);
     
     return $new_file;
 }
