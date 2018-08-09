@@ -13,7 +13,8 @@
 	<p><strong>温馨提示：</strong></p>
 	<p>1.您将通过上传的Excel文件，快速导入商品信息至平台商品库中；</p>
 	<p>2.请先添加好商品库分类、品牌、规格；</p>
-	<p>3.在导入商品信息前，请务必先下载商品导入模版，填写完成后再上传表格。</p>
+	<p>3.在导入商品信息前，请务必先下载商品导入模版，填写完成后再上传表格；</p>
+	<p>4.商品货号和货品号如重复此条信息不导入，或可留空自动生成。</p>
 </div>
 <div>
 	<h3 class="heading"> 
@@ -40,7 +41,7 @@
 		<div class="control-group control-group-small formSep">
 			<label class="control-label">下载模板：</label>
 			<div class="controls">
-				<a>下载模板</a>
+				<a href="{$demo_url}" target="_blank">下载模板</a>
 				<span class="help-block" id="">请先下载商品导入模版，再上传数据</span>
 			</div>
 		</div>
@@ -58,7 +59,7 @@
 						<a class="btn fileupload-exists" data-dismiss="fileupload" href="javascript:;" >{lang key='system::system.drop'}</a>
 					</div>
 				</div>
-				<span class="help-block" id="">{lang key='goods::goods.notice_goods_sn'}</span>
+				<span class="help-block" id="">目前仅支持（.xls）格式文件，文件大小请控制在20M以内</span>
 			</div>
 		</div>
 		<div class="row-fluid">
