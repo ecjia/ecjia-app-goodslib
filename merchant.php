@@ -247,8 +247,8 @@ class merchant extends ecjia_merchant {
 	    
 	    $is_exist_goodslib = RC_DB::table('goods')->where('goodslib_id', $id)->where('store_id', $_SESSION['store_id'])->where('is_delete', 0)->first();
 	    if($is_exist_goodslib) {
-	        return array('state' => 'error', 'message' => '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入。');
-	        //return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
+// 	        return array('state' => 'error', 'message' => '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入。');
+	        return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
 	    }
 	    
 	    $count_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods['goods_sn'])->where('store_id', $_SESSION['store_id'])->where('is_delete', 0)->count();
