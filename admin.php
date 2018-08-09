@@ -478,7 +478,67 @@ class admin extends ecjia_admin {
                     $data['goods_desc'] = $value[7] == null ? '' : trim($value[7]);
                     $data['brand_id'] = $value[8] == null ? '' : trim($value[8]);
                     $data['cat_id'] = $value[10] == null ? '' : trim($value[10]);
-                    $res = RC_DB::table('goodslib')->insertGetId($data);
+                    //TODO判断货号
+                    $new_goods_id = RC_DB::table('goodslib')->insertGetId($data);
+                    //规格属性$value[12]
+                    /* 电脑;内存;32G;;
+                     * 电脑;内存;16G;;500 */
+                    if(!empty($value[12])) {
+                        $goods_attr = explode("\n", $value[12]);
+                        foreach ($goods_attr as $k_a => $v_a) {
+                            if(empty($v_a)) {
+                                unset($goods_attr[$k_a]);
+                                continue;
+                            }
+                            $attr = explode(';', $v_a);
+                            $new_key = implode(',', array($attr[0],$attr[1],$attr[2]));
+                            $new_attr[$new_key] = $attr;
+                            $type_name = $attr[0];
+                        }
+                        $types = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->first();
+                        foreach ($new_attr as $k_a => $v_a) {
+                            $attr = RC_DB::table('attribute')->where('cat_id', $types['cat_id'])->where('attr_name', $v_a[1])->first();
+                            $data = [
+                                'goods_id' => $new_goods_id,
+                                'attr_id' => $attr['attr_id'],
+                                'attr_value' => $v_a[2],
+                                'color_value' => $v_a[3],
+                                'attr_price' => $v_a[4],
+                            ];
+                            $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data);
+                        }
+                       
+                        
+                        //货品$value[13]
+                        /*
+                         * 电脑,内存,8G|电脑,硬盘,128G;ECS001111g_p24
+                         * 电脑,内存,8G|电脑,硬盘,256G;ECS001111g_p25  */
+                        if(!empty($value[13])) {
+                            $goods_pro = explode("\n", $value[13]);
+                            foreach ($goods_pro as $k_p => $v_p) {
+                                if(empty($v_p)) {
+                                    unset($goods_pro[$k_p]);
+                                    continue;
+                                }
+                                $data = [];
+                                $pro = explode(';', $v_p);
+                                $pro[0] = explode('|', $pro[0]);
+                                if($pro[0]) {
+                                    $new_goods_attr = [];
+                                    foreach ($pro[0] as $v_attr) {
+                                        $new_goods_attr[] = $new_attr[$v_attr]['goods_attr_id'];
+                                    }
+                                    $data['goods_attr'] = implode('|', $new_goods_attr);
+                                }
+                                $data['goods_id'] = $new_goods_id;
+                                //TODO判断货号
+                                $data['product_sn'] = $pro[1];
+                                RC_DB::table('goodslib_products')->insertGetId($data);
+                            }
+                        }
+                        //货品 end
+                    }
+                    
                 }
             }
         });
