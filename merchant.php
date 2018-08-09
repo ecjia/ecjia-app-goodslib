@@ -168,6 +168,7 @@ class merchant extends ecjia_merchant {
 	    //规格属性货品
 	    //主表
 	    //type batch 批量
+	    $error_message = [];
 	    
 	    if(isset($_POST['goods_ids'])) {
 	        if (empty($_POST['goods_ids'])) {
@@ -176,7 +177,14 @@ class merchant extends ecjia_merchant {
 	        
 	        foreach ($_POST['goods_ids'] as $goods_id) {
 	            $rs = $this->insert_goods($goods_id);
+	            if(is_ecjia_error($rs)) {
+	                return $this->showmessage($rs->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	            }
+	            if(is_array($rs) && $rs['state'] == 'error') {
+	                $error_message[] = $rs['message'];
+	            }
 	        }
+	        
 	    } else {
 	        $id = isset($_POST['goods_id']) 		? intval($_POST['goods_id']) 		: 0;
 	        $goods_name = isset($_POST['goods_name']) 		? $_POST['goods_name'] 		: '';
@@ -212,13 +220,21 @@ class merchant extends ecjia_merchant {
 	        }
 	        
 	        $rs = $this->insert_goods($id, $_POST);
+	        if(is_ecjia_error($rs)) {
+	            return $this->showmessage($rs->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	        }
+	        if(is_array($rs) && $rs['state'] == 'error') {
+	            $error_message[] = $rs['message'];
+	        }
 	    }
-	    if(is_ecjia_error($rs)) {
-	        return $this->showmessage($rs->get_error_message(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+	    if($error_message) {
+	        RC_Logger::getlogger('error')->info('商品导入错误信息：');
+	        RC_Logger::getlogger('error')->info($error_message);
 	    }
 	    
+	    
 	    $url = RC_Uri::url('goodslib/merchant/success', array());
-	    return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'goods_id' => $new_id));
+	    return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => $url, 'goods_id' => $new_id, 'error_message' =>$error_message));
 	    
 	}
 	
@@ -231,12 +247,15 @@ class merchant extends ecjia_merchant {
 	    
 	    $is_exist_goodslib = RC_DB::table('goods')->where('goodslib_id', $id)->where('is_delete', 0)->first();
 	    if($is_exist_goodslib) {
-	        return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
+	        return array('state' => 'error', 'message' => '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入。');
+	        //return new ecjia_error('goods_exists', '商品【'.$is_exist_goodslib['goods_name'].'】已导入，请勿重复导入');
 	    }
 	    
 	    $count_goods_sn = RC_DB::table('goods')->where('goods_sn', $goods['goods_sn'])->where('store_id', $_SESSION['store_id'])->where('is_delete', 0)->count();
 	    if($count_goods_sn) {
+// 	        return array('state' => 'error', 'message' => '商品【'.$is_exist_goodslib['goods_name'].'】货号【'.$is_exist_goodslib['goods_sn'].'】重复，此条信息未导入。');
 	        $goods['goods_sn'] = '';
+	        //return new ecjia_error('goods_sn_exists', RC_Lang::get('goods::goods.goods_sn_exists'));
 	    }
 	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);unset($goods['goods_rank']);
 	    $goods['store_id'] = $_SESSION['store_id'];
@@ -308,11 +327,8 @@ class merchant extends ecjia_merchant {
 	        $cat_id = $goods['goods_type'];
 	        $goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $id)->get();
 	        if($goods_attr) {
-	            
 	            $goods_type = RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
-	            
 	            if($goods_type) {
-	                    
 	                //goods_attr attr_id
 	                foreach ($goods_attr as $row) {
 	                    unset($row['goods_attr_id']);
