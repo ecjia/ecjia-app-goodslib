@@ -788,6 +788,31 @@ class admin extends ecjia_admin {
     }
     
     /**
+     * 检查商品货号
+     */
+    public function check_goods_sn() {
+        $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
+        
+        $goods_id = intval($_REQUEST['goods_id']);
+        $goods_sn = htmlspecialchars(trim($_REQUEST['goods_sn']));
+        
+        $query_goods_sn = RC_DB::table('goodslib')->where('goods_sn', $goods_sn)->where('goods_id', '!=', $goods_id)->pluck('goods_id');
+        
+        if ($query_goods_sn) {
+            return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        }
+        /* 检查是否重复 */
+        if (!empty($goods_sn)) {
+            $query = RC_DB::table('goodslib_products')->where('product_sn', $goods_sn)->pluck('goods_id');
+            if ($query) {
+                return $this->showmessage(RC_Lang::get('goods::goods.goods_sn_exists'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+        }
+        
+        return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => ''));
+    }
+    
+    /**
      * 放入回收站
      */
     public function remove() {
