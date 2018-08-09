@@ -238,7 +238,7 @@ class merchant extends ecjia_merchant {
 	    if($count_goods_sn) {
 	        $goods['goods_sn'] = '';
 	    }
-	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);
+	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);unset($goods['goods_rank']);
 	    $goods['store_id'] = $_SESSION['store_id'];
 	    if(!empty($ext_info)) {
 	        $goods_name = isset($ext_info['goods_name']) 		? $ext_info['goods_name'] 		: '';
