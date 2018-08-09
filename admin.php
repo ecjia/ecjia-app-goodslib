@@ -52,6 +52,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
 class admin extends ecjia_admin {
     
     private $db_goods;
+    private $error;
     
     public function __construct() {
         parent::__construct();
@@ -440,6 +441,11 @@ class admin extends ecjia_admin {
     public function upload() {
         $this->admin_priv('goodslib_import');
         
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库',  RC_Uri::url('goodslib/admin/init')));
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('导入商品'));
+        $this->assign('ur_here', '导入商品');
+        $this->assign('action_link', array('href' =>  RC_Uri::url('goodslib/admin/init'), 'text' => '返回商品列表'));
+        
         if (!isset($_FILES['goodslib'])) {
             return $this->showmessage('请选择导入的文件', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
@@ -467,6 +473,7 @@ class admin extends ecjia_admin {
             unset($results[0]);//去除表头
             if ($results)
             {
+                $this->error = [];
                 foreach ($results as $key => $value)
                 {
                     $data = [];
@@ -481,6 +488,12 @@ class admin extends ecjia_admin {
                     $data['brand_id'] = $value[8] == null ? '' : trim($value[8]);
                     $data['cat_id'] = $value[10] == null ? '' : trim($value[10]);
                     //TODO判断货号
+                    $count_goods_sn = RC_DB::table('goodslib')->where('goods_sn', $data['goods_sn'])->where('is_delete', 0)->count();
+                    if($count_goods_sn) {
+                        $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货号【'.$data['goods_sn'].'】重复。';
+                        $this->error[] = array('state' => 'error', 'message' => $message);
+                        continue;
+                    }
                     $new_goods_id = RC_DB::table('goodslib')->insertGetId($data);
                     //规格属性$value[12]
                     /* 电脑;内存;32G;;
@@ -524,6 +537,21 @@ class admin extends ecjia_admin {
                                 }
                                 $data = [];
                                 $pro = explode(';', $v_p);
+                                //TODO判断货号
+                                if ($pro[1]) {
+                                    $count_product_sn = RC_DB::table('goodslib_products as p')
+                                    ->leftJoin('goodslib as g', RC_DB::raw('p.goods_id'), '=', RC_DB::raw('g.goods_id'))
+                                    ->where('product_sn', $data['product_sn'])->where('is_delete', 0)->count();
+                                    if($count_product_sn) {
+                                        $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货品号【'.$data['goods_sn'].'】重复。';
+                                        $this->error[] = array('state' => 'error', 'message' => $message);
+                                        RC_DB::table('goodslib')->where('goods_id', $new_goods_id)->delete();
+                                        RC_DB::table('goodslib_attr')->where('goods_id', $new_goods_id)->delete();
+                                        RC_DB::table('goodslib_products')->where('goods_id', $new_goods_id)->delete();
+                                        break;
+                                    }
+                                }
+                                
                                 $pro[0] = explode('|', $pro[0]);
                                 if($pro[0]) {
                                     $new_goods_attr = [];
@@ -533,14 +561,12 @@ class admin extends ecjia_admin {
                                     $data['goods_attr'] = implode('|', $new_goods_attr);
                                 }
                                 $data['goods_id'] = $new_goods_id;
-                                //TODO判断货号
                                 $data['product_sn'] = $pro[1];
                                 RC_DB::table('goodslib_products')->insertGetId($data);
                             }
                         }
                         //货品 end
                     }
-                    
                 }
             }
         });
@@ -551,7 +577,11 @@ class admin extends ecjia_admin {
             'href' => RC_Uri::url('goodslib/admin/init'),
             'text' => '商品列表'
         );
-        return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
+        
+//         _dump($this->error,1:);
+        $this->assign('error', $this->error);
+        $this->display('goodslib_import_success.dwt');
+//         return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
     }
     
     /**

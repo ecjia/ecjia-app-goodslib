@@ -34,7 +34,7 @@
 				<h4>恭喜您，导入成功！</h4>
 			</div>
 			<div class="panel-body ">
-				<a class="btn btn-info" href="{url path='goods/merchant/init'}">查看商品列表</a>
+				<a class="btn btn-info" href="{url path='goodslib/admin/init'}">查看商品列表</a>
 			</div>
 		</div>
 	</div>
