@@ -960,7 +960,9 @@ class admin extends ecjia_admin {
         if (empty($goods) === true) {
             return $this->showmessage(sprintf(sprintf(RC_Lang::get('goods::goods.canot_find_goods'), $goods_id), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => RC_Lang::get('goods::goods.return_last_page'), 'href' => 'javascript:history.go(-1)')))), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR);
         }
-        
+        if($goods['goods_desc']) {
+            $goods['goods_desc'] = stripslashes($goods['goods_desc']);
+        }
         //设置选中状态,并分配标签导航
         $this->tags['edit_goods_desc']['active'] = 1;
         $this->assign('tags', $this->tags);
