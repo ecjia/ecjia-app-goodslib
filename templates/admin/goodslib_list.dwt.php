@@ -100,7 +100,7 @@
 						<br/>
 						<div class="edit-list">
 							<a class="data-pjax" href='{url path="goodslib/admin/edit" args="goods_id={$goods.goods_id}"}'>{lang key='system::system.edit'}</a>&nbsp;|&nbsp;
-							<a class="data-pjax" href='{url path="goods/admin_gallery/init" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_gallery'}</a>&nbsp;|&nbsp;
+							<a class="data-pjax" href='{url path="goodslib/admin_gallery/init" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_gallery'}</a>&nbsp;|&nbsp;
 							<a class="data-pjax" href='{url path="goodslib/admin/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.tab_properties'}</a>&nbsp;|&nbsp;
 							{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goodslib/admin/product_list" args="goods_id={$goods.goods_id}"}'>{lang key='goods::goods.product_list'}</a>&nbsp;|&nbsp;{/if}
 							<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{lang key='goods::goods.trash_goods_confirm'}" href='{url path="goodslib/admin/remove" args="id={$goods.goods_id}"}'>{lang key='system::system.drop'}</a>
@@ -111,7 +111,7 @@
 						{$goods.goods_sn} 
 					</td>
 					<td align="right">
-						<span  class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin/edit_goods_price')}" data-name="goods_price" data-pk="{$goods.goods_id}" data-title="请输入商品价格"> 
+						<span  class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin/edit_goods_price')}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-name="goods_price" data-pk="{$goods.goods_id}" data-title="请输入商品价格"> 
 							{$goods.shop_price}
 						</span> 
 					</td>
@@ -122,7 +122,7 @@
 							{if $filter.brand_id}&brand_id={$filter.brand_id}{/if}
 							{if $filter.intro_type}&intro_type={$filter.intro_type}{/if}
 							{if $filter.keywords}&keywords={$filter.keywords}{/if}
-							{if $filter.review_status}&review_status={$filter.review_status}{/if}
+							{if $smarty.get.page}&page={$smarty.get.page}{/if}
 							" data-id="{$goods.goods_id}">
 						</i>
 					</td>

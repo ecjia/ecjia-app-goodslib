@@ -856,7 +856,7 @@ class admin extends ecjia_admin {
         RC_DB::table('goodslib')->where('goods_id', $goods_id)->update(array('is_delete' => 1));
         
         ecjia_admin::admin_log(addslashes($goods_name), 'trash', 'goodslib');
-        return $this->showmessage(RC_Lang::get('goods::goods.trash_goods_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+        return $this->showmessage('商品删除成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
     }
     
     /**
@@ -937,7 +937,8 @@ class admin extends ecjia_admin {
             return $this->showmessage(RC_Lang::get('goods::goods.shop_price_invalid'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         } else {
             RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
-            return $this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goodslib/admin/init'), 'content' => number_format($goods_price, 2, '.', '')));
+            $url = RC_Uri::url('goodslib/admin/init', array('page' => $_GET['page']));
+            return $this->showmessage(RC_Lang::get('goods::goods.edit_ok'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $url, 'content' => number_format($goods_price, 2, '.', '')));
         }
     }
     

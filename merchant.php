@@ -165,12 +165,9 @@ class merchant extends ecjia_merchant {
 	 * 导入
 	 */
 	public function insert() {
-	    //规格属性货品
-	    //主表
-	    //type batch 批量
 	    $error_message = [];
 	    
-	    if(isset($_POST['goods_ids'])) {
+	    if(isset($_POST['goods_ids'])) {//批量导入
 	        if (empty($_POST['goods_ids'])) {
 	            return $this->showmessage('请选择导入的商品', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 	        }
@@ -185,7 +182,7 @@ class merchant extends ecjia_merchant {
 	            }
 	        }
 	        
-	    } else {
+	    } else {//单个导入
 	        $id = isset($_POST['goods_id']) 		? intval($_POST['goods_id']) 		: 0;
 	        $goods_name = isset($_POST['goods_name']) 		? $_POST['goods_name'] 		: '';
 	        $goods_sn = isset($_POST['goods_sn']) 		? $_POST['goods_sn'] 		: '';
