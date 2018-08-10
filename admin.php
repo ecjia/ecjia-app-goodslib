@@ -471,7 +471,7 @@ class admin extends ecjia_admin {
         $file = RC_Excel::load($temp_file, function($reader) {
             $reader = $reader->getSheet(0);//excel第一张sheet
             $results = $reader->toArray();
-            unset($results[0]);//去除表头
+            unset($results[0]);unset($results[1]);//去除表头和规则
             if ($results)
             {
                 $this->error = [];
@@ -495,7 +495,17 @@ class admin extends ecjia_admin {
                     $data['goods_desc'] = $value[7] == null ? '' : trim($value[7]);
                     $data['brand_id'] = $value[8] == null ? '' : trim($value[8]);
                     $data['cat_id'] = $value[10] == null ? '' : trim($value[10]);
-                    //TODO判断货号
+                    if(empty($data['goods_name'])) {
+                        $message = '第'.($key+1).'行，商品名称不能为空。';
+                        $this->error[] = array('state' => 'error', 'message' => $message);
+                        continue;
+                    }
+                    if(is_null($data['shop_price'])) {
+                        $message = '第'.($key+1).'行，商品价格不能为空。';
+                        $this->error[] = array('state' => 'error', 'message' => $message);
+                        continue;
+                    }
+                    //判断货号
                     if ($data['goods_sn']) {
                         $count_goods_sn = RC_DB::table('goodslib')->where('goods_sn', $data['goods_sn'])->where('is_delete', 0)->count();
                         if($count_goods_sn) {
@@ -506,8 +516,8 @@ class admin extends ecjia_admin {
                     }
                     $new_goods_id = RC_DB::table('goodslib')->insertGetId($data);
                     //规格属性$value[12]
-                    /* 电脑;内存;32G;;
-                     * 电脑;内存;16G;;500 */
+                    /* 电脑;内存;32G;
+                     * 电脑;内存;16G;500 */
                     if(!empty($value[12]) && $new_goods_id) {
                         $goods_attr = explode("\n", $value[12]);
                         foreach ($goods_attr as $k_a => $v_a) {
@@ -528,8 +538,8 @@ class admin extends ecjia_admin {
                                     'goods_id' => $new_goods_id,
                                     'attr_id' => $attr['attr_id'],
                                     'attr_value' => $v_a[2],
-                                    'color_value' => $v_a[3],
-                                    'attr_price' => $v_a[4],
+//                                     'color_value' => $v_a[3],//暂用不到
+                                    'attr_price' => $v_a[3],
                                 ];
                                 $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data_attr);
                             } else {

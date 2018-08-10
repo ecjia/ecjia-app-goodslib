@@ -249,10 +249,10 @@ class goodslib {
                                 'cat_name' => $goods_attr[$k_a]['cat_name'],
                                 'attr_name' => $goods_attr[$k_a]['attr_name'],
                                 'attr_value' => $r_a['attr_value'],
-                                'color_value' => $r_a['color_value'],
+//                                 'color_value' => $r_a['color_value'],//暂用不到
                                 'attr_price' => $r_a['attr_price'],
                             ];
-                            $rows[$k]['goods_attr_export'] .= $goods_attr[$k_a]['cat_name'].';'.$goods_attr[$k_a]['attr_name'].';'.$r_a['attr_value'].';'.$r_a['color_value'].';'.$r_a['attr_price']."\r\n";
+                            $rows[$k]['goods_attr_export'] .= $goods_attr[$k_a]['cat_name'].';'.$goods_attr[$k_a]['attr_name'].';'.$r_a['attr_value'].';'/* .$r_a['color_value'].';' */.$r_a['attr_price']."\r\n";
                         }
                         
                         //product
