@@ -136,7 +136,7 @@ class goodslib {
         
         $db_goods
         	->selectRaw('g.goods_id, g.goods_name, g.goods_type, g.goods_sn, g.shop_price, g.market_price, g.goods_weight, g.goods_thumb, g.sort_order, g.is_display')
-        	->orderBy($filter ['sort_by'], $filter['sort_order']);
+        	->orderBy($filter ['sort_by'], $filter['sort_order'])->orderBy('goods_id', 'desc');
         if($page_size) {
             $rows = $db_goods->take($page_size)
             ->skip($page->start_id-1)

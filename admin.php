@@ -305,6 +305,7 @@ class admin extends ecjia_admin {
                 'last_update'           => RC_Time::gmtime(),
                 'goods_type'            => $goods_type,
                 'review_status'			=> 5,
+                'is_display'			=> !empty($_POST['is_display']) ? intval($_POST['is_display']) : 0,
             );
             
             $insert_id = RC_DB::table('goodslib')->insertGetId($data);
@@ -444,7 +445,7 @@ class admin extends ecjia_admin {
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库',  RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('导入商品'));
         $this->assign('ur_here', '导入商品');
-        $this->assign('action_link', array('href' =>  RC_Uri::url('goodslib/admin/init'), 'text' => '返回商品列表'));
+//         $this->assign('action_link', array('href' =>  RC_Uri::url('goodslib/admin/init'), 'text' => '返回商品列表'));
         
         if (!isset($_FILES['goodslib'])) {
             return $this->showmessage('请选择导入的文件', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
@@ -800,6 +801,7 @@ class admin extends ecjia_admin {
             'goods_brief'		   		=> $_POST['goods_brief'],
             'goods_weight'		 		=> $goods_weight,
             'last_update'		   		=> RC_Time::gmtime(),
+            'is_display'			    => !empty($_POST['is_display']) ? intval($_POST['is_display']) : 0,
         );
         RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
         /* 记录日志 */
