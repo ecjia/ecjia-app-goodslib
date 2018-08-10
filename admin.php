@@ -534,6 +534,7 @@ class admin extends ecjia_admin {
                         foreach ($new_attr as $k_a => $v_a) {
                             $type_row = RC_DB::table('goods_type')->where('cat_id', $types['cat_id'])->where('store_id', 0)->where('cat_name', $v_a[0])->first();
                             if ($type_row) {
+                                RC_DB::table('goodslib')->where('goods_id', $new_goods_id)->update(array('goods_type' => $type_row['cat_id']));
                                 $attr = RC_DB::table('attribute')->where('cat_id', $types['cat_id'])->where('attr_name', $v_a[1])->first();
                                 if ($attr) {
                                     $data_attr = [
