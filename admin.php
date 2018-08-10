@@ -513,6 +513,15 @@ class admin extends ecjia_admin {
                             $this->error[] = array('state' => 'error', 'message' => $message);
                             continue;
                         }
+                    } else {
+                        $max_id = $this->db_goods->join(null)->field('MAX(goods_id) + 1|max')->find();
+                        if (empty($max_id['max'])) {
+                            $goods_sn_bool = true;
+                            $data['goods_sn'] = '';
+                        } else {
+                            $goods_sn_bool = false;
+                            $data['goods_sn'] = generate_goods_sn($max_id['max']);
+                        }
                     }
                     $new_goods_id = RC_DB::table('goodslib')->insertGetId($data);
                     //规格属性$value[12]
@@ -600,7 +609,10 @@ class admin extends ecjia_admin {
                                     $data_pro['goods_attr'] = implode('|', $new_goods_attr);
                                     $data_pro['goods_id'] = $new_goods_id;
                                     $data_pro['product_sn'] = $pro[1];
-                                    RC_DB::table('goodslib_products')->insertGetId($data_pro);
+                                    $pro_id = RC_DB::table('goodslib_products')->insertGetId($data_pro);
+                                    if (empty($pro[1])) {
+                                        RC_DB::table('goodslib_products')->where('product_id', $pro_id)->update(array('product_sn' => $data['goods_sn'] . '_p' . $pro_id));
+                                    }
                                 } else {
                                     $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货品属性【'.$pro[0].'】不存在。';
                                     $this->error[] = array('state' => 'error', 'message' => $message);
