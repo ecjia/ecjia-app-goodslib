@@ -541,7 +541,7 @@ class admin extends ecjia_admin {
                                         'goods_id' => $new_goods_id,
                                         'attr_id' => $attr['attr_id'],
                                         'attr_value' => $v_a[2],
-                                        //                                     'color_value' => $v_a[3],//暂用不到
+                                        //'color_value' => $v_a[3],//暂用不到
                                         'attr_price' => $v_a[3],
                                     ];
                                     $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data_attr);
@@ -1088,16 +1088,6 @@ class admin extends ecjia_admin {
         
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here('商品库', RC_Uri::url('goodslib/admin/init')));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.edit_goods_attr')));
-        ecjia_screen::get_current_screen()->add_help_tab(array(
-            'id'		=> 'overview',
-            'title'		=> RC_Lang::get('goods::goods.overview'),
-            'content'	=> '<p>' . RC_Lang::get('goods::goods.edit_attr_help') . '</p>'
-        ));
-        
-        ecjia_screen::get_current_screen()->set_help_sidebar(
-            '<p><strong>' . RC_Lang::get('goods::goods.more_info') . '</strong></p>' .
-            '<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:商品列表#.E5.95.86.E5.93.81.E5.B1.9E.E6.80.A7" target="_blank">'. RC_Lang::get('goods::goods.about_edit_attr') .'</a>') . '</p>'
-            );
         
         $goods_id = $_REQUEST['goods_id'];
         $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->first();
