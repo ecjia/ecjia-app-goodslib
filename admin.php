@@ -476,6 +476,13 @@ class admin extends ecjia_admin {
                 $this->error = [];
                 foreach ($results as $key => $value)
                 {
+                    if(empty($value)) {
+                        unset($results[$key]);
+                        continue;
+                    }
+                    if($value[0] == '' && $value[1] == '' && $value[2] == '' && $value[3] == '' && $value[4] == '') {
+                        continue;
+                    }
                     $data = [];
                     $data['goods_sn'] = $value[0] == null ? '':trim($value[0]);
                     $data['goods_name'] = $value[1] == null ? '' : trim($value[1]);
@@ -488,17 +495,19 @@ class admin extends ecjia_admin {
                     $data['brand_id'] = $value[8] == null ? '' : trim($value[8]);
                     $data['cat_id'] = $value[10] == null ? '' : trim($value[10]);
                     //TODO判断货号
-                    $count_goods_sn = RC_DB::table('goodslib')->where('goods_sn', $data['goods_sn'])->where('is_delete', 0)->count();
-                    if($count_goods_sn) {
-                        $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货号【'.$data['goods_sn'].'】重复。';
-                        $this->error[] = array('state' => 'error', 'message' => $message);
-                        continue;
+                    if ($data['goods_sn']) {
+                        $count_goods_sn = RC_DB::table('goodslib')->where('goods_sn', $data['goods_sn'])->where('is_delete', 0)->count();
+                        if($count_goods_sn) {
+                            $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货号【'.$data['goods_sn'].'】重复。';
+                            $this->error[] = array('state' => 'error', 'message' => $message);
+                            continue;
+                        }
                     }
                     $new_goods_id = RC_DB::table('goodslib')->insertGetId($data);
                     //规格属性$value[12]
                     /* 电脑;内存;32G;;
                      * 电脑;内存;16G;;500 */
-                    if(!empty($value[12])) {
+                    if(!empty($value[12]) && $new_goods_id) {
                         $goods_attr = explode("\n", $value[12]);
                         foreach ($goods_attr as $k_a => $v_a) {
                             if(empty($v_a)) {
@@ -513,14 +522,20 @@ class admin extends ecjia_admin {
                         $types = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->first();
                         foreach ($new_attr as $k_a => $v_a) {
                             $attr = RC_DB::table('attribute')->where('cat_id', $types['cat_id'])->where('attr_name', $v_a[1])->first();
-                            $data = [
-                                'goods_id' => $new_goods_id,
-                                'attr_id' => $attr['attr_id'],
-                                'attr_value' => $v_a[2],
-                                'color_value' => $v_a[3],
-                                'attr_price' => $v_a[4],
-                            ];
-                            $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data);
+                            if ($attr) {
+                                $data_attr = [
+                                    'goods_id' => $new_goods_id,
+                                    'attr_id' => $attr['attr_id'],
+                                    'attr_value' => $v_a[2],
+                                    'color_value' => $v_a[3],
+                                    'attr_price' => $v_a[4],
+                                ];
+                                $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data_attr);
+                            } else {
+                                $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】属性【'.$v_a[1].'】不存在。';
+                                $this->error[] = array('state' => 'error', 'message' => $message);
+                                break;
+                            }
                         }
                        
                         
@@ -535,15 +550,15 @@ class admin extends ecjia_admin {
                                     unset($goods_pro[$k_p]);
                                     continue;
                                 }
-                                $data = [];
+                                $data_pro = [];
                                 $pro = explode(';', $v_p);
                                 //TODO判断货号
                                 if ($pro[1]) {
                                     $count_product_sn = RC_DB::table('goodslib_products as p')
                                     ->leftJoin('goodslib as g', RC_DB::raw('p.goods_id'), '=', RC_DB::raw('g.goods_id'))
-                                    ->where('product_sn', $data['product_sn'])->where('is_delete', 0)->count();
+                                    ->where('product_sn', $pro[1])->where('is_delete', 0)->count();
                                     if($count_product_sn) {
-                                        $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货品号【'.$data['goods_sn'].'】重复。';
+                                        $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货品号【'.$pro[1].'】重复。';
                                         $this->error[] = array('state' => 'error', 'message' => $message);
                                         RC_DB::table('goodslib')->where('goods_id', $new_goods_id)->delete();
                                         RC_DB::table('goodslib_attr')->where('goods_id', $new_goods_id)->delete();
@@ -552,17 +567,26 @@ class admin extends ecjia_admin {
                                     }
                                 }
                                 
-                                $pro[0] = explode('|', $pro[0]);
-                                if($pro[0]) {
+                                $pro_attr = explode('|', $pro[0]);
+                                if($pro_attr) {
                                     $new_goods_attr = [];
-                                    foreach ($pro[0] as $v_attr) {
+                                    foreach ($pro_attr as $v_attr) {
                                         $new_goods_attr[] = $new_attr[$v_attr]['goods_attr_id'];
                                     }
-                                    $data['goods_attr'] = implode('|', $new_goods_attr);
+                                    if (empty($new_goods_attr)) {
+                                        $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货品属性【'.$pro[0].'】不存在。';
+                                        $this->error[] = array('state' => 'error', 'message' => $message);
+                                        break;
+                                    }
+                                    $data_pro['goods_attr'] = implode('|', $new_goods_attr);
+                                    $data_pro['goods_id'] = $new_goods_id;
+                                    $data_pro['product_sn'] = $pro[1];
+                                    RC_DB::table('goodslib_products')->insertGetId($data_pro);
+                                } else {
+                                    $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】货品属性【'.$pro[0].'】不存在。';
+                                    $this->error[] = array('state' => 'error', 'message' => $message);
+                                    break;
                                 }
-                                $data['goods_id'] = $new_goods_id;
-                                $data['product_sn'] = $pro[1];
-                                RC_DB::table('goodslib_products')->insertGetId($data);
                             }
                         }
                         //货品 end
