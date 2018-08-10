@@ -62,7 +62,7 @@
           			<div class="form-group">
           				<label class="control-label col-lg-2">加入推荐</label>
           				<div class="col-lg-10">
-          					<div class="checkbox">
+          					<div class="checkbox-inline">
               					<input id="is_best" type="checkbox" name="is_best" value="1" {if $goods.store_best}checked{/if}>
               					<label for="is_best">{lang key='goods::goods.is_best'}</label>
                   				
@@ -77,7 +77,7 @@
           			<div class="form-group">
               			<label class="control-label col-lg-2">包邮</label>
               			<div class="col-lg-10">
-              				<div class="checkbox">
+              				<div class="checkbox-inline">
                             	<input id="is_shipping" type="checkbox" name="is_shipping" value="1" {if $goods.is_shipping}checked{/if}>
                             	<label for="is_shipping">{lang key='goods::goods.free_shipping'}</label>
                             </div>
@@ -86,7 +86,7 @@
               		<div class="form-group">
           				<label class="control-label col-lg-2">上架</label>
           				<div class="col-lg-10">
-              				<div class="checkbox">
+              				<div class="checkbox-inline">
                      			<input id="is_on_sale" type="checkbox" name="is_on_sale" value="1" {if $goods.is_on_sale}checked{/if}>
                        			<label for="is_on_sale">{lang key='goods::goods.on_sale_desc'}</label>
                        		</div>
