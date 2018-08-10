@@ -532,18 +532,25 @@ class admin extends ecjia_admin {
                         }
                         $types = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->first();
                         foreach ($new_attr as $k_a => $v_a) {
-                            $attr = RC_DB::table('attribute')->where('cat_id', $types['cat_id'])->where('attr_name', $v_a[1])->first();
-                            if ($attr) {
-                                $data_attr = [
-                                    'goods_id' => $new_goods_id,
-                                    'attr_id' => $attr['attr_id'],
-                                    'attr_value' => $v_a[2],
-//                                     'color_value' => $v_a[3],//暂用不到
-                                    'attr_price' => $v_a[3],
-                                ];
-                                $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data_attr);
+                            $type_row = RC_DB::table('goods_type')->where('cat_id', $types['cat_id'])->where('store_id', 0)->where('cat_name', $v_a[0])->first();
+                            if ($type_row) {
+                                $attr = RC_DB::table('attribute')->where('cat_id', $types['cat_id'])->where('attr_name', $v_a[1])->first();
+                                if ($attr) {
+                                    $data_attr = [
+                                        'goods_id' => $new_goods_id,
+                                        'attr_id' => $attr['attr_id'],
+                                        'attr_value' => $v_a[2],
+                                        //                                     'color_value' => $v_a[3],//暂用不到
+                                        'attr_price' => $v_a[3],
+                                    ];
+                                    $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data_attr);
+                                } else {
+                                    $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】属性【'.$v_a[1].'】不存在。';
+                                    $this->error[] = array('state' => 'error', 'message' => $message);
+                                    break;
+                                }
                             } else {
-                                $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】属性【'.$v_a[1].'】不存在。';
+                                $message = '第'.($key+1).'行，商品【'.$data['goods_name'].'】规格【'.$v_a[0].'】不存在。';
                                 $this->error[] = array('state' => 'error', 'message' => $message);
                                 break;
                             }
