@@ -335,8 +335,15 @@
     overflow: hidden;
     white-space: nowrap;
 }
+.admin_detail #detail .goods_spec li {
+	height: 22px;
+    line-height: 22px;
+}
 #detail .goods_spec .green {
     background-color: #47aa4d;
     color: #FFF!important;
     border: 0!important
+}
+.admin_detail #detail, .admin_detail .tm-detail-meta {
+	width:100%!important;
 }
