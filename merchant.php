@@ -165,6 +165,8 @@ class merchant extends ecjia_merchant {
 	 * 导入
 	 */
 	public function insert() {
+	    // 检查权限
+	    $this->admin_priv('goodslib_manage');
 	    $error_message = [];
 	    
 	    if(isset($_POST['goods_ids'])) {//批量导入
@@ -236,6 +238,8 @@ class merchant extends ecjia_merchant {
 	}
 	
 	private function insert_goods($id, $ext_info = array()) {
+	    // 检查权限
+	    $this->admin_priv('goodslib_manage');
 	    /* 商品信息 */
 	    $goods = RC_DB::table('goodslib')->where('goods_id', $id)->where('is_display', 1)->where('is_delete', 0)->first();
 	    if (empty($goods)) {
@@ -359,7 +363,8 @@ class merchant extends ecjia_merchant {
 	 * 预览
 	 */
 	public function preview() {
-	    $this->admin_priv('goods_manage');
+	    // 检查权限
+	    $this->admin_priv('goodslib_manage');
 	    
 	    $goods_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
 	    if (empty($goods_id)) {
