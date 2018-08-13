@@ -175,7 +175,7 @@ class admin extends ecjia_admin {
         $goods_name_style = isset($goods['goods_name_style']) ? $goods['goods_name_style'] : '';
         
         /* 模板赋值 */
-        $this->assign('tags', array('edit' => array('name' => _('通用信息'), 'active' => 1, 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/add'))));
+        $this->assign('tags', array('edit' => array('name' => __('通用信息'), 'active' => 1, 'pjax' => 1, 'href' => RC_Uri::url('goodslib/admin/add'))));
         $this->assign('goods', $goods);
         $this->assign('goods_name_color', $goods_name_style);
         $this->assign('cat_list', cat_list(0, $goods['cat_id'], false));
