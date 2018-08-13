@@ -5,10 +5,14 @@
 <script type="text/javascript">
 	var images_url = "{$images_url}";
 	ecjia.merchant.preview.init();
+	ecjia.merchant.goods_list.init();
 </script>
 <!-- {/block} -->
 
 <!-- {block name="home-content"} -->
+
+<!-- #BeginLibraryItem "/library/goods_insert.lbi" --><!-- #EndLibraryItem -->
+
 <div class="page-header">
 	<div class="pull-left">
 		<h2>
@@ -52,7 +56,7 @@
 								      	<dd>
 								          	<em class="tm-yen">¥</em>
 								          	<span class="tm-price shop_price">{$goods.shop_price}</span>&nbsp;&nbsp;
-								          	<input type="hidden" name="shop_price" value="{$goods.shop_price}">
+								          	<input type="hidden" name="original_price" value="{$goods.shop_price}">
 								      	</dd>
 							    	</dl>
 							    	
@@ -82,6 +86,13 @@
 											    </dd>
 											</dl>
 											<dl class="tb-amount tm-clear">
+											    <dt class="tb-metatit">商品品牌</dt>
+											    <dd id="J_Amount">
+											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$brand_name}</em>
+											        <span id="J_StockTips"></span>
+											    </dd>
+											</dl>
+											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">添加时间</dt>
 											    <dd id="J_Amount">
 											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.add_time}</em>
@@ -107,7 +118,10 @@
                                                 </dd>
                                             </dl>
                                             <!-- {/foreach} -->
-											
+										</div>
+										<div class="panel-body ">
+											<a class="btn btn-info insert-goods-btn" href="javascript:;" data-href='{url path="goodslib/merchant/insert" args="goods_id={$goods.goods_id}"}' 
+										data-id="{$goods.goods_id}" data-name="{$goods.goods_name}" data-sn="{$goods.goods_sn}" data-shopprice="{$goods.shop_price}" data-marketprice="{$goods.market_price}"><i class="fa fa-plus"></i> 立即导入</a>
 										</div>
 							    	</div>
 							  	</div>

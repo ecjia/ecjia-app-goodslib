@@ -371,7 +371,7 @@ class merchant extends ecjia_merchant {
 	    ecjia_merchant_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_preview')));
 	    
 	    $this->assign('ur_here', RC_Lang::get('goods::goods.goods_preview'));
-// 	    $this->assign('action_link', array('text' => RC_Lang::get('goods::goods.goods_list'), 'href' => RC_Uri::url('goods/merchant/init')));
+	    $this->assign('action_link', array('text' => '返回', 'href' => RC_Uri::url('goodslib/merchant/add', array('cat_id' => $_GET['cat_id']))));
 	    
 	    $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_display', 1)->where('is_delete', 0)->first();
 	    
@@ -433,7 +433,6 @@ class merchant extends ecjia_merchant {
 	    
 	    // 获得商品的规格和属性
 	    $properties = get_goodslib_properties($goods_id);
-// 	    _dump($properties,1);
 	    $this->assign('specification', $properties['spe']);
 	    
 	    //商品属性
@@ -442,7 +441,6 @@ class merchant extends ecjia_merchant {
 	    
 	    //货品
 	    $product = goodslib_product_list($goods_id, '');
-// 	    _dump($product,1);
 	    $this->assign('products', $product);
 	    
 	    $this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
@@ -450,6 +448,7 @@ class merchant extends ecjia_merchant {
 	    $this->assign('goods', $goods);
 	    $this->assign('cat_name', $cat_name);
 	    $this->assign('brand_name', $brand_name);
+	    $this->assign('form_action', RC_Uri::url('goodslib/merchant/insert', array('cat_id' => $cat_id)));
 	    
 	    $this->display('preview.dwt');
 	}
