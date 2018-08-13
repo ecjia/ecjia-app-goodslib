@@ -181,17 +181,6 @@ class admin extends ecjia_admin {
         $this->assign('cat_list', cat_list(0, $goods['cat_id'], false));
         $this->assign('brand_list', get_brand_list());
         $this->assign('unit_list',  goods::unit_list());
-//         $this->assign('user_rank_list', get_user_rank_list());
-        $this->assign('cfg', ecjia::config());
-        $this->assign('goods_attr_html', build_attr_html($goods['goods_type'], $goods['goods_id']));
-        $volume_price_list = '';
-        if (isset($_REQUEST['goods_id'])) {
-            $volume_price_list = get_volume_price_list($_REQUEST['goods_id']);
-        }
-        if (empty($volume_price_list)) {
-            $volume_price_list = array('0' => array('number' => '', 'price' => ''));
-        }
-        $this->assign('volume_price_list', $volume_price_list);
         $this->assign('form_action', RC_Uri::url('goodslib/admin/insert'));
         $this->assign_lang();
         
