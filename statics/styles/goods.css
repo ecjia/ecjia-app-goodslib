@@ -126,6 +126,10 @@
 	width: 69px;
 	margin: 0 0 0 8px;
 }
+#detail .tm-fcs-panel .tm-promo-price dt.tb-metatit {
+    height: 28px;
+    line-height: 28px;
+}
 
 #detail em {
 	font-style: normal;

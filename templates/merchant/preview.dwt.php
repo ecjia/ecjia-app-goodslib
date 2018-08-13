@@ -69,7 +69,7 @@
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">商品重量</dt>
 											    <dd id="J_Amount">
-											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_weight}</em>
+											        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{$goods.goods_weight_by_unit} {$goods.goods_weight_unit}</em>
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>

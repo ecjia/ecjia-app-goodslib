@@ -403,6 +403,14 @@ class merchant extends ecjia_merchant {
 	    $images_url = RC_App::apps_url('statics/images', __FILE__);
 	    $this->assign('images_url', $images_url);
 	    
+	    /* 根据商品重量的单位重新计算 */
+	    if ($goods['goods_weight'] > 0) {
+	        $goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight'] / 0.001);
+	    }
+	    $unit = $goods['goods_weight'] >= 1 ? '1' : '0.001';
+	    $unit_list = goods::unit_list();
+	    $goods['goods_weight_unit'] = $unit_list[$unit];
+	    
 	    //商品相册
 	    $goods_photo_list = RC_DB::table('goodslib_gallery')->where('goods_id', $goods['goods_id'])->get();
 	    if (!empty($goods_photo_list)) {
