@@ -399,6 +399,7 @@
 						goods_id: goods_id,
 						goods_sn: goods_sn
 					};
+				if(goods_sn == '') return false;
 
 				goods_sn == '' && $('#goods_sn_notice').html('');
 
