@@ -229,21 +229,13 @@
 	margin: 4px 0 0 12px;
 }
 
-#attributes div.attributes-list {
+.attributes-list {
 	clear: both;
 	margin: 10px 0;
-	border: 1px solid #e6e6e6;
 	border-radius: 4px;
 }
 
-#attributes .attr-list-hd {
-	padding: 5px 20px;
-	line-height: 22px;
-	color: #999;
-	height: 22px;
-}
-
-#attributes .attributes-list ul {
+.attributes-list ul {
 	padding: 0 20px 10px;
 	text-indent: 0;
 	border-top: 1px solid #fff;
@@ -251,13 +243,7 @@
 	text-indent: 0;
 }
 
-#attributes .attr-list-hd .ui-more-nbg {
-	float: right;
-	height: 20px;
-	line-height: 22px;
-}
-
-#attributes .attributes-list li {
+.attributes-list li {
 	display: inline;
 	float: left;
 	width: 220px;
@@ -272,13 +258,7 @@
 	padding: 0;
 }
 
-#attributes .attr-list-hd em {
-	font-weight: 700;
-	float: left;
-	font-style: normal;
-}
-
-#attributes ul:after {
+.attributes-list ul:after {
 	display: block;
 	visibility: hidden;
 	clear: both;

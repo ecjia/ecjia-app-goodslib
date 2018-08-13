@@ -129,21 +129,65 @@
 						</div>
 					</div>
 					
-					{if $attr_list}
-					<div id="attributes">
-						<div class="attributes-list" id="J_AttrList">
-							<div class="tm-clear tb-hidden tm_brandAttr" id="J_BrandAttr" style="display: block;">
-								<p class="attr-list-hd tm-clear"><a class="ui-more-nbg tm-MRswitchAttrs" href="#J_Attrs"><i class="ui-more-nbg-arrow tm-MRswitchAttrs"></i></a><em>产品参数：</em></p>
-								<ul id="J_AttrUL">
-									<!-- {foreach from=$attr_list item=val} -->
-				         			<li>{$val.attr_name}：{$val.attr_value}</li>       			
-				         			<!-- {/foreach} -->																			    						    						    							    						    							    							    						    							    						    							    						    							    					    					    																																																																																																																											    								     <li title="&nbsp;32GB&nbsp;128GB&nbsp;256GB">存储容量:&nbsp;32GB&nbsp;128GB&nbsp;256GB</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					{/if}
-					<div class="t_c clear">{$goods.goods_desc}</div>
+					<ul id="myTab" class="nav nav-tabs m_t20">
+                        <li class="active"><a href='{url path="goodslib/merchant/preview" args="&id={$goods.goods_id}"}#home' data-toggle="tab">商品详情</a></li>
+                        <li class=""><a href='{url path="goodslib/merchant/preview" args="&id={$goods.goods_id}"}#attr' data-toggle="tab">商品参数</a></li>
+                        <li class=""><a href='{url path="goodslib/merchant/preview" args="&id={$goods.goods_id}"}#products' data-toggle="tab">货品列表</a></li>
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade active in" id="home">  
+                            <p></p>
+                            <div class="t_c clear">
+                            {if $goods.goods_desc}{$goods.goods_desc}
+                            {else}<p class="text-center m_t20">暂无！</p>
+                            {/if}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="attr">
+                        	{if $attr_list}
+        					<div class="attributes-list" id="attributes">
+        						<div class="tm-clear tb-hidden tm_brandAttr" style="display: block;">
+        							<ul>
+        								<!-- {foreach from=$attr_list item=val} -->
+        			         			<li>{$val.attr_name}：{$val.attr_value}</li>
+        			         			<!-- {/foreach} -->       			
+        							</ul>
+        						</div>
+        					</div>
+        					{else}
+        					<p></p>
+        					<p class="text-center m_t20">暂无参数！</p>
+        					{/if}
+                        </div>
+                        <div class="tab-pane fade" id="products">
+                            <p></p>
+                            {if $products.product}
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>货号</th>
+                                        <th class="text-center">{foreach from=$products.attr_name item=attr key=k}{if $k gt 0}|{/if}{$attr}{/foreach}</th>
+                                        <th class="text-center">属性价</th>
+                                        <th>规格图片</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <!-- {foreach from=$products.product item=row} -->
+                                    <tr>
+                                        <td>{$row.product_sn}</td>
+                                        <td class="text-center">{foreach from=$row.goods_attr item=attr key=k}{if $k gt 0}|{/if}{$attr}{/foreach}</td>
+                                        <td class="text-center">{$row.goods_attr_price}</td>
+                                        <td>{$row.attr_img_file}</td>
+                                    </tr>
+                                    <!-- {/foreach} -->
+                                </tbody>
+                            </table>
+                            {else}
+                            <p class="text-center m_t20">暂无货品！</p>
+                            {/if}
+                        </div>
+                    </div>
+					
 				</div>
 			</div>
 		</div>

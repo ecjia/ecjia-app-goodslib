@@ -251,21 +251,32 @@ function goodslib_product_list($goods_id, $conditions = '') {
     ->get();
     
     /* 处理规格属性 */
-    $goods_attr = product_goodsattr_attr_list($goods_id);
+    $goods_attr = product_goodslib_attr_list($goods_id);
     if (!empty ($row)) {
         foreach ($row as $key => $value) {
             $_goods_attr_array = explode('|', $value ['goods_attr']);
             if (is_array($_goods_attr_array)) {
                 $_temp = [];
+                $_temp_price = 0;
                 foreach ($_goods_attr_array as $_goods_attr_value) {
-                    $_temp[] = $goods_attr [$_goods_attr_value];
+                    $_temp[] = $goods_attr [$_goods_attr_value]['attr_value'];
+                    $_temp_price += $goods_attr[$_goods_attr_value]['attr_price'];
                 }
                 $row [$key] ['goods_attr'] = $_temp;
+                $row [$key] ['goods_attr_id'] = $_goods_attr_array;
+                $row [$key] ['goods_attr_price'] = $_temp_price;
             }
+        }
+    }
+    if(isset($row[0]['goods_attr_id'])) {
+        $attr_id = RC_DB::table('goodslib_attr')->where('goods_id', $goods_id)->whereIn('goods_attr_id', $row[0]['goods_attr_id'])->lists('attr_id');
+        if ($attr_id) {
+            $attr_name = RC_DB::table('attribute')->whereIn('attr_id', $attr_id)->lists('attr_name');
         }
     }
     return array(
         'product'		=> $row,
+        'attr_name'     => $attr_name,
         'filter'		=> $filter,
         'page_count'	=> $filter ['page_count'],
         'record_count'	=> $filter ['record_count']
@@ -280,13 +291,13 @@ function goodslib_product_list($goods_id, $conditions = '') {
  *            s integer $goods_id
  * @return array
  */
-function product_goodsattr_attr_list($goods_id) {
-    $results = RC_DB::table('goodslib_attr')->select('goods_attr_id', 'attr_value')->where('goods_id', $goods_id)->get();
+function product_goodslib_attr_list($goods_id) {
+    $results = RC_DB::table('goodslib_attr')->select('goods_attr_id', 'attr_value', 'attr_price')->where('goods_id', $goods_id)->get();
     
     $return_arr = array();
     if (!empty ($results)) {
         foreach ($results as $value) {
-            $return_arr [$value ['goods_attr_id']] = $value ['attr_value'];
+            $return_arr [$value ['goods_attr_id']] = $value;
         }
     }
     return $return_arr;

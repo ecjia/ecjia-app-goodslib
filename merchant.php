@@ -432,8 +432,13 @@ class merchant extends ecjia_merchant {
 	    $this->assign('goods_photo_list', $goods_photo_list);
 	    
 	    //商品属性
-	    $attr_list = get_cat_attr_list($goods['goods_type'], $goods_id);
+	    $attr_list = get_goodslib_cat_attr_list($goods['goods_type'], $goods_id);
 	    $this->assign('attr_list', $attr_list);
+	    
+	    //货品
+	    $product = goodslib_product_list($goods_id, '');
+// 	    _dump($product,1);
+	    $this->assign('products', $product);
 	    
 	    $this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
 	    /* 取得分类、品牌 */
