@@ -431,6 +431,11 @@ class merchant extends ecjia_merchant {
 	    }
 	    $this->assign('goods_photo_list', $goods_photo_list);
 	    
+	    // 获得商品的规格和属性
+	    $properties = get_goodslib_properties($goods_id);
+// 	    _dump($properties,1);
+	    $this->assign('specification', $properties['spe']);
+	    
 	    //商品属性
 	    $attr_list = get_goodslib_cat_attr_list($goods['goods_type'], $goods_id);
 	    $this->assign('attr_list', $attr_list);

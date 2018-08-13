@@ -308,3 +308,35 @@
 
 /*goodslib*/
 .success-page .glyphicon {font-size:36px; color:#1abc9c;}
+
+#detail .goods_spec ul {
+    /* height: 2em;
+    max-width: 49em;
+    margin-bottom: .8em; */
+	overflow:hidden;
+	padding: 0;
+	margin: 0;
+	margin-top:4px;
+}
+#detail .goods_spec li {
+    cursor: pointer;
+    float: left;
+    border: 1px solid #eaeaea;
+    border-radius: 50px;
+    padding: 3px 10px;
+    display: block;
+    font-size: 14px;
+    text-align: center;
+    margin-right: 10px;
+    height: 26px;
+    line-height: 20px;
+    color: #333;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#detail .goods_spec .green {
+    background-color: #47aa4d;
+    color: #FFF!important;
+    border: 0!important
+}

@@ -344,6 +344,7 @@
 	/* 商品预览 */
 	app.preview = {
 		init: function() {
+			app.preview.goods_attr();
 
 			var browse = window.navigator.appName.toLowerCase();
 			var MyMar;
@@ -420,6 +421,42 @@
 				};
 			}
 		},
+		
+		goods_attr: function() {
+			/*
+	         * 切换商品规格
+	         */
+            $(".tb-sku ul").each(function() {
+                //取出ul下的第一个li
+                var li = $(this).children().first();
+                li.addClass("green");
+                app.preview.calculate_price();
+            });
+            $(".goods_spec li").on("click", function(e) {
+                e.preventDefault();
+                $(this).siblings().removeClass('green');
+                $(this).siblings().css('border', '1px solid #eaeaea');
+                $(this).addClass("green");
+                $(this).css({
+                    'border': '0'
+                });
+                app.preview.calculate_price();
+            })
+		},
+		
+		calculate_price: function() {
+			var price = 0;
+            $(".green").each(function() {
+                data_price = $(this).attr('data-price');
+                if (data_price == '') {
+                    var data_price = 0;
+                };
+                price = parseFloat(price) + parseFloat(data_price);
+            });
+            var shop_price = parseFloat($("input[name='shop_price']").val());
+            var total_price = price + shop_price;
+            $(".shop_price").html(total_price);
+		}
 
 	}
 

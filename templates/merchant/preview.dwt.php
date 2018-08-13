@@ -51,7 +51,8 @@
 								     	<dt class="tb-metatit">本店售价</dt>
 								      	<dd>
 								          	<em class="tm-yen">¥</em>
-								          	<span class="tm-price">{$goods.shop_price}</span>&nbsp;&nbsp;
+								          	<span class="tm-price shop_price">{$goods.shop_price}</span>&nbsp;&nbsp;
+								          	<input type="hidden" name="shop_price" value="{$goods.shop_price}">
 								      	</dd>
 							    	</dl>
 							    	
@@ -94,6 +95,18 @@
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
+											<!-- {foreach from=$specification item=value key=key} -->
+											<dl class="tb-amount tm-clear goods_spec">
+                                            <dt class="tb-metatit">{$value.name}</dt>
+                                                <dd>
+                                                	<ul>
+                                                    <!-- {foreach from=$value.value item=val key=key} -->
+                                                    <li data-attr="{$val.id}" data-price="{$val.price}">{$val.label}</li>
+                                            		<!-- {/foreach} -->
+                                                	</ul>
+                                                </dd>
+                                            </dl>
+                                            <!-- {/foreach} -->
 											
 										</div>
 							    	</div>
