@@ -919,7 +919,7 @@ class admin extends ecjia_admin {
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(RC_Lang::get('goods::goods.goods_preview')));
         
         $this->assign('ur_here', RC_Lang::get('goods::goods.goods_preview'));
-        $this->assign('action_link', array('text' => '返回', 'href' => RC_Uri::url('goodslib/merchant/add', array('cat_id' => $_GET['cat_id']))));
+        $this->assign('action_link', array('text' => '返回', 'href' => RC_Uri::url('goodslib/admin/init')));
         
         $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_display', 1)->where('is_delete', 0)->first();
         
