@@ -41,7 +41,7 @@
 		<div class="control-group control-group-small formSep">
 			<label class="control-label">下载模板：</label>
 			<div class="controls">
-				<a href="{$demo_url}" target="_blank">下载模板</a>
+				<a href="{$demo_url}" target="_blank"><i class=" fontello-icon-download"></i>下载商品导入Excel模板</a>
 				<span class="help-block" id="">请先下载商品导入模版，再上传数据</span>
 			</div>
 		</div>
