@@ -692,7 +692,28 @@ function copy_goodslib_images($goodlib_id, $goods_id, $images_data = array()) {
     }
     
     return true;
+}
+
+function copy_goods_images($goods_id, $goodlib_id, $images_data = array()) {
+    if (empty($images_data)) {
+        $images_data = RC_DB::table('goods')->where('goods_id', $goods_id)->select('goods_thumb', 'goods_img', 'original_img')->first();
+    }
     
+    if ($images_data) {
+        foreach ($images_data as $key => $img) {
+            if (!in_array($key, array('goods_img', 'goods_thumb', 'original_img'))) {
+                return false;
+            }
+            $img_new = create_new_filename($img, $goodlib_id);
+            $img_path = RC_Upload::upload_path($img);
+            $rs = goods_imageutils::copyImage($img_path, $img_new['path']);
+            if ($rs) {
+                update_goodslib_field($goodlib_id, array($key => $img_new['relative_path']));
+            }
+        }
+    }
+    
+    return true;
 }
 
 function copy_goodslib_gallery($goodlib_id, $goods_id, $images_data = array()) {
@@ -728,7 +749,40 @@ function copy_goodslib_gallery($goodlib_id, $goods_id, $images_data = array()) {
     return true;
 }
 
-function copy_goods_desc($goodlib_id, $goods_id, $goods_desc = '') {
+function copy_goods_gallery($goods_id, $goodlib_id, $images_data = array()) {
+    if (empty($images_data)) {
+        $images_data = RC_DB::table('goods_gallery')->where('goods_id', $goods_id)->get();
+    }
+    
+    if ($images_data) {
+        foreach ($images_data as $key => $row) {
+            unset($row['img_id']);
+            $row['goods_id'] = $goodlib_id;
+            //img_url thumb_url img_original
+            
+            $img_url = create_new_filename($row['img_url'], $goodlib_id);
+            $img_url_path = RC_Upload::upload_path($row['img_url']);
+            if(goods_imageutils::copyImage($img_url_path, $img_url['path'])) {
+                $row['img_url'] = $img_url['relative_path'];
+            }
+            $thumb_url = create_new_filename($row['thumb_url'], $goodlib_id);
+            $thumb_url_path = RC_Upload::upload_path($row['thumb_url']);
+            if(goods_imageutils::copyImage($thumb_url_path, $thumb_url['path'])) {
+                $row['thumb_url'] = $thumb_url['relative_path'];
+            }
+            $img_original = create_new_filename($row['img_original'], $goodlib_id);
+            $img_original_path = RC_Upload::upload_path($row['img_original']);
+            if(goods_imageutils::copyImage($img_original_path, $img_original['path'])) {
+                $row['img_original'] = $img_original['relative_path'];
+            }
+            
+            RC_DB::table('goodslib_gallery')->insert($row);
+        }
+    }
+    return true;
+}
+
+function copy_goodslib_desc($goodlib_id, $goods_id, $goods_desc = '') {
     if (empty($goods_desc)) {
         $goods_desc = RC_DB::table('goodslib')->where('goods_id', $goodlib_id)->pluck('goods_desc');
     }
@@ -748,6 +802,31 @@ function copy_goods_desc($goodlib_id, $goods_id, $goods_desc = '') {
         //替换更新数据
         $goods_desc = str_replace($match[2], $new_match, $goods_desc);
         return update_goods_field($goods_id, array('goods_desc' => $goods_desc));
+    }
+    
+    return true;
+}
+
+function copy_goods_desc($goods_id, $goodlib_id, $goods_desc = '') {
+    if (empty($goods_desc)) {
+        $goods_desc = RC_DB::table('goods')->where('goods_id', $goods_id)->pluck('goods_desc');
+    }
+    
+    if ($goods_desc) {
+        $goods_desc = stripslashes($goods_desc);
+        //复制替换图
+        preg_match_all('/<\s*img\s+[^>]*?src\s*=\s*(\'|\")(.*?)\\1[^>]*?\/?\s*>/i', $goods_desc, $match);
+        //复制重命名原图
+        foreach($match[2] as $key => $img_url) {
+            $new_file = create_new_filename($img_url, $goodlib_id);
+            $goods_img = str_replace(RC_Upload::upload_url(), '', $img_url);
+            goods_imageutils::copyImage(RC_Upload::upload_path($goods_img), $new_file['path']);
+            
+            $new_match[$key] = $new_file['url'];
+        }
+        //替换更新数据
+        $goods_desc = str_replace($match[2], $new_match, $goods_desc);
+        return update_goodslib_field($goodlib_id, array('goods_desc' => $goods_desc));
     }
     
     return true;
@@ -787,6 +866,10 @@ function create_new_filename($goods_img, $goods_id) {
 
 function update_goods_field($goods_id, $data = array()) {
     return RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+}
+
+function update_goodslib_field($goods_id, $data = array()) {
+    return RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
 }
 
 function array_change_key($arr, $new_key) {

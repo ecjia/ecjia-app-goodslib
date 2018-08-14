@@ -272,7 +272,6 @@ class merchant extends ecjia_merchant {
 	        $is_shipping = isset($ext_info['is_shipping']) 		? intval($ext_info['is_shipping']) 		: 0;
 	        $is_on_sale = isset($ext_info['is_on_sale']) 		? intval($ext_info['is_on_sale']) 		: 0;
 	        
-	        $goods['is_on_sale'] = $is_on_sale;
 	        $goods['goods_name'] = $goods_name;
 	        $goods['goods_sn'] = $goods_sn;
 	        $goods['shop_price'] = $shop_price;
@@ -316,7 +315,7 @@ class merchant extends ecjia_merchant {
 	    }
 	    if(!empty($goods['goods_desc'])) {
 	        //复制图片-重命名
-	        copy_goods_desc($id, $new_id, $goods['goods_desc']);
+	        copy_goodslib_desc($id, $new_id, $goods['goods_desc']);
 	    }
 	    $goods_gallery = RC_DB::table('goodslib_gallery')->where('goods_id', $id)->get();
 	    if (!empty($goods_gallery)) {
