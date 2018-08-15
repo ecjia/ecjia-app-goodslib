@@ -160,6 +160,21 @@ function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
     return $row;
 }
 
+function get_goodslib_attr_list($goods_id = 0) {
+    if (empty ($goods_id)) {
+        return array();
+    }
+    $db = RC_DB::table('goodslib_attr as ga')
+    ->leftJoin('attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+    ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
+    ->where(RC_DB::raw('a.attr_input_type'), '<>', 1)->where(RC_DB::raw('ga.goods_id'), $goods_id);
+    
+    $row = $db->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
+    ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
+    ->get();
+    return $row;
+}
+
 /**
  * 根据属性数组创建属性的表单
  *

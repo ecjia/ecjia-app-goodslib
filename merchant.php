@@ -440,7 +440,7 @@ class merchant extends ecjia_merchant {
 	    $this->assign('specification', $properties['spe']);
 	    
 	    //商品属性
-	    $attr_list = get_goodslib_cat_attr_list($goods['goods_type'], $goods_id);
+	    $attr_list = get_goodslib_attr_list($goods_id);
 	    $this->assign('attr_list', $attr_list);
 	    
 	    //货品

@@ -246,10 +246,10 @@
 .attributes-list li {
 	display: inline;
 	float: left;
-	width: 220px;
+	width: 33%;
 	height: 18px;
 	overflow: hidden;
-	margin: 10px 15px 0 0;
+	margin: 10px 0 0;
 	line-height: 18px;
 	vertical-align: top;
 	white-space: nowrap;

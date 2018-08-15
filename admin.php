@@ -921,7 +921,7 @@ class admin extends ecjia_admin {
         $this->assign('ur_here', RC_Lang::get('goods::goods.goods_preview'));
         $this->assign('action_link', array('text' => '返回', 'href' => RC_Uri::url('goodslib/admin/init')));
         
-        $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_display', 1)->where('is_delete', 0)->first();
+        $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_delete', 0)->first();
         
         if (empty($goods)) {
             return $this->showmessage(RC_Lang::get('goods::goods.no_goods'), ecjia::MSGSTAT_ERROR | ecjia::MSGTYPE_HTML, array('links' => array(array('text'=> RC_Lang::get('goods::goods.back_goods_list'),'href'=>RC_Uri::url('goods/merchant/init')))));
@@ -984,7 +984,7 @@ class admin extends ecjia_admin {
         $this->assign('specification', $properties['spe']);
         
         //商品属性
-        $attr_list = get_goodslib_cat_attr_list($goods['goods_type'], $goods_id);
+        $attr_list = get_goodslib_attr_list($goods_id);
         $this->assign('attr_list', $attr_list);
         
         //货品
