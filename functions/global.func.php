@@ -148,13 +148,11 @@ function get_goodslib_cat_attr_list($cat_id, $goods_id = 0) {
         return array();
     }
     $db = RC_DB::table('attribute as a')
-    ->leftJoin('goodslib_attr as ga', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+    ->leftJoin('goodslib_attr as ga', function ($join) use ($goods_id){
+        $join->on(RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))->on(RC_DB::raw('ga.goods_id'), '=',RC_DB::raw( $goods_id));
+    })
     ->select(RC_DB::raw('a.attr_id, a.attr_name, a.attr_input_type, a.attr_type, a.attr_values, ga.attr_value, ga.attr_price'))
     ->where(RC_DB::raw('a.cat_id'), RC_DB::raw($cat_id));
-    
-    if($goods_id) {
-        $db->where(RC_DB::raw('ga.goods_id'), $goods_id);
-    }
     
     $row = $db->orderBy(RC_DB::raw('a.sort_order'), 'asc')->orderBy(RC_DB::raw('a.attr_type'), 'asc')
         ->orderBy(RC_DB::raw('a.attr_id'), 'asc')->orderBy(RC_DB::raw('ga.goods_attr_id'), 'asc')
