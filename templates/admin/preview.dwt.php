@@ -64,6 +64,7 @@
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
+											{if $cat_name}
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">商品分类</dt>
 											    <dd id="J_Amount">
@@ -71,6 +72,8 @@
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
+											{/if}
+											{if $brand_name}
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">商品品牌</dt>
 											    <dd id="J_Amount">
@@ -78,6 +81,7 @@
 											        <span id="J_StockTips"></span>
 											    </dd>
 											</dl>
+											{/if}
 											<dl class="tb-amount tm-clear">
 											    <dt class="tb-metatit">添加时间</dt>
 											    <dd id="J_Amount">
