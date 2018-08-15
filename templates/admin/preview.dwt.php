@@ -181,7 +181,7 @@
                                         <th>货号</th>
                                         <th class="text-center">{foreach from=$products.attr_name item=attr key=k}{if $k gt 0}|{/if}{$attr}{/foreach}</th>
                                         <th class="text-center">属性价</th>
-                                        <th>规格图片</th>
+                                        <!-- <th>规格图片</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -190,7 +190,7 @@
                                         <td>{$row.product_sn}</td>
                                         <td class="text-center">{foreach from=$row.goods_attr item=attr key=k}{if $k gt 0}|{/if}{$attr}{/foreach}</td>
                                         <td class="text-center">{$row.goods_attr_price}</td>
-                                        <td>{$row.attr_img_file}</td>
+                                        <!-- <td>{$row.attr_img_file}</td> -->
                                     </tr>
                                     <!-- {/foreach} -->
                                 </tbody>
