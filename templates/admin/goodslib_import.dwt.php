@@ -49,7 +49,7 @@
 			<label class="control-label">上传文件：</label>
 			<div class="controls">
 				<div class="fileupload fileupload-new" data-provides="fileupload">
-					<div class="fileupload-preview fileupload-exists thumbnail"></div>
+					<div class="fileupload-preview fileupload-exists thumbnail"><input type="hidden" name="old_img" value="1" /></div>
 					<div>
 						<span class="btn btn-file">
 							<span class="fileupload-new">选择文件</span>
