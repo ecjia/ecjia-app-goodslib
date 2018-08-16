@@ -37,7 +37,7 @@
 
 <div class="row-fluid list-page">
 	<div class="span12">
-	<form class="form-horizontal" enctype="multipart/form-data" action="{$form_action}" method="post" name="theForm">
+	<form class="form-horizontal" enctype="multipart/form-data" action="{$form_action}" method="post" name="">
 		<div class="control-group control-group-small formSep">
 			<label class="control-label">下载模板：</label>
 			<div class="controls">
@@ -48,26 +48,15 @@
 		<div class="control-group control-group-small formSep">
 			<label class="control-label">上传文件：</label>
 			<div class="controls">
-				<div class="fileupload fileupload-new" data-provides="fileupload">
-					<div class="fileupload-preview fileupload-exists thumbnail"><input type="hidden" name="old_img" value="1" /></div>
-					<div>
-						<span class="btn btn-file">
-							<span class="fileupload-new">选择文件</span>
-							<span class="fileupload-exists">更换文件</span>
-							<input type="file" name="goodslib" />
-						</span>
-						<a class="btn fileupload-exists" data-dismiss="fileupload" href="javascript:;" >{lang key='system::system.drop'}</a>
-					</div>
-				</div>
-				<span class="help-block" id="">目前仅支持（.xls）格式文件，文件大小请控制在20M以内</span>
-			</div>
-			<div class="controls">
     			<div data-provides="fileupload" class="fileupload fileupload-new"><input type="hidden" value="" name="">
-    				<span class="btn btn-file"><span class="fileupload-new">选择文件</span><span class="fileupload-exists">更换文件</span><input type="file" name=""></span>
-    				<span class="fileupload-preview"></span>
-    				<a style="float: none" data-dismiss="fileupload" class="close fileupload-exists" href="index.php-uid=1&amp;page=form_extended.html#">×</a>
+    				<span class="btn btn-file">
+        				<span class="fileupload-new">选择文件</span>
+        				<span class="fileupload-exists">更换文件</span>
+        				<input type="file" name="goodslib">
+    				</span>
+    				<span class="fileupload-preview m_l10"></span>
+    				<a style="float: none" data-dismiss="fileupload" class="close fileupload-exists" href="javascript:;">×</a>
     			</div>
-			
 				<span class="help-block" id="">目前仅支持（.xls）格式文件，文件大小请控制在20M以内</span>
 			</div>
 		</div>
