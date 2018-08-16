@@ -37,7 +37,7 @@
 
 <div class="row-fluid list-page">
 	<div class="span12">
-	<form class="form-horizontal" enctype="multipart/form-data" action="{$form_action}" method="post" name="">
+	<form class="form-horizontal" enctype="multipart/form-data" action="{$form_action}" method="post" name="theForm">
 		<div class="control-group control-group-small formSep">
 			<label class="control-label">下载模板：</label>
 			<div class="controls">
