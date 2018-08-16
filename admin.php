@@ -72,11 +72,8 @@ class admin extends ecjia_admin {
         
         RC_Style::enqueue_style('splashy-css', RC_Uri::admin_url() . '/statics/images/splashy/splashy.css');
         
-        //时间控件
-        RC_Script::enqueue_script('bootstrap-datepicker', RC_Uri::admin_url('statics/lib/datepicker/bootstrap-datepicker.min.js'));
-        RC_Style::enqueue_style('datepicker', RC_Uri::admin_url('statics/lib/datepicker/datepicker.css'));
-        
         RC_Script::enqueue_script('jquery-uniform');
+        RC_Script::enqueue_script('bootstrap-placeholder');
         RC_Style::enqueue_style('uniform-aristo');
         RC_Script::enqueue_script('jq_quicksearch', RC_Uri::admin_url() . '/statics/lib/multi-select/js/jquery.quicksearch.js', array('jquery'), false, true);
         
