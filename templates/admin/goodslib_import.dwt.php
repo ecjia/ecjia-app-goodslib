@@ -61,6 +61,15 @@
 				</div>
 				<span class="help-block" id="">目前仅支持（.xls）格式文件，文件大小请控制在20M以内</span>
 			</div>
+			<div class="controls">
+    			<div data-provides="fileupload" class="fileupload fileupload-new"><input type="hidden" value="" name="">
+    				<span class="btn btn-file"><span class="fileupload-new">选择文件</span><span class="fileupload-exists">更换文件</span><input type="file" name=""></span>
+    				<span class="fileupload-preview"></span>
+    				<a style="float: none" data-dismiss="fileupload" class="close fileupload-exists" href="index.php-uid=1&amp;page=form_extended.html#">×</a>
+    			</div>
+			
+				<span class="help-block" id="">目前仅支持（.xls）格式文件，文件大小请控制在20M以内</span>
+			</div>
 		</div>
 		<div class="row-fluid">
         	<label class="control-label"></label>
