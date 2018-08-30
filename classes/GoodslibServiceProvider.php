@@ -9,7 +9,7 @@ class GoodslibServiceProvider extends  AppParentServiceProvider
     
     public function boot()
     {
-        $this->package('ecjia/app-goodslib', null, dirname(__DIR__));
+        $this->package('ecjia/app-goodslib');
     }
     
     public function register()
