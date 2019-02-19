@@ -44,30 +44,37 @@
 //
 //  ---------------------------------------------------------------------------------
 //
+
+/**
+ * js语言包设置
+ */
+
 defined('IN_ECJIA') or exit('No permission resources.');
 
-class goodslib_merchant_hooks {
+return array(
+    //
+    'attribute_page' =>array(
+        'spec_name_required'	=> __('请输入规格名称', 'goodslib'),
+        'attr_name_required'	=> __('请输入属性名称', 'goodslib'),
+        'cat_id_select'			=> __('请选择所属商品类型', 'goodslib'),
+    ),
+    'goods_list_page' => array(
+        'pls_select'			=> __('请选择...', 'goodslib'),
+        'brand_name_empty'		=> __('品牌名称不能为空', 'goodslib'),
+        'cat_name_empty'		=> __('分类名称不能为空', 'goodslib'),
+    ),
 
-    public static function goodslib_merchant_menu_api($menus) {
-        //在父级菜单里添加权限值
-        $menus->add_purview('goodslib_manage');
-    	$menu = ecjia_merchant::make_admin_menu('02_goodslib_add', __('一键导入', 'goodslib'), RC_Uri::url('goodslib/merchant/init'), 12)->add_purview('goodslib_manage')->add_icon('fa-plus-square-o');
-    	 
-    	$menus->add_submenu($menu);
+    'merchant_goods_list_page' => array(
+        'add_goods_ok'          => __('添加商品成功', 'goodslib'),
+        'import_goods'          => __('开始导入', 'goodslib'),
+        'importing'             => __('导入中', 'goodslib'),
+        'goods_name_required'   => __('请输入商品名称！', 'goodslib'),
+        'shop_price_required'   => __('请输入商品价格！', 'goodslib'),
+        'goods_number_required' => __('请输入商品库存！', 'goodslib'),
+        'import_goods_required' => __('请选择需要导入的商品！', 'goodslib'),
+        'not_compute'           => __('未计算', 'goodslib'),
+        'empty_data'            => __('暂无内容', 'goodslib'),
+    ),
 
-    	$submenus = $menus->submenus();
-    	if ( !empty($submenus) ) {
-            foreach ($menus->submenus() as $menu) {
-                if ($menu->sort == 10) {
-                    $menu->add_purview('goodslib_manage');
-                }
-            }
-        }
-
-    	return $menus;
-    }
-}
-
-RC_Hook::add_filter( 'goods_merchant_menu_api', array('goodslib_merchant_hooks', 'goodslib_merchant_menu_api') );
-
-// end
+);
+//end
