@@ -49,6 +49,7 @@ defined('IN_ECJIA') or exit('No permission resources.');
 /**
  * ECJIA 属性规格管理
  */
+use Ecjia\App\Goods\GoodsAttr;
 class admin_attribute extends ecjia_admin {
 	public function __construct() {
 		parent::__construct();
@@ -134,6 +135,9 @@ class admin_attribute extends ecjia_admin {
 		/* 取得商品分类列表 */
 		$this->assign('goods_type_list', goods_type_list($cat_id, false));
 		$this->assign('attr_groups', get_attr_groups($cat_id));
+        $this->assign('attr_indexs', Ecjia\App\Goods\GoodsAttr::getAttrIndex());
+        $this->assign('attr_types', Ecjia\App\Goods\GoodsAttr::getAttrType());
+        $this->assign('attr_input_types', Ecjia\App\Goods\GoodsAttr::getAttrInputType());
 		
 		$this->assign('ur_here', __('添加属性', 'goodslib'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_attribute/init', 'cat_id='.$cat_id), 'text' => __('商品属性', 'goodslib')));
@@ -209,6 +213,9 @@ class admin_attribute extends ecjia_admin {
 		}
 		$this->assign('attr', $attr);
 		$this->assign('attr_groups', get_attr_groups($attr['cat_id']));
+        $this->assign('attr_indexs', Ecjia\App\Goods\GoodsAttr::getAttrIndex());
+        $this->assign('attr_types', Ecjia\App\Goods\GoodsAttr::getAttrType());
+        $this->assign('attr_input_types', Ecjia\App\Goods\GoodsAttr::getAttrInputType());
 		
 		$info = RC_DB::table('goods_type')->where('cat_id', $attr['cat_id'])->first();
 		
