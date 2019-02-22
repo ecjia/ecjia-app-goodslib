@@ -1476,7 +1476,7 @@ class admin extends ecjia_admin {
             } else {
                 $arr['pjaxurl'] = RC_Uri::url('goodslib/admin/product_list', array('goods_id' => $product['goods_id']));
             }
-            $message = __('保存货品成功', 'goodslib');;
+            $message = __('保存货品成功', 'goodslib');
         }
         return $this->showmessage($message, ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, $arr);
     }
