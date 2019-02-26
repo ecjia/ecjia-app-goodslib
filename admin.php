@@ -1140,7 +1140,7 @@ class admin extends ecjia_admin {
         $goods_id = intval($_REQUEST['goods_id']);
         $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->first();
         if (empty($goods) === true) {
-            return $this->showmessage(sprintf(sprintf(__('找不到ID为 %s 的商品！', 'goodslib'), $goods_id), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goodslib'), 'href' => 'javascript:history.go(-1)')))), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR);
+            return $this->showmessage(sprintf(__('找不到ID为 %s 的商品！', 'goodslib'), $goods_id), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goodslib'), 'href' => 'javascript:history.go(-1)'))));
         }
         if($goods['goods_desc']) {
             $goods['goods_desc'] = stripslashes($goods['goods_desc']);
