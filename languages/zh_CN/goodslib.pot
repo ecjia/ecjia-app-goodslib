@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecjia App goodslib 1.27.4\n"
 "Report-Msgid-Bugs-To: https://make.ecjia.com/polyglots/\n"
-"POT-Creation-Date: 2019-03-01 01:43:38+00:00\n"
+"POT-Creation-Date: 2019-03-06 09:04:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -240,7 +240,7 @@ msgstr ""
 msgid "货品修改成功！"
 msgstr ""
 
-#: admin_attribute.php:74 admin_goods_spec.php:73 admin_goods_spec.php:83
+#: admin_attribute.php:70 admin_goods_spec.php:69 admin_goods_spec.php:83
 #: apis/goodslib_admin_menu_api.class.php:58
 msgid "商品库规格"
 msgstr ""
