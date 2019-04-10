@@ -152,7 +152,7 @@ class product_image_data {
 	    $goods_thumb = $this->auto_generate_thumb ? $this->goods_format->getThumbPostion() : '';
 	    
 	    if (!$goods_original || !$goods_img) {
-	        return new ecjia_error('upload_goods_image_error', __('商品图片路径无效', 'goods'));
+	        return new ecjia_error('upload_goods_image_error', __('商品图片路径无效', 'goodslib'));
 	    }
 	    
 	    /* 如果有上传图片，删除原来的商品图 */
@@ -181,7 +181,7 @@ class product_image_data {
 	    if (ecjia::config('auto_generate_gallery')) {
 	        $data = $this->update_gallery($img_desc);
 	        if (empty($data['img_id'])) {
-	            return new ecjia_error('copy_gallery_image_fail', __('商品相册复制失败', 'goods'));
+	            return new ecjia_error('copy_gallery_image_fail', __('商品相册复制失败', 'goodslib'));
 	        }
 	    }
 	    
@@ -207,7 +207,7 @@ class product_image_data {
 
 	    $goods_thumb = $this->goods_format->getThumbPostion();
 	    if (!$goods_thumb) {
-	        return new ecjia_error('upload_thumb_error', __('商品缩略图路径无效', 'goods'));
+	        return new ecjia_error('upload_thumb_error', __('商品缩略图路径无效', 'goodslib'));
 	    }
 	     
 	    /* 如果有上传图片，删除原来的商品图 */
@@ -236,7 +236,7 @@ class product_image_data {
 	    $goods_thumb = $this->gallery_format->getThumbPostion();
 	    
 	    if (!$goods_original || !$goods_img) {
-	        return new ecjia_error('upload_goods_gallery_error', __('商品图片路径无效', 'goods'));
+	        return new ecjia_error('upload_goods_gallery_error', __('商品图片路径无效', 'goodslib'));
 	    }
 
 	    $data = array(
