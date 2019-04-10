@@ -350,3 +350,11 @@
 .admin_detail #detail, .admin_detail .tm-detail-meta {
 	width:100%!important;
 }
+
+.fileupload-btn-product, .fileupload-btn-product:hover, .fileupload-btn-product:after{
+	width: 220px;
+	height: 220px;
+}
+.fileupload-btn-product .fileupload-exists {
+	top:31%;
+}
