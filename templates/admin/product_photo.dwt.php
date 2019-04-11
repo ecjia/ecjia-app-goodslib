@@ -39,7 +39,7 @@
 
         <div class="row-fluid">
             <div class="span12">
-                <div class="m_b10">
+                <div class="m_b10 help-block">
                     注：相册非必填项，若不上传，默认使用主商品相册图。
                 </div>
                 <div class="fileupload" data-action="{$form_action}" data-remove="{url path='goodslib/admin_gallery/drop_image'}">

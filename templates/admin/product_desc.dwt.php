@@ -38,6 +38,7 @@
         </ul>
 
         <div class="panel-body panel-body-small">
+            <div class="m_b10 help-block">注：图文详情非必填项，若不设置，默认使用主商品图文详情内容。</div>
             <div class="form">
                 <form class="form-horizontal" enctype="multipart/form-data" action="{$form_action}" method="post" name="theForm">
                     <div class="row-fluid control-group">
