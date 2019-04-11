@@ -19,7 +19,7 @@
     </h3>
 </div>
 
-<div class="row-fluid">
+<div class="row-fluid product-edit">
     <div class="span3">
         <div class="setting-group">
             <span class="setting-group-title">{t domain="goodslib"}货品（SKU）{/t}</span>
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                     <div class="span7 f_l">
-                        <div class="control-group m_t10">
+                        <div class="control-group control-group-small m_t10">
                             <label class="control-label">{t domain="goodslib"}商品名称：{/t}</label>
                             <div class="controls">
                                 <input class="form-control w280" name="product_name" type="text" value="{$info.product_name|escape}" style="color:{$goods_name_color};"/>
@@ -73,21 +73,21 @@
                             </div>
                         </div>
 
-                        <div class="control-group">
+                        <div class="control-group control-group-small">
                             <label class="control-label">{t domain="goodslib"}商品货号：{/t}</label>
                             <div class="controls">
                                 <input class="form-control" name="product_sn" type="text" value="{$info.product_sn|escape}" />
                                 <span class="help-block">{t domain="goodslib"}非必填，系统默认自动生成{/t}</span>
                             </div>
                         </div>
-                        <div class="control-group">
+                        <div class="control-group control-group-small">
                             <label class="control-label">{t domain="goodslib"}价格：{/t}</label>
                             <div class="controls">
                                 <input class="form-control" name="product_shop_price" type="text" value="{$info.product_shop_price}" />
                                 <span class="help-block">{t domain="goodslib"}非必填，若不填则默认使用主商品价格{/t}</span>
                             </div>
                         </div>
-                        <div class="control-group">
+                        <div class="control-group control-group-small">
                             <label class="control-label">{t domain="goodslib"}条形码：{/t}</label>
                             <div class="controls">
                                 <input class="form-control" name="product_bar_code" type="text" value="{$info.product_bar_code|escape}" />
@@ -95,7 +95,7 @@
                             </div>
                         </div>
 
-                        <div class="control-group">
+                        <div class="control-group control-group-small">
                             <input name="product_id" type="hidden" value="{$info.product_id}">
                             <label class="control-label"> </label>
                             <input type="submit" name="submit" value="{t domain="goodslib"}完成{/t}" class="btn btn-gebo" />
