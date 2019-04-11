@@ -1314,6 +1314,11 @@ class admin extends ecjia_admin {
                             RC_DB::table('goodslib_attr')->where('goods_attr_id', $info['goods_attr_id'])->update($data);
                         }
                     } else {
+                        //查询要删除的属性是否存在对应货品
+                        $count = RC_DB::table('goodslib_products')->where('goods_id', $goods_id)->whereRaw(RC_DB::raw(" CONCAT('|', goods_attr, '|') like '%|".$info['goods_attr_id']."|%' "))->count();
+                        if($count) {
+                            return $this->showmessage(__('请先删除关联的货品再修改规格属性', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+                        }
                         RC_DB::table('goodslib_attr')->where('goods_attr_id', $info['goods_attr_id'])->delete();
                     }
                 }
