@@ -1443,6 +1443,7 @@ class admin extends ecjia_admin {
 
         $product_id = !empty($_POST['product_id']) ? intval($_POST['product_id']) : 0;
         $info = RC_DB::table('goodslib_products')->where('product_id', $product_id)->first();
+        $goods = RC_DB::table('goodslib')->where('goods_id', $info['goods_id'])->first();
 
         /* 检查货号是否重复 */
         if (trim($_POST['product_sn'])) {
@@ -1492,22 +1493,30 @@ class admin extends ecjia_admin {
         $goods_thumb 	= ''; // 初始化商品缩略图
         $img_original	= ''; // 初始化原始图片
 
-        /* 如果没有输入商品货号则自动生成一个商品货号 */
-        /*if (empty($_POST['goods_sn'])) {
-            $goods_sn = generate_goods_sn($goods_id);
-        } else {
-            $goods_sn = trim($_POST['goods_sn']);
-        }*/
-
         /* 处理商品数据 */
         $product_name 	= !empty($_POST['product_name']) 		? $_POST['product_name'] 				: '';
         $shop_price 	= !empty($_POST['product_shop_price']) 	? $_POST['product_shop_price'] 			: 0;
+        $product_sn     = !empty($_POST['product_sn'])          ? trim($_POST['product_sn'])                : '';
 
         $product_bar_code = isset($_POST['product_bar_code']) 	? $_POST['product_bar_code'] 	: '';
 
+        //货品号不为空
+        if (!empty($product_sn)) {
+            /* 检测：货品货号是否在商品表和货品表中重复 */
+            if (check_goodslib_sn_exist($product_sn, $info['goods_id'])) {
+                return $this->showmessage(__('货品号已存在，请修改', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+            if (check_goodslib_product_sn_exist($product_sn, $product_id)) {
+                return $this->showmessage(__('货品号已存在，请修改', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+        } else {
+            //货品号为空 自动补货品号
+            $product_sn = $goods['goods_sn'] . "g_p" . $product_id;
+        }
+
         $data = array(
             'product_name'				=> rc_stripslashes($product_name),
-            'product_sn'			  	=> trim($_POST['product_sn']),
+            'product_sn'			  	=> $product_sn,
             'product_shop_price'		=> $shop_price,
             'product_bar_code'		  	=> $product_bar_code,
         );
@@ -1516,7 +1525,7 @@ class admin extends ecjia_admin {
         /* 记录日志 */
         $log_object = $product_name;
         if(empty($log_object)) {
-            $log_object = RC_DB::table('goodslib')->where('goods_id', $info['goods_id'])->pluck('goods_name');
+            $log_object = $goods['goods_name'];
         }
         ecjia_admin::admin_log($log_object, 'edit', 'goodslib_product');
 
