@@ -110,6 +110,7 @@ class admin extends ecjia_admin {
         $this->db_goods = RC_Model::model('goods/goods_model');
         
         ecjia_admin_log::instance()->add_object('goodslib', __('商品库', 'goodslib'));
+        ecjia_admin_log::instance()->add_object('goodslib_product', __('商品库货品', 'goodslib'));
     }
     
     /**
@@ -1508,8 +1509,11 @@ class admin extends ecjia_admin {
         RC_DB::table('goodslib_products')->where('product_id', $product_id)->update($data);
 
         /* 记录日志 */
-        ecjia_admin::admin_log($_POST['product_name'], 'edit', 'goodslib');
-
+        $log_object = $product_name;
+        if(empty($log_object)) {
+            $log_object = RC_DB::table('goodslib')->where('goods_id', $info['goods_id'])->pluck('goods_name');
+        }
+        ecjia_admin::admin_log($log_object, 'edit', 'goodslib_product');
 
         /* 更新上传后的商品图片 */
         if ($proc_goods_img) {
@@ -1622,7 +1626,11 @@ class admin extends ecjia_admin {
         RC_DB::table('goodslib_products')->where('product_id', $product_id)->where('goods_id', $goods_id)->update($data);
 
         /* 记录日志 */
-        ecjia_admin::admin_log($goods['goods_name'], 'edit', 'goods');
+        $log_object = $info['product_name'];
+        if(empty($log_object)) {
+            $log_object = $goods['goods_name'];
+        }
+        ecjia_admin::admin_log($log_object, 'edit', 'goodslib_product');
 
         /* 提示页面 */
 
