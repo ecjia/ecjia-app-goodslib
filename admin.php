@@ -1538,8 +1538,8 @@ class admin extends ecjia_admin {
             }
         }
 
-
-        return $this->showmessage(__('编辑商品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+        $pjaxurl = RC_Uri::url('goodslib/admin/product_edit', "id=$product_id&goods_id=".$info['goods_id']);
+        return $this->showmessage(__('编辑货品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
 
     }
 
