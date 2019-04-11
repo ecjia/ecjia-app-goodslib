@@ -1813,9 +1813,14 @@ class admin extends ecjia_admin {
         $this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
         
         $product_id = !empty($_GET['id']) ? intval($_GET['id']) : 0;
-        
+
+        $image_data = new product_image_data('', '', '', 0, $product_id);
+        $image_data->delete_images();
+
         $result = RC_DB::table('goodslib_products')->where('product_id', $product_id)->delete();
         if ($result) {
+            $image_data->delete_gallery();
+            RC_DB::table('goodslib_gallery')->where('product_id', $product_id)->delete();
             //记录日志
             ecjia_admin::admin_log('', 'trash', 'products');
         }

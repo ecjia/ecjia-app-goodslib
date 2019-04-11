@@ -94,10 +94,16 @@ class admin_gallery_product extends ecjia_admin {
         	'marketPriceRate'	=> ecjia::config('market_price_rate'),
         	'integralPercent'	=> ecjia::config('integral_percent'),
         );
+        RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/product.js', __FILE__), array(), false, 1);
         RC_Script::localize_script('goods_list', 'admin_goodsList_lang', $goods_list_jslang );
+        RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
+
+        $goods_id = intval($_GET['goods_id']);
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib'), RC_Uri::url('goodslib/admin/init')));
-		$this->assign('ur_here', __('编辑商品相册', 'goodslib'));
-        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('编辑商品相册', 'goodslib')));
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品列表', 'goodslib'), RC_Uri::url('goodslib/admin/product_list', 'goods_id='.$goods_id)));
+        $ur_here = __('编辑货品（SKU）', 'goodslib');
+        ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here($ur_here));
+        $this->assign('ur_here', $ur_here);
         ecjia_screen::get_current_screen()->add_help_tab(array(
 	        'id'		=> 'overview',
 	        'title'		=> __('概述', 'goodslib'),
@@ -153,10 +159,10 @@ class admin_gallery_product extends ecjia_admin {
         }
 		
         //设置选中状态,并分配标签导航
-        $this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin/init'), 'text' => __('商品列表', 'goodslib')));
+        $this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin/product_list', ['goods_id' => $goods_id]), 'text' => __('商品编辑', 'goodslib')));
 
         $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->first();
-        $this->assign('goods_name', $goods['goods_name']);
+        $this->assign('goods_name', 		sprintf(__('商品名称：%s', 'goodslib'), $goods['goods_name']));
         $this->assign('goods_id', $goods_id);
         $this->assign('img_list', $img_list);
         $this->assign('form_action', RC_Uri::url('goodslib/admin_gallery_product/insert', "goods_id=$goods_id".'&id='.$product_id));
