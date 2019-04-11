@@ -1495,7 +1495,7 @@ class admin extends ecjia_admin {
 
         /* 处理商品数据 */
         $product_name 	= !empty($_POST['product_name']) 		? $_POST['product_name'] 				: '';
-        $shop_price 	= !empty($_POST['product_shop_price']) 	? $_POST['product_shop_price'] 			: 0;
+        $shop_price 	= $_POST['product_shop_price'] != '' 	? $_POST['product_shop_price'] 				: NULL;
         $product_sn     = !empty($_POST['product_sn'])          ? trim($_POST['product_sn'])                : '';
 
         $product_bar_code = isset($_POST['product_bar_code']) 	? $_POST['product_bar_code'] 	: '';
