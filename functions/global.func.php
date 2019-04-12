@@ -851,6 +851,62 @@ function copy_product_gallery($product_id, $goodlib_product_id, $goodlib_id, $im
     return true;
 }
 
+function copy_goodslib_product_images($goodlib_product_id, $product_id, $images_data = array()) {
+    if (empty($images_data)) {
+        $images_data = RC_DB::table('goodslib_products')->where('product_id', $goodlib_product_id)->select('product_thumb', 'product_img', 'product_original_img')->first();
+    }
+
+    if ($images_data) {
+        foreach ($images_data as $key => $img) {
+            if (!in_array($key, array('product_thumb', 'product_img', 'product_original_img'))) {
+                return false;
+            }
+            $img_new = create_new_filename($img, $product_id);
+            $img_path = RC_Upload::upload_path($img);
+            $rs = goods_imageutils::copyImage($img_path, $img_new['path']);
+            if ($rs) {
+                update_goods_products_field($product_id, array($key => $img_new['relative_path']));
+            }
+        }
+    }
+
+    return true;
+}
+
+function copy_goodslib_product_gallery($goodlib_product_id, $product_id, $goods_id, $images_data = array()) {
+    if (empty($images_data)) {
+        $images_data = RC_DB::table('goodslib_gallery')->where('product_id', $goodlib_product_id)->get();
+    }
+
+    if ($images_data) {
+        foreach ($images_data as $key => $row) {
+            unset($row['img_id']);
+            $row['product_id'] = $product_id;
+            $row['goods_id'] = $goods_id;
+            //img_url thumb_url img_original
+
+            $img_url = create_new_filename($row['img_url'], $product_id);
+            $img_url_path = RC_Upload::upload_path($row['img_url']);
+            if(goods_imageutils::copyImage($img_url_path, $img_url['path'])) {
+                $row['img_url'] = $img_url['relative_path'];
+            }
+            $thumb_url = create_new_filename($row['thumb_url'], $product_id);
+            $thumb_url_path = RC_Upload::upload_path($row['thumb_url']);
+            if(goods_imageutils::copyImage($thumb_url_path, $thumb_url['path'])) {
+                $row['thumb_url'] = $thumb_url['relative_path'];
+            }
+            $img_original = create_new_filename($row['img_original'], $product_id);
+            $img_original_path = RC_Upload::upload_path($row['img_original']);
+            if(goods_imageutils::copyImage($img_original_path, $img_original['path'])) {
+                $row['img_original'] = $img_original['relative_path'];
+            }
+
+            RC_DB::table('goods_gallery')->insert($row);
+        }
+    }
+    return true;
+}
+
 
 function copy_goodslib_desc($goodlib_id, $goods_id, $goods_desc = '') {
 //     if (empty($goods_desc)) {
@@ -906,6 +962,10 @@ function copy_product_desc($product_id, $goodlib_product_id, $product_desc = '')
 
 }
 
+function copy_goodslib_product_desc ($goodlib_product_id, $product_id, $product_desc = '') {
+
+}
+
 function create_new_filename($goods_img, $goods_id) {
     
     if (strpos($goods_img, 'http://') !== false || strpos($goods_img, 'https://') !== false) {
@@ -948,6 +1008,10 @@ function update_goodslib_field($goods_id, $data = array()) {
 
 function update_goodslib_products_field($product_id, $data = array()) {
     return RC_DB::table('goodslib_products')->where('product_id', $product_id)->update($data);
+}
+
+function update_goods_products_field($product_id, $data = array()) {
+    return RC_DB::table('products')->where('product_id', $product_id)->update($data);
 }
 
 function array_change_key($arr, $new_key) {
