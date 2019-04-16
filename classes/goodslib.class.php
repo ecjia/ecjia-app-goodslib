@@ -155,6 +155,7 @@ class goodslib {
         		} else {
         		    $rows[$k]['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
         		}
+                $rows[$k]['product_list'] = RC_DB::table('goodslib_products')->where('goods_id', $v['goods_id'])->get();
         	}
         }
         return array(
