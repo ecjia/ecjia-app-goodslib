@@ -97,16 +97,16 @@
         <div class="hide">
             <table class="clone_div">
                 <tr class="attr_row">
-                    <!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
-                    <td>
+                    <td><!-- {foreach from=$attribute item=attribute_value key=attribute_key} -->
+                        <div class="f_l m_r5">
                         <select name="attr[{$attribute_value.attr_id}][]" class="w150">
                             <option value="0" selected>{t domain="goodslib"}请选择...{/t}</option>
                             <!-- {foreach from=$attribute_value.attr_values item=value} -->
                                 <option value="{$value}">{$value}</option>
                             <!-- {/foreach} -->
                         </select>
-                    </td>
-                    <!-- {/foreach} -->
+                        </div>
+                    <!-- {/foreach} --></td>
                     <td><input class="w150" type="text" name="product_sn[]" value="" size="20"/></td>
                     <td><a class="no-underline" data-toggle="clone_product" data-parent=".attr_row" href="javascript:;"><i class="fontello-icon-plus"></i></a> </td>
                 </tr>
