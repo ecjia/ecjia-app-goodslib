@@ -124,8 +124,12 @@ class admin extends ecjia_admin {
         $this->assign('ur_here', __('商品库商品（SPU）', 'goodslib'));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib')));
         
-        $this->assign('cat_list', cat_list(0, $cat_id, false));
-        $this->assign('brand_list', get_brand_list());
+//        $this->assign('cat_list', cat_list(0, $cat_id, false));
+
+        $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
+        $this->assign('cat_list_option', $cat_list_option);
+
+        $this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
         
         $goods_list = goodslib::goods_list(0);
         
