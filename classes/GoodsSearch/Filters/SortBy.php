@@ -14,7 +14,7 @@ use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
  * 商品列表排序
- * @author Administrator
+ * @author royalwang
  *
  */
 class SortBy implements FilterInterface
