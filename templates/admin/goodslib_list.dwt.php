@@ -94,13 +94,13 @@
 						</a>
 					</td>
 					<td class="hide-edit-area ">
-                        {if $goods.product_list}<span class="label-orange">{t domain="goodslib"}多货品{/t}{/if}</span>{$goods.goods_name|escape:html}
+                        {if $goods.has_products}<span class="label-orange">{t domain="goodslib"}多货品{/t}{/if}</span>{$goods.goods_name|escape:html}
 						<br/>
 						<div class="edit-list">
 							<a class="data-pjax" href='{url path="goodslib/admin/edit" args="goods_id={$goods.goods_id}"}'>{t domain="goodslib"}编辑{/t}</a>&nbsp;|&nbsp;
 							<a class="data-pjax" href='{url path="goodslib/admin_gallery/init" args="goods_id={$goods.goods_id}"}'>{t domain="goodslib"}商品相册{/t}</a>&nbsp;|&nbsp;
 							<a class="data-pjax" href='{url path="goodslib/admin/edit_goods_attr" args="goods_id={$goods.goods_id}"}'>{t domain="goodslib"}商品属性{/t}</a>&nbsp;|&nbsp;
-							{if $specifications[$goods.goods_type] neq ''}<a target="_blank" href='{url path="goodslib/admin/product_list" args="goods_id={$goods.goods_id}"}'>{t domain="goodslib"}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
+							{if $goods.has_products}<a target="_blank" href='{url path="goodslib/admin/product_list" args="goods_id={$goods.goods_id}"}'>{t domain="goodslib"}货品列表{/t}</a>&nbsp;|&nbsp;{/if}
 							<a target="_blank" href='{url path="goodslib/admin/preview" args="goods_id={$goods.goods_id}"}'>{t domain="goodslib"}预览{/t}</a>&nbsp;|&nbsp;
 							<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain="goodslib"}您确定要把该商品放入回收站吗？{/t}" href='{url path="goodslib/admin/remove" args="id={$goods.goods_id}"}'>{t domain="goodslib"}删除{/t}</a>
 						</div>

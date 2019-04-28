@@ -159,8 +159,8 @@ class admin extends ecjia_admin {
         $this->assign('goods_list', $goods_list);
         $this->assign('filter', $goods_list['filter']);
         
-        $specifications = get_goods_type_specifications();
-        $this->assign('specifications', $specifications);
+//        $specifications = get_goods_type_specifications();
+//        $this->assign('specifications', $specifications);
         
         $this->assign('action_link',      	array('text' => __('添加商品', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/add')));
         $this->assign('form_action', RC_Uri::url('goodslib/admin/batch'));

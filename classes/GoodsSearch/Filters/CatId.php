@@ -38,14 +38,14 @@ class CatId implements FilterInterface
     			$extension_goods_id = GoodsCategory::getExtensionGoods($children);
     			if (!empty($extension_goods_id)) {
     				$subQuery = $builder->where(function ($query) use ($children, $extension_goods_id) {
-    					$query->whereIn('goods.cat_id', $children)
+    					$query->whereIn('goodslib.cat_id', $children)
     					->orWhere(function ($query) use ($extension_goods_id) {
-    						$query->whereIn('goods.goods_id', $extension_goods_id);
+    						$query->whereIn('goodslib.goods_id', $extension_goods_id);
     					});
     				});
     				return $subQuery;
     			}else {
-    				$builder->whereIn('goods.goods_id', $extension_goods_id);
+    				$builder->whereIn('goodslib.goods_id', $extension_goods_id);
     			}
     		}
     	}	

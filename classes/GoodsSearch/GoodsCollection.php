@@ -62,7 +62,12 @@ class GoodsCollection
             $this->request->replace($input);
         }
 
-        $collection = GoodsSearch::singleton()->apply($this->request);
+        $collection = GoodsSearch::singleton()->apply($this->request, function ($query) {
+            /**
+             * @var Builder $query
+             */
+            $query->with('products');
+        });
         $collection = $collection->map(function($item) use ($user_rank_discount, $user_rank) {
             return (new GoodsAdminFormatted($item))->toArray();
         });

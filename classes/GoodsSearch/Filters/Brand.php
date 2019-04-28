@@ -13,11 +13,11 @@ use Ecjia\System\Frameworks\SuperSearch\FilterInterface;
 use Royalcms\Component\Database\Eloquent\Builder;
 
 /**
- * 商品审核通过和无需审核的
+ * 商品品牌条件
  * @author Administrator
  *
  */
-class ReviewStatus implements FilterInterface
+class Brand implements FilterInterface
 {
 
     /**
@@ -29,7 +29,7 @@ class ReviewStatus implements FilterInterface
      */
     public static function apply(Builder $builder, $value)
     {
-    	return $builder->where('goodslib.review_status', '>', $value);//$value=2
+    	return $builder->where('goodslib.brand_id', $value);
     }
 
 }

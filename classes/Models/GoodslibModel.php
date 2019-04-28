@@ -72,7 +72,7 @@ class GoodslibModel extends Model
      */
     public function products()
     {
-    	return $this->hasMany('Ecjia\App\Cart\Models\ProductsModel', 'goods_id', 'goods_id');
+    	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibProductsModel', 'goods_id', 'goods_id');
     }
     
     /**
@@ -80,7 +80,7 @@ class GoodslibModel extends Model
      */
     public function goods_attr()
     {
-    	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodsAttrModel', 'goods_id', 'goods_id');
+    	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibAttrModel', 'goods_id', 'goods_id');
     }
 
 }
