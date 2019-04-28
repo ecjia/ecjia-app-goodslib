@@ -118,8 +118,15 @@ class admin extends ecjia_admin {
      */
     public function init() {
         $this->admin_priv('goodslib_manage');
-        
-        $cat_id = empty($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
+
+        $cat_id = intval($this->request->input('cat_id', 0));
+        $page = intval($this->request->input('page', 1));
+        $brand_id = intval($this->request->input('brand_id', 0));
+        $keywords = trim($this->request->input('keywords'));
+        $review_status = intval($this->request->input('review_status', 0));
+//        $list_type = intval($this->request->input('type', 0));
+        $sort_by = trim($this->request->input('sort_by', 'goods_id'));
+        $sort_order = trim($this->request->input('sort_order', 'DESC'));
         
         $this->assign('ur_here', __('商品库商品（SPU）', 'goodslib'));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib')));
@@ -131,8 +138,24 @@ class admin extends ecjia_admin {
 
         $this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
         
-        $goods_list = goodslib::goods_list(0);
-        
+//        $goods_list = goodslib::goods_list(0);
+
+        $input = [
+            'is_delete'		    => 0,
+            'is_real'		    => 1,
+            'cat_id'            => $cat_id,
+            'brand'             => $brand_id,
+            'keywords'          => $keywords,
+            'review_status'     => $review_status,
+            'sort_by'           => [$sort_by => $sort_order],
+            'page'              => $page,
+        ];
+        $input = collect($input)->filter()->all(); //->merge($where)
+
+//        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
+//        $goods_list = $collection = \Ecjia\App\Goodslib\GoodsSearch\GoodsCollection::test();
+        $goods_list = $collection = (new \Ecjia\App\Goodslib\GoodsSearch\GoodsCollection($input))->getData();
+
         $this->assign('goods_list', $goods_list);
         $this->assign('filter', $goods_list['filter']);
         
