@@ -124,21 +124,16 @@ class admin extends ecjia_admin {
         $brand_id = intval($this->request->input('brand_id', 0));
         $keywords = trim($this->request->input('keywords'));
         $review_status = intval($this->request->input('review_status', 0));
-//        $list_type = intval($this->request->input('type', 0));
         $sort_by = trim($this->request->input('sort_by', 'goods_id'));
         $sort_order = trim($this->request->input('sort_order', 'DESC'));
         
         $this->assign('ur_here', __('商品库商品（SPU）', 'goodslib'));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib')));
         
-//        $this->assign('cat_list', cat_list(0, $cat_id, false));
-
         $cat_list_option = \Ecjia\App\Goods\Category\CategoryFormSelectOption::buildTopCategorySelectOption()->render($cat_id);
         $this->assign('cat_list_option', $cat_list_option);
 
         $this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
-        
-//        $goods_list = goodslib::goods_list(0);
 
         $input = [
             'is_delete'		    => 0,
@@ -152,16 +147,11 @@ class admin extends ecjia_admin {
         ];
         $input = collect($input)->filter()->all(); //->merge($where)
 
-//        $goods_count = (new \Ecjia\App\Goods\Collections\GoodsCountable($input))->getData();
-//        $goods_list = $collection = \Ecjia\App\Goodslib\GoodsSearch\GoodsCollection::test();
         $goods_list = $collection = (new \Ecjia\App\Goodslib\GoodsSearch\GoodsCollection($input))->getData();
 
         $this->assign('goods_list', $goods_list);
         $this->assign('filter', $goods_list['filter']);
-        
-//        $specifications = get_goods_type_specifications();
-//        $this->assign('specifications', $specifications);
-        
+
         $this->assign('action_link',      	array('text' => __('添加商品', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/add')));
         $this->assign('form_action', RC_Uri::url('goodslib/admin/batch'));
         
