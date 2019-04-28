@@ -95,7 +95,7 @@ class admin extends ecjia_admin {
         
         RC_Loader::load_app_func('admin_user', 'user');
         $goods_list_jslang = array(
-            'user_rank_list'	=> get_rank_list(),
+            'user_rank_list'	=> \Ecjia\App\User\UserRank\UserRankCollection::queryAllRanks(),
             'marketPriceRate'	=> ecjia::config('market_price_rate'),
             'integralPercent'	=> ecjia::config('integral_percent'),
         );
