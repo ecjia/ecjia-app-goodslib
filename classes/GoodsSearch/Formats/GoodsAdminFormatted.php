@@ -9,7 +9,7 @@
 namespace Ecjia\App\Goodslib\GoodsSearch\Formats;
 
 
-use Ecjia\App\Goodslib\Models\GoodsModel;
+use Ecjia\App\Goodslib\Models\GoodslibModel;
 use RC_Upload;
 
 class GoodsAdminFormatted
@@ -21,11 +21,9 @@ class GoodsAdminFormatted
     
     protected $user_rank;
     
-    public function __construct(GoodsModel $model, $user_rank_discount = 1, $user_rank = 0)
+    public function __construct(GoodslibModel $model)
     {
         $this->model = $model;
-        $this->user_rank_discount = $user_rank_discount;
-        $this->user_rank = $user_rank;
     }
 
     public function toArray()
