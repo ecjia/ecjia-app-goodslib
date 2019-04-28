@@ -29,7 +29,7 @@ class GoodsAdminFormatted
     public function toArray()
     {
 
-        return [
+        $formatted = [
             //store info
             'store_id' 					=> $this->model->store_id,
             'store_name'				=> $this->model->store->merchants_name,
@@ -45,11 +45,18 @@ class GoodsAdminFormatted
             'shop_price'                => $this->model->shop_price,
             'market_price'              => $this->model->market_price,
             'goods_weight'              => $this->model->goods_weight,
-            'goods_thumb'               => RC_Upload::upload_url($this->model->goods_thumb),
             'sort_order'                => $this->model->sort_order,
             'is_display'                => $this->model->is_display,
             'has_products'              => $this->model->products->isNotEmpty() ? 1 : 0,
         ];
+
+        if ($this->model->goods_thumb) {
+            $formatted['goods_thumb'] = RC_Upload::upload_url($this->model->goods_thumb);
+        } else {
+            $formatted['goods_thumb'] = \RC_Uri::admin_url('statics/images/nopic.png');
+        }
+
+        return $formatted;
     }
 
     /**
