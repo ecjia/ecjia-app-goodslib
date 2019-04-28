@@ -124,8 +124,8 @@ class admin extends ecjia_admin {
         $brand_id = intval($this->request->input('brand_id', 0));
         $keywords = trim($this->request->input('keywords'));
         $review_status = intval($this->request->input('review_status', 0));
-        $sort_by = trim($this->request->input('sort_by', 'goods_id'));
-        $sort_order = trim($this->request->input('sort_order', 'DESC'));
+        $sort_by = trim($this->request->input('sort_by', 'sort_order'));
+        $sort_order = trim($this->request->input('sort_order', 'ASC'));
         
         $this->assign('ur_here', __('商品库商品（SPU）', 'goodslib'));
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib')));
