@@ -81,7 +81,7 @@ class admin_parameter extends ecjia_admin {
 		$this->assign('ur_here',          	__('商品库参数模板', 'goodslib'));
 		$this->assign('action_link',      	array('text' => __('参数模板', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin_parameter/add')));
 		
-		$parameter_template_list = Ecjia\App\Goods\GoodsFunction::get_goods_type_list('parameter');
+		$parameter_template_list = Ecjia\App\Goods\GoodsAttr::get_goods_type_list('parameter');
 		$this->assign('parameter_template_list',	$parameter_template_list);
 		
 		$this->assign('filter',	$parameter_template_list['filter']);
@@ -164,7 +164,7 @@ class admin_parameter extends ecjia_admin {
 		$parameter_template['enabled']		= intval($_POST['enabled']);
 		$parameter_template['attr_group']	= $_POST['attr_group'];
 		
-		$old_groups	= Ecjia\App\Goods\GoodsFunction::get_attr_groups($cat_id);
+		$old_groups	= Ecjia\App\Goods\GoodsAttr::get_attr_groups($cat_id);
 		$count = RC_DB::table('goods_type')
 			->where('cat_name', $parameter_template['cat_name'])
 			->where('cat_id', '!=', $cat_id)
@@ -184,11 +184,11 @@ class admin_parameter extends ecjia_admin {
 					$found = array_search($val, $new_groups);
 					if ($found === NULL || $found === false) {
 						/* 老的分组没有在新的分组中找到 */
-						Ecjia\App\Goods\GoodsFunction::update_attribute_group($cat_id, $key, 0);
+						Ecjia\App\Goods\GoodsAttr::update_attribute_group($cat_id, $key, 0);
 					} else {
 						/* 老的分组出现在新的分组中了 */
 						if ($key != $found) {
-							Ecjia\App\Goods\GoodsFunction::update_attribute_group($cat_id, $key, $found); // 但是分组的key变了,需要更新属性的分组
+							Ecjia\App\Goods\GoodsAttr::update_attribute_group($cat_id, $key, $found); // 但是分组的key变了,需要更新属性的分组
 						}
 					}
 				}

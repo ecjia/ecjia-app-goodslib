@@ -93,12 +93,12 @@ class admin_parameter_attribute extends ecjia_admin {
 		if (!empty($cat_id)) {
 			$goods_type_list = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_type', 'parameter')->lists('cat_id');
 			if (in_array($cat_id, $goods_type_list)) {
-				$attr_list = Ecjia\App\Goodslib\GoodslibFunction::get_attr_list();
+				$attr_list = Ecjia\App\Goods\GoodsAttr::get_attr_list();
 			}
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', Ecjia\App\Goodslib\GoodslibFunction::goods_type_select_list($cat_id, 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'parameter'));
 	
 		$this->assign('form_action', RC_Uri::url('goodslib/admin_parameter_attribute/batch'));
 		
@@ -119,9 +119,9 @@ class admin_parameter_attribute extends ecjia_admin {
 		$this->assign('ur_here', __('添加参数', 'goodslib'));
 		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_parameter_attribute/init', array('cat_id' => $cat_id)), 'text' => __('参数列表', 'goodslib')));
 		
-		$this->assign('goods_type_list', Ecjia\App\Goodslib\GoodslibFunction::goods_type_select_list($cat_id, 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'parameter'));
 		
-		$this->assign('attr_groups', Ecjia\App\Goodslib\GoodslibFunction::get_attr_groups($cat_id));
+		$this->assign('attr_groups', Ecjia\App\Goods\GoodsAttr::get_attr_groups($cat_id));
 		
         $this->assign('attr_types', Ecjia\App\Goods\GoodsAttr::getAttrType());
         $this->assign('attr_input_types', Ecjia\App\Goods\GoodsAttr::getAttrInputType());
@@ -186,9 +186,9 @@ class admin_parameter_attribute extends ecjia_admin {
 		$attr_info = RC_DB::table('attribute')->where('attr_id', $_GET['attr_id'])->first();
 		$this->assign('attr', $attr_info);
 
-		$this->assign('attr_groups', Ecjia\App\Goodslib\GoodslibFunction::get_attr_groups($attr_info['cat_id']));
+		$this->assign('attr_groups', Ecjia\App\Goods\GoodsAttr::get_attr_groups($attr_info['cat_id']));
 		
-		$this->assign('goods_type_list', Ecjia\App\Goodslib\GoodslibFunction::goods_type_select_list($attr_info['cat_id'], 'parameter'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($attr_info['cat_id'], 'parameter'));
 		
 		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_parameter_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('参数列表', 'goodslib')));
 		
@@ -323,7 +323,7 @@ class admin_parameter_attribute extends ecjia_admin {
 	public function get_attr_group() {
 		$cat_id = !empty($_POST['cat_id']) ? $_POST['cat_id'] : 0;
 		
-		$data = Ecjia\App\Goodslib\GoodslibFunction::get_attr_groups($cat_id);
+		$data = Ecjia\App\Goods\GoodsAttr::get_attr_groups($cat_id);
 		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $data));
 	}
 }

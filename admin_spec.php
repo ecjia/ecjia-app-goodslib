@@ -82,7 +82,7 @@ class admin_spec extends ecjia_admin {
 		$this->assign('ur_here',          	__('商品库规格模板', 'goodslib'));
 		$this->assign('action_link',      	array('text' => __('规格模板', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin_spec/add')));
 		
-		$spec_template_list = Ecjia\App\Goods\GoodsFunction::get_goods_type_list('specification');
+		$spec_template_list = Ecjia\App\Goods\GoodsAttr::get_goods_type_list('specification');
 		$this->assign('spec_template_list',	$spec_template_list);
 		
 		$this->assign('filter', $spec_template_list['filter']);

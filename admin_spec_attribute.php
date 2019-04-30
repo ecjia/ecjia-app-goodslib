@@ -94,12 +94,12 @@ class admin_spec_attribute extends ecjia_admin {
 		if (!empty($cat_id)) {
 			$goods_type_list = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_type', 'specification')->lists('cat_id');
 			if (in_array($cat_id, $goods_type_list)) {
-				$attr_list = Ecjia\App\Goodslib\GoodslibFunction::get_attr_list();
+				$attr_list = Ecjia\App\Goods\GoodsAttr::get_attr_list();
 			}
 		}
 		$this->assign('attr_list', $attr_list);
 		
-		$this->assign('goods_type_list', Ecjia\App\Goodslib\GoodslibFunction::goods_type_select_list($cat_id, 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'specification'));
 
 		$this->assign('form_action', RC_Uri::url('goodslib/admin_spec_attribute/batch'));
 		
@@ -121,7 +121,7 @@ class admin_spec_attribute extends ecjia_admin {
 		
 		$info = RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
 		
-		$this->assign('goods_type_list', Ecjia\App\Goodslib\GoodslibFunction::goods_type_select_list($cat_id, 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'specification'));
 		
 		$this->assign('form_action', RC_Uri::url('goodslib/admin_spec_attribute/insert'));
 	
@@ -179,7 +179,7 @@ class admin_spec_attribute extends ecjia_admin {
 		$attr_info = RC_DB::table('attribute')->where('attr_id', $_GET['attr_id'])->first();
 		$this->assign('attr', $attr_info);
 
-		$this->assign('goods_type_list', Ecjia\App\Goodslib\GoodslibFunction::goods_type_select_list($cat_id, 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'specification'));
 	
 		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_spec_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('商品属性列表', 'goodslib')));
 		
