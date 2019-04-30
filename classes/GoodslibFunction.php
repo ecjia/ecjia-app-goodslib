@@ -44,25 +44,96 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-defined('IN_ECJIA') or exit('No permission resources.');
 
-/**
- * ECJIA后台商品库菜单API
- */
-class goodslib_admin_menu_api extends Component_Event_Api {
-	public function call(&$options) {
-		$menus = ecjia_admin::make_admin_menu('03_goodslib_cat', __('商品库', 'goodslib'), '', 3);
-		$submenus = array(
-		    ecjia_admin::make_admin_menu('01_goodslib_add', __('添加商品', 'goodslib'), RC_Uri::url('goodslib/admin/add'), 1)->add_purview(array('goodslib_update')),
-			ecjia_admin::make_admin_menu('02_goodslib_list', __('商品库商品', 'goodslib'), RC_Uri::url('goodslib/admin/init'), 2)->add_purview(array('goodslib_manage')),
-		    ecjia_admin::make_admin_menu('03_goodslib_spec', __('商品库规格', 'goodslib'), RC_Uri::url('goodslib/admin_spec/init'), 3)->add_purview('attr_manage'),
-			ecjia_admin::make_admin_menu('04_goodslib_parameter', __('商品库参数', 'goodslib'), RC_Uri::url('goodslib/admin_parameter/init'), 4)->add_purview('attr_manage'),
-		    
-		    
-		);
-        $menus->add_submenu($submenus);
-        return $menus;
-    }
+
+namespace Ecjia\App\Goodslib;
+
+use RC_DB;
+use ecjia_page;
+
+class GoodslibFunction
+{
+
+	/**
+	 * 获得平台商品[规格/参数]模板（下拉）
+	 * @access  public
+	 * @param   integer     $selected   选定的模板编号
+	 * @param   string      $type       模板类型
+	 * @param   boolean     $enabled    激活状态
+	 * @return  string
+	 */
+	public static function goods_type_select_list($selected, $type, $enabled = false) {
+	
+		$db_goods_type = RC_DB::table('goods_type')->where('store_id', 0);
+	
+		if ($enabled) {
+			$db_goods_type->where('enabled', 1);
+		}
+	
+		$data = $db_goods_type->select('cat_id', 'cat_name')->where('cat_type', $type)->get();
+	
+		$opt = '';
+		if (!empty($data)) {
+			foreach ($data as $row){
+				$opt .= "<option value='$row[cat_id]'";
+				$opt .= ($selected == $row['cat_id']) ? ' selected="true"' : '';
+				$opt .= '>' . htmlspecialchars($row['cat_name']). '</option>';
+			}
+		}
+		return $opt;
+	}
+	
+	
+	/**
+	 * 获取平台属性参数列表数据
+	 * @return  array
+	 */
+	public static function get_attr_list() {
+		$db_attribute = RC_DB::table('attribute as a');
+		
+		$filter = array();
+		$filter['cat_id'] 		= empty($_REQUEST['cat_id']) 		? 0 			: intval($_REQUEST['cat_id']);
+		$filter['sort_by'] 		= empty($_REQUEST['sort_by']) 		? 'sort_order' 	: trim($_REQUEST['sort_by']);
+		$filter['sort_order']	= empty($_REQUEST['sort_order']) 	? 'asc' 		: trim($_REQUEST['sort_order']);
+	
+		$where = (!empty($filter['cat_id'])) ? " a.cat_id = '".$filter['cat_id']."' " : '';
+		if (!empty($filter['cat_id'])) {
+			$db_attribute->whereRaw($where);
+		}
+		$count = $db_attribute->count('attr_id');
+		$page = new ecjia_page($count, 15, 5);
+	
+		$row = $db_attribute
+		->leftJoin('goods_type as t', RC_DB::raw('a.cat_id'), '=', RC_DB::raw('t.cat_id'))
+		->select(RC_DB::raw('a.*, t.cat_name'))
+		->orderby($filter['sort_by'], $filter['sort_order'])
+		->take(15)->skip($page->start_id-1)->get();
+	
+		if (!empty($row)) {
+			foreach ($row AS $key => $val) {
+// 				$row[$key]['attr_input_type_desc'] = Ecjia\App\Goods\GoodsAttr::getAttrInputTypeLabel($val['attr_input_type']);
+				$row[$key]['attr_values'] = str_replace("\n", ", ", $val['attr_values']);
+			}
+		}
+		return array('item' => $row, 'page' => $page->show(5), 'desc' => $page->page_desc());
+	}
+	
+	
+	/**
+	 * 商家获得指定的参数模板下的参数分组
+	 *
+	 * @param   integer     $cat_id     参数模板id
+	 *
+	 * @return  array
+	 */
+	public static function get_attr_groups($cat_id) {
+		$data = RC_DB::table('goods_type')->where('cat_id', $cat_id)->pluck('attr_group');
+		$grp = str_replace("\r", '', $data);
+		if ($grp) {
+			return explode("\n", $grp);
+		} else {
+			return array();
+		}
+	}
+    
 }
-
-// end
