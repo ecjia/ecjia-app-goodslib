@@ -54,17 +54,17 @@
 					<label class="control-label">{t domain="goodslib"}参数可选值：{/t}</label>
 					<div class="controls chk_radio">
                         {foreach from=$attr_types item=value key=key}
-                        <input class="uni_style" name="attr_type" type="radio" value="{$key}" {if $attr.attr_type eq $key} checked="true"{/if} autocomplete="off"/><span>{$value}</span>
+                        <input class="uni_style" name="attr_type"  id="attr_type_{$key}" type="radio" value="{$key}" {if $attr.attr_type eq $key} checked="true"{/if} autocomplete="off"/><span>{$value}</span>
                         {/foreach}
 						<span class="help-block" id="noticeAttrType">{t domain="goodslib" escape=no }选择"唯一参数"时，商品的该参数值只能设置一个值，用户只能查看该值。<br/>选择"复选参数"时，可以对商品该参数设置多个值。{/t}</span>
 					</div>
 				</div>
 				
-				<div class="control-group formSep">
+				<div class="control-group formSep attr_input_type" {if $attr.attr_type eq 2}style="display: none;"{/if}>
 					<label class="control-label">{t domain="goodslib"}该参数值的录入方式：{/t}</label>
 					<div class="controls chk_radio">
                         {foreach from=$attr_input_types item=value key=key}
-                        <input class="uni_style" name="attr_input_type" type="radio" value="{$key}" {if $attr.attr_input_type eq $key} checked="true"{/if} autocomplete="off"/><span>{$value}</span>
+                        	<input class="uni_style" name="attr_input_type" id="attr_input_type_{$key}" type="radio" value="{$key}" {if $attr.attr_input_type eq $key}checked="true"{/if} autocomplete="off"/><span>{$value}</span>
                         {/foreach}
 					</div>
 				</div>

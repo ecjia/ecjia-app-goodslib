@@ -94,10 +94,24 @@
 					}
 				})
 			});
-
+			app.edit_arrt.radio_click();
 			app.edit_arrt.edit_type_attr();
 		},
 
+		radio_click: function() {
+			$(":radio[name=attr_type]").click(function() {
+			    if($(this).val() == 2) {
+			    	 $(".attr_input_type").hide();
+			    	 $(".attr_values").show();
+			    } else {
+			    	 $("input:radio:checked").parent().removeClass('uni-checked');
+			    	 $("#attr_input_type_0").attr('checked',true).parent().addClass('uni-checked');
+			    	 $(".attr_input_type").show();
+			    	 $(".attr_values").hide();
+			    }
+			});
+		},
+		
 		edit_type_attr: function() {
 			var $this = $('form[name="theForm"]');
 			var option = {

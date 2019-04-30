@@ -153,12 +153,16 @@ class admin_parameter_attribute extends ecjia_admin {
 		$attr_input_type = intval($_POST['attr_input_type']);//该属性值的录入方式
 		$attr_values = isset($_POST['attr_values']) ? $_POST['attr_values'] : ''; //可选值列表,
 		
-		if ($attr_input_type == 1) { //从下面的列表中选择（一行代表一个可选值）
-			if (empty($attr_values)) {
-				return $this->showmessage(__('参数的可选值列表不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-			}
+		if ($attr_type == 2) {//为复选参数时
+			$attr_input_type = 1; 
 		}
 		
+		if ($attr_input_type == 1) {//从下面的列表中选择（一行代表一个可选值）
+			if (empty($attr_values)) {
+				return $this->showmessage(__('参数的可选值列表不能为空', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+			}
+		}
+	
 		$attr = array(
 			'attr_name'			=> trim($_POST['attr_name']),
 			'cat_id'			=> $cat_id,
@@ -218,9 +222,14 @@ class admin_parameter_attribute extends ecjia_admin {
 		$attr_type = !empty($_POST['attr_type']) ? intval($_POST['attr_type']) 	: 0;  //参数可选值,唯一/复选
 		$attr_input_type = intval($_POST['attr_input_type']);//该属性值的录入方式
 		$attr_values = isset($_POST['attr_values']) ? $_POST['attr_values'] : ''; //可选值列表,
-		if ($attr_input_type == 1) { //从下面的列表中选择（一行代表一个可选值）
+		
+		if ($attr_type == 2) {//为复选参数时
+			$attr_input_type = 1; 
+		}
+		
+		if ($attr_input_type == 1) {//从下面的列表中选择（一行代表一个可选值）
 			if (empty($attr_values)) {
-				return $this->showmessage(__('参数的可选值列表不能为空', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+				return $this->showmessage(__('参数的可选值列表不能为空', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
 			}
 		}
 		
