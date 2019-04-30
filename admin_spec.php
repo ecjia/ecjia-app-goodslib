@@ -162,7 +162,8 @@ class admin_spec extends ecjia_admin {
 		$cat_id						= intval($_POST['cat_id']);
 		$spec_template['cat_name']	= trim($_POST['cat_name']);
 		$spec_template['enabled']	= intval($_POST['enabled']);
-		
+		$spec_template['cat_type']	= 'specification';
+
 		$count = RC_DB::table('goods_type')->where('cat_type', 'specification')->where('cat_name', $spec_template['cat_name'])->where('cat_id', '!=', $cat_id)->where('store_id', 0)->count();
 		if ($count > 0 ){
 			return $this->showmessage(__('规格模板名称已存在', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
