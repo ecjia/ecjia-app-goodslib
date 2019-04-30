@@ -28,14 +28,14 @@
 			<i class="fontello-icon-cog"></i>{t domain="goodslib"}批量操作{/t}<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu batch-move">
-				<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idclass=".checkbox:checked" data-url='{RC_Uri::url("goodslib/admin_attribute/batch", "cat_id={$cat_id}")}' data-msg="{t domain='goodslib'}您确定要删除选中的商品参数吗？{/t}" data-noselectmsg="{t domain='goodslib'}您没有选择需要删除的参数{/t}" href="javascript:;"><i class="fontello-icon-trash"></i>{t domain="goodslib"}批量删除{/t}</a></li>
+				<li><a class="batch-trash-btn" data-toggle="ecjiabatch" data-idclass=".checkbox:checked" data-url='{RC_Uri::url("goodslib/admin_parameter_attribute/batch", "cat_id={$cat_id}")}' data-msg="{t domain='goodslib'}您确定要删除选中的商品参数吗？{/t}" data-noselectmsg="{t domain='goodslib'}您没有选择需要删除的参数{/t}" href="javascript:;"><i class="fontello-icon-trash"></i>{t domain="goodslib"}批量删除{/t}</a></li>
 			</ul>
 		</div>
 	</form>
 	
 	<div class="choose_list f_r">
 		<span>{t domain="goodslib"}按商品规格显示：{/t}</span>
-		<select name="goods_type" data-url="{url path='goodslib/admin_attribute/init' args='cat_id='}">
+		<select name="goods_type" data-url="{url path='goodslib/admin_parameter_attribute/init' args='cat_id='}">
 			{$goods_type_list}
 		</select>
 	</div>
@@ -63,7 +63,7 @@
 						<input class="checkbox" value="{$attr.attr_id}" name="checkboxes[]" type="checkbox" autocomplete="off"/>
 					</td>
 					<td class="first-cell" nowrap="true" valign="top">
-						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin_attribute/edit_attr_name')}" data-name="edit_attr_name" data-pk="{$attr.attr_id}" data-title="{t domain='goodslib'}参数名称不能为空{/t}">
+						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin_parameter_attribute/edit_attr_name')}" data-name="edit_attr_name" data-pk="{$attr.attr_id}" data-title="{t domain='goodslib'}参数名称不能为空{/t}">
 							{$attr.attr_name}
 						</span>
 					</td>
@@ -77,11 +77,11 @@
 						<span>{$attr.attr_values}</span>
 					</td>
 					<td align="right" nowrap="true" valign="top">
-						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin_attribute/edit_sort_order')}" data-name="edit_sort_order" data-pjax-url='{url path="goodslib/admin_attribute/init" args="cat_id={$smarty.get.cat_id}"}' data-pk="{$attr.attr_id}" data-title="{t domain='goodslib'}请输入排序号{/t}">{$attr.sort_order}</span>
+						<span class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin_parameter_attribute/edit_sort_order')}" data-name="edit_sort_order" data-pjax-url='{url path="goodslib/admin_parameter_attribute/init" args="cat_id={$smarty.get.cat_id}"}' data-pk="{$attr.attr_id}" data-title="{t domain='goodslib'}请输入排序号{/t}">{$attr.sort_order}</span>
 					</td>
 					<td align="center" nowrap="true" valign="top">
-						<a class="data-pjax" href='{RC_Uri::url("goodslib/admin_attribute/edit", "attr_id={$attr.attr_id}")}' title="{t domain='goodslib'}编辑{/t}"><i class="fontello-icon-edit"></i></a>
-						<a class="ajaxremove" data-toggle="ajaxremove" data-msg="{t domain='goodslib'}您确实要删除该参数吗？{/t}" href='{RC_Uri::url("goodslib/admin_attribute/remove", "id={$attr.attr_id}")}' title="{t domain='goodslib'}删除{/t}"><i class="fontello-icon-trash"></i></a>
+						<a class="data-pjax" href='{RC_Uri::url("goodslib/admin_parameter_attribute/edit", "attr_id={$attr.attr_id}")}' title="{t domain='goodslib'}编辑{/t}"><i class="fontello-icon-edit"></i></a>
+						<a class="ajaxremove" data-toggle="ajaxremove" data-msg="{t domain='goodslib'}您确实要删除该参数吗？{/t}" href='{RC_Uri::url("goodslib/admin_parameter_attribute/remove", "id={$attr.attr_id}")}' title="{t domain='goodslib'}删除{/t}"><i class="fontello-icon-trash"></i></a>
 					</td>
 				</tr>
 				<!-- {foreachelse} -->
