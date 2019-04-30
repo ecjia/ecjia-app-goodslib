@@ -181,7 +181,7 @@ class admin_spec_attribute extends ecjia_admin {
 
 		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'specification'));
 	
-		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_spec_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('商品属性列表', 'goodslib')));
+		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_spec_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('属性列表', 'goodslib')));
 		
 		$this->assign('form_action', RC_Uri::url('goodslib/admin_spec_attribute/update'));
 		
