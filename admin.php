@@ -280,6 +280,8 @@ class admin extends ecjia_admin {
             /* 处理商品数据 */
             $shop_price = !empty($_POST['shop_price']) ? $_POST['shop_price'] : 0;
             $market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
+            $cost_price = !empty($_POST['cost_price']) ? $_POST['cost_price'] : 0;
+            
             $goods_weight = !empty($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
             $goods_type = isset($_POST['goods_type']) ? $_POST['goods_type'] : 0;
             $goods_name = htmlspecialchars($_POST['goods_name']);
@@ -304,6 +306,7 @@ class admin extends ecjia_admin {
                 'brand_id'              => $brand_id,
                 'shop_price'            => $shop_price,
                 'market_price'          => $market_price,
+            	'cost_price'          	=> $cost_price,
                 'keywords'              => $_POST['keywords'],
                 'goods_brief'           => $_POST['goods_brief'],
                 'goods_weight'          => $goods_weight,
@@ -842,6 +845,7 @@ class admin extends ecjia_admin {
         /* 处理商品数据 */
         $shop_price 	= !empty($_POST['shop_price']) 		? $_POST['shop_price'] 				: 0;
         $market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
+        $cost_price 	= !empty($_POST['cost_price']) 		? $_POST['cost_price'] 				: 0;
         
         $goods_weight 	= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
         
@@ -869,6 +873,7 @@ class admin extends ecjia_admin {
             'brand_id'			  		=> $brand_id,
             'shop_price'				=> $shop_price,
             'market_price'		  		=> $market_price,
+        	'cost_price'		  		=> $cost_price,
 //             'suppliers_id'		  		=> $suppliers_id,
             'is_real'			   		=> empty($code) ? '1' : '0',
             'extension_code'			=> $code,

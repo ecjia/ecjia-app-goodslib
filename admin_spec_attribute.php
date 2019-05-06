@@ -60,11 +60,15 @@ class admin_spec_attribute extends ecjia_admin {
 		RC_Script::enqueue_script('smoke');
 		RC_Script::enqueue_script('jquery-uniform');
 		RC_Style::enqueue_style('uniform-aristo');
+		
 		RC_Script::enqueue_script('jquery-chosen');
 		RC_Style::enqueue_style('chosen');
+		RC_Style::enqueue_style('goods-colorpicker-style', RC_Uri::admin_url() . '/statics/lib/colorpicker/css/colorpicker.css');
+		RC_Script::enqueue_script('goods-colorpicker-script', RC_Uri::admin_url('/statics/lib/colorpicker/bootstrap-colorpicker.js'), array(), false, 1);
 		
 		RC_Script::enqueue_script('bootstrap-editable-script', RC_Uri::admin_url('statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js'), array(), false, 1);
         RC_Style::enqueue_style('bootstrap-editable-css', RC_Uri::admin_url('statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css'));
+
 		RC_Script::enqueue_script('goods_attribute', RC_App::apps_url('statics/js/goods_attribute.js', __FILE__), array(), false, 1);
 		RC_Script::localize_script('goods_attribute', 'js_lang', config('app-goodslib::jslang.attribute_page'));
 		
@@ -299,6 +303,48 @@ class admin_spec_attribute extends ecjia_admin {
 		if (RC_DB::table('attribute')->where('attr_id', $id)->update($data)) {
 			return $this->showmessage(__('编辑排序成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('content' => $val));
 		}
+	}
+	
+	/**
+	 * 设置色值
+	 */
+	public function set_color_values() {
+		$this->admin_priv('goods_spec_attr_update');
+	
+		$attr_id = intval($_POST['attr_id']);
+		$attribute_info = RC_DB::TABLE('attribute')->where('attr_id', $attr_id)->select('attr_values', 'color_values', 'cat_id', 'attr_id')->first();
+		$this->assign('cat_id', $attribute_info['cat_id']);
+		$this->assign('attr_id', $attribute_info['attr_id']);
+		$attr_values_list = explode("\n", $attribute_info['attr_values']);
+		$color_values_list = explode("\n", $attribute_info['color_values']);
+		
+		$color_list_array = array();
+		foreach ($attr_values_list as $key => $value){
+			$color_list_array[$value] = $color_values_list[$key];
+		}
+		$this->assign('color_list_array', $color_list_array);
+
+		$data = $this->fetch('set_color_values.dwt');
+
+		return $this->showmessage('', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('data' => $data));
+	}
+	
+	/**
+	 * 设置色值处理
+	 */
+	public function set_color_values_insert() {
+		$this->admin_priv('goods_spec_attr_update');
+	
+		$cat_id = intval($_POST['cat_id']);
+		$attr_id = intval($_POST['attr_id']);
+		
+		$data = array(
+			'attr_values'  => implode("\n", $_POST['attr_values']),
+			'color_values' => implode("\n", $_POST['color_values']),
+		);
+		RC_DB::table('attribute')->where('attr_id', $attr_id)->update($data);
+	
+		return $this->showmessage(__('设置颜色色值成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/mh_spec_attribute/init', array('cat_id' => $cat_id))));
 	}
 }
 

@@ -1,10 +1,12 @@
 <?php defined('IN_ECJIA') or exit('No permission resources.');?>
 <!-- {extends file="ecjia.dwt.php"} -->
+
 <!-- {block name="footer"} -->
 <script type="text/javascript">
 	ecjia.admin.goods_arrt.init();
 </script>
 <!-- {/block} -->
+
 <!-- {block name="main_content"} -->
 <div>
 	<h3 class="heading">
@@ -17,6 +19,9 @@
 	<!-- {/if} -->
 	</h3>
 </div>
+
+<div class="modal hide fade" id="myModal1" style="height:300px;overflow-y:auto;"></div>
+
 <div class="row-fluid batch">
 	<form class="f_l" action="" name="searchForm">
 		<div class="btn-group f_l m_r5">
