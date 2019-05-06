@@ -345,7 +345,7 @@ class admin_spec_attribute extends ecjia_admin {
 		);
 		RC_DB::table('attribute')->where('attr_id', $attr_id)->update($data);
 	
-		return $this->showmessage(__('设置颜色色值成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/mh_spec_attribute/init', array('cat_id' => $cat_id))));
+		return $this->showmessage(__('设置颜色色值成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goodslib/admin_spec_attribute/init', array('cat_id' => $cat_id))));
 	}
 }
 

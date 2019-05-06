@@ -20,7 +20,7 @@
 	</h3>
 </div>
 
-<div class="modal hide fade" id="myModal1" style="height:300px;overflow-y:auto;"></div>
+<div class="modal hide fade" id="myModal1"></div>
 
 <div class="row-fluid batch">
 	<form class="f_l" action="" name="searchForm">

@@ -66,6 +66,9 @@ class admin_spec extends ecjia_admin {
 		RC_Script::enqueue_script('adsense-bootstrap-editable-script', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/js/bootstrap-editable.min.js', array(), false, 1);
 		RC_Style::enqueue_style('adsense-bootstrap-editable-style', RC_Uri::admin_url() . '/statics/lib/x-editable/bootstrap-editable/css/bootstrap-editable.css');
 
+		RC_Style::enqueue_style('goods-colorpicker-style', RC_Uri::admin_url() . '/statics/lib/colorpicker/css/colorpicker.css');
+		RC_Script::enqueue_script('goods-colorpicker-script', RC_Uri::admin_url('/statics/lib/colorpicker/bootstrap-colorpicker.js'), array(), false, 1);
+		
         RC_Script::localize_script('goods_attribute', 'js_lang', config('app-goodslib::jslang.attribute_page'));
 		ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库规格模板', 'goodslib'), RC_Uri::url('goodslib/admin_spec/init')));
 	}
