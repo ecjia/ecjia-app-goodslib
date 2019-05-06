@@ -335,7 +335,7 @@ class admin_spec_attribute extends ecjia_admin {
 	 */
 	public function set_color_values_insert() {
 		$this->admin_priv('goods_spec_attr_update');
-	
+		
 		$cat_id = intval($_POST['cat_id']);
 		$attr_id = intval($_POST['attr_id']);
 		
