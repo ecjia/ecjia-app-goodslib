@@ -63,6 +63,7 @@ class admin_spec_attribute extends ecjia_admin {
 		
 		RC_Script::enqueue_script('jquery-chosen');
 		RC_Style::enqueue_style('chosen');
+		
 		RC_Style::enqueue_style('goods-colorpicker-style', RC_Uri::admin_url() . '/statics/lib/colorpicker/css/colorpicker.css');
 		RC_Script::enqueue_script('goods-colorpicker-script', RC_Uri::admin_url('/statics/lib/colorpicker/bootstrap-colorpicker.js'), array(), false, 1);
 		
@@ -183,7 +184,7 @@ class admin_spec_attribute extends ecjia_admin {
 		$attr_info = RC_DB::table('attribute')->where('attr_id', $_GET['attr_id'])->first();
 		$this->assign('attr', $attr_info);
 
-		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($cat_id, 'specification'));
+		$this->assign('goods_type_list', Ecjia\App\Goods\GoodsAttr::goods_type_select_list($attr_info['cat_id'], 'specification'));
 	
 		$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin_spec_attribute/init', array('cat_id' => $attr_info['cat_id'])), 'text' => __('属性列表', 'goodslib')));
 		

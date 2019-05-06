@@ -52,6 +52,7 @@
 					<div class="controls">
 						<textarea class="w350" name="attr_values" cols="30" rows="8">{$attr.attr_values}</textarea>
 						<span class="input-must">*</span>
+						<span class="help-block">多个可选值时，换行输入，每行一个可选值。</span>
 					</div>
 				</div>
 				
