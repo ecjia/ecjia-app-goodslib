@@ -23,7 +23,7 @@ class ProductGallery extends ProductImage
         parent::__construct($goods_id, $product_id, $fileinfo);
 
 
-        $this->image_format = new ProductGalleryFormatted($this);
+        $this->image_format = new ProductGalleryFormatted($this, $this->root_dir);
     }
 
     /**

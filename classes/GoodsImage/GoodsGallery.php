@@ -10,7 +10,7 @@ namespace Ecjia\App\Goodslib\GoodsImage;
 
 
 use Ecjia\App\Goods\GoodsImage\Format\GoodsGalleryFormatted;
-use Ecjia\App\Goods\Goodslib\GoodsGalleryModel;
+use Ecjia\App\Goodslib\Models\GoodslibGalleryModel;
 use ecjia;
 use ecjia_error;
 
@@ -28,7 +28,7 @@ class GoodsGallery extends GoodsImage
         parent::__construct($goods_id, $product_id, $fileinfo);
 
 
-        $this->image_format = new GoodsGalleryFormatted($this);
+        $this->image_format = new GoodsGalleryFormatted($this, $this->root_dir);
     }
 
 
@@ -63,7 +63,7 @@ class GoodsGallery extends GoodsImage
             'img_original' 	=> $original_path,
         );
 
-        $model = GoodsGalleryModel::create($data);
+        $model = GoodslibGalleryModel::create($data);
         if (! empty($model)) {
             return new ecjia_error('upload_gallery_image_fail', __('商品相册上传失败', 'goods'));
         }

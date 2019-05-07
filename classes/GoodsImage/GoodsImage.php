@@ -23,13 +23,18 @@ class GoodsImage extends \Ecjia\App\Goods\GoodsImage\GoodsImage
      */
     protected $auto_generate_thumb = false;
 
+    /**
+     * 商品上传的目录位置
+     * @var string
+     */
+    protected $root_dir = 'goodslib/';
 
     public function __construct($goods_id, $product_id = 0, $fileinfo = null)
     {
         parent::__construct($goods_id, $product_id, $fileinfo);
 
 
-        $this->image_format = new GoodsImageFormatted($this);
+        $this->image_format = new GoodsImageFormatted($this, $this->root_dir);
     }
 
 

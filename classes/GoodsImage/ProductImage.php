@@ -18,13 +18,12 @@ class ProductImage extends GoodsImage
 {
 
 
-
     public function __construct($goods_id, $product_id = 0, $fileinfo = null)
     {
         parent::__construct($goods_id, $product_id, $fileinfo);
 
 
-        $this->image_format = new ProductImageFormatted($this);
+        $this->image_format = new ProductImageFormatted($this, $this->root_dir);
     }
 
     /**
