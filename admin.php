@@ -136,7 +136,6 @@ class admin extends ecjia_admin {
         $this->assign('brand_list', \Ecjia\App\Goods\Brand\BrandCollection::getBrandNameKeyBy());
 
         $input = [
-            'is_delete'		    => 0,
             'is_real'		    => 1,
             'cat_id'            => $cat_id,
             'brand'             => $brand_id,
@@ -146,9 +145,8 @@ class admin extends ecjia_admin {
             'page'              => $page,
         ];
         $input = collect($input)->filter()->all(); //->merge($where)
-
+        $input['is_delete'] = 0;
         $goods_list = $collection = (new \Ecjia\App\Goodslib\GoodsSearch\GoodsCollection($input))->getData();
-
         $this->assign('goods_list', $goods_list);
         $this->assign('filter', $goods_list['filter']);
 
