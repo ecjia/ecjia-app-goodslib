@@ -9,24 +9,11 @@
 namespace Ecjia\App\Goodslib\GoodsImage\Product;
 
 
-use Ecjia\App\Goods\Models\ProductsModel;
+use Ecjia\App\Goodslib\Models\GoodslibProductsModel;
 use ecjia_error;
 
 class ProductThumb extends ProductImage
 {
-
-    /**
-     *  保存图片到磁盘
-     */
-    public function saveImageToDisk()
-    {
-        $thumb_path = $this->disk->getPath($this->image_format->getThumbPostion());
-
-        $original_path = $img_path = null;
-
-        //返回 [原图，处理过的图片，缩略图]
-        return [$original_path, $img_path, $thumb_path];
-    }
 
     /**
      * 更新图片到数据库
@@ -46,7 +33,7 @@ class ProductThumb extends ProductImage
             'thumb_url' 	=> $thumb_path,
         );
 
-        $model = ProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->update($data);
+        $model = GoodslibProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->update($data);
         if (! empty($model)) {
             return new ecjia_error('upload_thumb_image_fail', __('商品缩略图上传失败', 'goods'));
         }
