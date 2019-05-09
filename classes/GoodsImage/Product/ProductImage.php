@@ -6,11 +6,12 @@
  * Time: 09:27
  */
 
-namespace Ecjia\App\Goodslib\GoodsImage;
+namespace Ecjia\App\Goodslib\GoodsImage\Product;
 
 
 use Ecjia\App\Goods\GoodsImage\Format\ProductImageFormatted;
 use Ecjia\App\Goodslib\Models\GoodslibProductsModel;
+use Ecjia\App\Goodslib\GoodsImage\Goods\GoodsImage;
 use ecjia_error;
 use ecjia;
 

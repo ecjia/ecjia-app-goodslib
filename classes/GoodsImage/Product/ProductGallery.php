@@ -6,7 +6,7 @@
  * Time: 09:28
  */
 
-namespace Ecjia\App\Goodslib\GoodsImage;
+namespace Ecjia\App\Goodslib\GoodsImage\Product;
 
 
 use Ecjia\App\Goods\GoodsImage\Format\ProductGalleryFormatted;
