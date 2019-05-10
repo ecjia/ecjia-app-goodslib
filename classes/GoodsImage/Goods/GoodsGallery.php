@@ -49,7 +49,7 @@ class GoodsGallery extends GoodsImage
 
         /* 不保留商品原图的时候删除原图 */
         if (! ecjia::config('retain_original_img') && !empty($original_path)) {
-            $this->disk->deletePath($original_path);
+            $this->disk->delete($original_path);
             $original_path = '';
         }
 
