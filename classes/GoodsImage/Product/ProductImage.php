@@ -43,13 +43,13 @@ class ProductImage extends GoodsImage
         }
 
         //存入数据库中
-        $model = GoodslibProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->select('product_original_img', 'product_img', 'product_thumb')->first();
+        $model = GoodslibProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->select('goods_id', 'product_id', 'product_original_img', 'product_img', 'product_thumb')->first();
         if (! empty($model)) {
             $this->clearOldImage($model);
 
             /* 不保留商品原图的时候删除原图 */
             if (! ecjia::config('retain_original_img') && !empty($original_path)) {
-                $this->disk->deletePath($original_path);
+                $this->disk->delete($original_path);
                 $original_path = '';
             }
 

@@ -12,7 +12,7 @@ namespace Ecjia\App\Goodslib\GoodsImage\Product;
 use Ecjia\App\Goodslib\Models\GoodslibProductsModel;
 use ecjia_error;
 
-class ProductThumb extends ProductImage
+class ProductThumb extends \Ecjia\App\Goods\GoodsImage\Product\ProductThumb
 {
 
     /**
@@ -33,12 +33,27 @@ class ProductThumb extends ProductImage
             'thumb_url' 	=> $thumb_path,
         );
 
-        $model = GoodslibProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->update($data);
+        $model = GoodslibProductsModel::where('goods_id', $this->goods_id)->where('product_id', $this->product_id)->select('goods_id', 'product_id', 'product_thumb')->first();
         if (! empty($model)) {
-            return new ecjia_error('upload_thumb_image_fail', __('商品缩略图上传失败', 'goods'));
+            $this->clearOldImage($model);
+
+            $model->product_thumb = $thumb_path;
+            $model->save();
         }
 
         return true;
+    }
+
+    /**
+     * 清理旧图片
+     * @param GoodslibProductsModel $model
+     */
+    protected function clearOldImage($model)
+    {
+        /* 先存储新的图片，再删除原来的图片 */
+        if ($model['product_thumb']) {
+            $this->disk->delete($model['product_thumb']);
+        }
     }
 
 }
