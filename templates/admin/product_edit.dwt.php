@@ -45,7 +45,7 @@
                         <div class="control-group control-group-small m_t10">
                             <label class="control-label">{t domain="goodslib"}商品名称：{/t}</label>
                             <div class="controls">
-                                <input class="form-control w280" name="product_name" type="text" value="{$info.product_name|escape}" style="color:{$goods_name_color};"/>
+                                <input class="form-control w330" name="product_name" type="text" value="{$info.product_name|escape}" style="color:{$goods_name_color};"/>
                                 <span class="help-block">{t domain="goodslib"}非必填，若不填则默认使用主商品名称{/t}</span>
                             </div>
                         </div>
@@ -53,21 +53,21 @@
                         <div class="control-group control-group-small">
                             <label class="control-label">{t domain="goodslib"}商品货号：{/t}</label>
                             <div class="controls">
-                                <input class="form-control" name="product_sn" type="text" value="{$info.product_sn|escape}" />
+                                <input class="form-control w280" name="product_sn" type="text" value="{$info.product_sn|escape}" />
                                 <span class="help-block">{t domain="goodslib"}非必填，系统默认自动生成{/t}</span>
                             </div>
                         </div>
                         <div class="control-group control-group-small">
                             <label class="control-label">{t domain="goodslib"}价格：{/t}</label>
                             <div class="controls">
-                                <input class="form-control" name="product_shop_price" type="text" value="{$info.product_shop_price}" />
+                                <input class="form-control w280" name="product_shop_price" type="text" value="{$info.product_shop_price}" />
                                 <span class="help-block">{t domain="goodslib"}非必填，若不填则默认使用主商品价格{/t}</span>
                             </div>
                         </div>
                         <div class="control-group control-group-small">
                             <label class="control-label">{t domain="goodslib"}条形码：{/t}</label>
                             <div class="controls">
-                                <input class="form-control" name="product_bar_code" type="text" value="{$info.product_bar_code|escape}" />
+                                <input class="form-control w280" name="product_bar_code" type="text" value="{$info.product_bar_code|escape}" />
                                 <span class="help-block">{t domain="goodslib"}非必填，可手动输入或修改{/t}</span>
                             </div>
                         </div>
