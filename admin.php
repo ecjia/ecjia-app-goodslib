@@ -211,7 +211,7 @@ class admin extends ecjia_admin {
             }
         }
 
-        $upload = RC_Upload::uploader('newimage', array('save_path' => 'images', 'auto_sub_dirs' => true));
+        $upload = RC_Upload::uploader('newimage', array('save_path' => 'goodslib', 'auto_sub_dirs' => true));
         $upload->add_saving_callback(function ($file, $filename) {
             return true;
         });
