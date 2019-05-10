@@ -816,34 +816,38 @@ class admin extends ecjia_admin {
                 return $this->showmessage(__('您输入的货号已存在，请换一个', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
             }
         }
-        
-        $upload = RC_Upload::uploader('image', array('save_path' => 'images', 'auto_sub_dirs' => true));
+
+
+        $upload = RC_Upload::uploader('newimage', array('save_path' => 'images', 'auto_sub_dirs' => true));
         $upload->add_saving_callback(function ($file, $filename) {
             return true;
         });
         /* 是否处理商品图 */
-        $proc_goods_img = isset($_FILES['goods_img']) ? true : false;
+        $proc_goods_img = $this->request->hasFile('goods_img');
+
 //        if (isset($_FILES['goods_img']) && !$upload->check_upload_file($_FILES['goods_img'])) {
 //            $proc_goods_img = false;
 //        }
         /* 是否处理缩略图 */
         //$proc_thumb_img = true;
-        $proc_thumb_img = isset($_FILES['thumb_img']) ? true : false;
+        $proc_thumb_img = $this->request->hasFile('thumb_img');
+
 //        if (isset($_FILES['thumb_img']) && !$upload->check_upload_file($_FILES['thumb_img'])) {
 //            $proc_thumb_img = false;
 //        }
         
         if ($proc_goods_img) {
 //            if (isset($_FILES['goods_img'])) {
-                $image_info = $upload->upload($_FILES['goods_img']);
+                $image_info = $upload->upload('goods_img');
                 if (empty($image_info)) {
                     return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
                 }
 //            }
         }
+
         if ($proc_thumb_img) {
 //            if (isset($_FILES['thumb_img'])) {
-                $thumb_info = $upload->upload($_FILES['thumb_img']);
+                $thumb_info = $upload->upload('thumb_img');
                 if (empty($thumb_info)) {
                     return $this->showmessage($upload->error(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
                 }
@@ -941,12 +945,12 @@ class admin extends ecjia_admin {
         /* 记录上一次选择的分类和品牌 */
         setcookie('ECSCP[last_choose]', $catgory_id . '|' . $brand_id, RC_Time::gmtime() + 86400);
         
-        $link[] = array(
+        $links = ecjia_alert_links(array(
             'href' => RC_Uri::url('goodslib/admin/init'),
             'text' => __('商品列表', 'goodslib')
-        );
+        ));
         
-        return $this->showmessage(__('编辑商品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link, 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', array('goods_id' => $goods_id))));
+        return $this->showmessage(__('编辑商品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $links, 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', array('goods_id' => $goods_id))));
     }
     
     /**
