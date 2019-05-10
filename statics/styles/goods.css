@@ -361,3 +361,17 @@
 }
 .product-edit .form-horizontal .control-group-small .controls {
  margin-left: 100px}
+
+.product-edit .edit-page {
+	width: auto;
+	margin-right: 254px;
+}
+.product-edit .left-bar {
+	width: 100%;
+	float: left;
+}
+.product-edit .right-bar {
+	width: 254px;
+	float: right;
+	margin-right: -254px;
+}
