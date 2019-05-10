@@ -12,8 +12,24 @@ namespace Ecjia\App\Goodslib\GoodsImage\Goods;
 use Ecjia\App\Goodslib\Models\GoodslibModel;
 use ecjia_error;
 
-class GoodsThumb extends \Ecjia\App\Goods\GoodsImage\Goods\GoodsThumb
+class GoodsThumb extends GoodsImage
 {
+
+    /**
+     *  保存图片到磁盘
+     */
+    public function saveImageToDisk()
+    {
+        $thumb_path = $this->image_format->getThumbPostion();
+
+        $original_path = $img_path = null;
+
+        // 保存原图，缩略图不加水印
+        $this->disk->writeForSourcePath($this->getFilePath(), $thumb_path);
+
+        //返回 [原图，处理过的图片，缩略图]
+        return [$original_path, $img_path, $thumb_path];
+    }
 
     /**
      * 更新图片到数据库
