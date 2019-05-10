@@ -345,7 +345,7 @@ class admin extends ecjia_admin {
                 'text' => __('继续添加', 'goodslib')
             ));
 
-        return $this->showmessage(__('添加商品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array( 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', "goods_id=$goods_id"), 'links' => $link, 'max_id' => $goods_id));
+        return $this->showmessage(__('添加商品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array( 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', "goods_id=$goods_id"), 'links' => $links, 'max_id' => $goods_id));
     }
     
     //导出
