@@ -211,15 +211,14 @@ class admin_gallery extends ecjia_admin {
 		$row = RC_DB::table('goodslib_gallery')->select('img_url', 'thumb_url', 'img_original')->where('img_id', $img_id)->first();
 		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
 
-		RC_Loader::load_app_class('goods_imageutils', 'goodslib', false);
 		if ($row['img_url']) {
-			RC_Filesystem::disk()->delete(goods_imageutils::getAbsolutePath($row['img_url']));
+            RC_Storage::disk()->delete($row['img_url']);
 		}
 		if ($row['thumb_url']) {
-			RC_Filesystem::disk()->delete(goods_imageutils::getAbsolutePath($row['thumb_url']));
+            RC_Storage::disk()->delete($row['thumb_url']);
 		}
 		if ($row['img_original']) {
-			RC_Filesystem::disk()->delete(goods_imageutils::getAbsolutePath($row['img_original']));
+            RC_Storage::disk()->delete($row['img_original']);
 		}
 
 		/* 删除数据 */
@@ -231,10 +230,11 @@ class admin_gallery extends ecjia_admin {
 	/**
 	* 修改相册图片描述
 	*/
-	public function update_image_desc() {
+	public function update_image_desc()
+    {
 		$this->admin_priv('goodslib_update', ecjia::MSGTYPE_JSON);
-		$img_id = $_GET['img_id'];
-		$val = $_GET['val'];
+		$img_id = intval($_GET['img_id']);
+		$val = strval($_GET['val']);
 		
 		RC_DB::table('goodslib_gallery')->where('img_id', $img_id)->update(array('img_desc' => $val));
 		
