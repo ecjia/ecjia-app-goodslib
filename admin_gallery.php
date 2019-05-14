@@ -208,7 +208,7 @@ class admin_gallery extends ecjia_admin {
 		$goods_id = empty($_GET['goods_id']) ? 0 : intval($_GET['goods_id']);
 		
 		/* 删除图片文件 */
-		$row = RC_DB::table('goodslib_gallery')->select('img_url', 'thumb_url', 'img_original')->where('img_id', $img_id)->first();
+		$row = RC_DB::table('goodslib_gallery')->select('img_url', 'thumb_url', 'img_original')->where('goods_id', $goods_id)->where('img_id', $img_id)->first();
 		strrpos($row['img_original'], '?') && $row['img_original'] = substr($row['img_original'], 0, strrpos($row['img_original'], '?'));
 
 		if ($row['img_url']) {
