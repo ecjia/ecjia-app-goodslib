@@ -111,6 +111,7 @@
 					<td>
 						{$goods.goods_sn} 
 					</td>
+					
 					<td align="right">
 						<span  class="cursor_pointer" data-trigger="editable" data-url="{RC_Uri::url('goodslib/admin/edit_goods_price')}{if $smarty.get.page}&page={$smarty.get.page}{/if}" data-name="goods_price" data-pk="{$goods.goods_id}" data-title="{t domain='goodslib'}请输入商品价格{/t}">
 							{$goods.shop_price}
