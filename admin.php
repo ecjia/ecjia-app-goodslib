@@ -81,6 +81,7 @@ class admin extends ecjia_admin {
         RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/product.js', __FILE__), array(), false, 1);
         RC_Script::localize_script('goods_list', 'js_lang', config('app-goodslib::jslang.goods_list_page'));
         RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
+        RC_Style::enqueue_style('product', RC_App::apps_url('statics/styles/product.css', __FILE__), array());
         
         RC_Loader::load_app_class('goods', 'goods', false );
         RC_Loader::load_app_class('goodslib', 'goodslib' );
@@ -1210,6 +1211,206 @@ class admin extends ecjia_admin {
     }
     
     /**
+     * 商品参数页面
+     */
+    public function edit_goods_parameter() {
+    	$this->admin_priv('goodslib_update');
+    	
+    	$this->assign('tags', $this->tags);
+    	
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib'), RC_Uri::url('goodslib/admin/init')));
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('设置商品参数', 'goodslib')));
+    
+    	$this->assign('ur_here', __('设置商品参数', 'goodslib'));
+    	$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin/init'), 'text' => __('商品列表', 'goodslib')));
+    	
+    	$goods_id = intval($_GET['goods_id']);
+    	$this->assign('goods_id', $goods_id);
+    	
+    	$goodslib_info = RC_DB::table('goodslib')->where('goods_id', $goods_id)->first();
+    	if (empty($goodslib_info)) {
+    		return $this->showmessage(__('未检测到此商品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回商品列表', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/init')))));
+    	}
+    	$this->assign('goodslib_info', $goodslib_info);
+    	
+    	if(!empty($goodslib_info['parameter_id'])) {
+    		$template_id = $goodslib_info['parameter_id'];
+    	} else {
+    		$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('parameter', $goodslib_info['cat_id']);
+    	}
+    	$this->assign('template_id', $template_id);
+    	
+    	if ($template_id) {
+    		$this->assign('has_template', 'has_template');
+    			
+    		$template_info = Ecjia\App\Goods\GoodsAttr::get_template_info($template_id);
+    		$this->assign('template_info', $template_info);
+    			
+    		$this->assign('goods_attr_html', Ecjia\App\Goods\GoodsAttr::goodslib_build_attr_html($template_id, $goods_id));
+    	}
+    	
+    	$this->assign('form_action', RC_Uri::url('goodslib/admin/update_goods_parameter', array('goods_id' => $goods_id)));
+    
+    	$this->display('goods_parameter.dwt');
+    }
+    
+  	/**
+	 * 更新商品参数逻辑处理
+	 */
+    public function update_goods_parameter() {
+    	$this->admin_priv('goodslib_update');
+    
+    	$goods_type = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+    	$goods_id   = isset($_POST['goods_id'])    ? intval($_POST['goods_id'])    : 0;
+    	
+    	if (!empty($_POST['attr_id_list'])) {
+
+    		$goods_attr_list = array();
+    		
+    		$data = RC_DB::table('attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
+    		$attr_list = array();
+    		if (is_array($data)) {
+    			foreach ($data as $key => $row) {
+    				$attr_list[$row['attr_id']] = $row['attr_index'];
+    			}
+    		}
+    		
+    		$query = RC_DB::table('goodslib_attr as ga')
+    		->leftJoin('attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
+    		->where(RC_DB::raw('ga.goods_id'), $goods_id)
+    		->get();
+    		
+    		if (is_array($query)) {
+    			foreach ($query as $key => $row) {
+    				$goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
+    			}
+    		}
+            
+    		foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
+				$attr_value = $attr_id.'_attr_value_list';
+				$goods_attr_list[$attr_id] = $_POST[$attr_value];
+			}
+			
+    		$data = array(
+    			'parameter_id' => $goods_type
+    		);
+    		RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
+    
+    		$data_insert = array();
+    		foreach ($goods_attr_list as $attr_id => $attr_value_list) {
+    			foreach ($attr_value_list as $attr_value => $info) {
+    				$data_insert[] = array(
+    						'attr_id'		=> $attr_id,
+    						'goods_id'		=> $goods_id,
+    						'attr_value'	=> $info,
+    				);
+    			}
+    		}
+    		RC_DB::table('goodslib_attr')->insert($data_insert);
+
+    		$pjaxurl = RC_Uri::url('goodslib/admin/edit_goods_parameter', array('goods_id' => $goods_id));
+    		return $this->showmessage(__('设置商品参数成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+    	}
+    }
+    
+    
+    /**
+     * 设置规格页面
+     */
+    public function edit_goods_specification() {
+    	$this->admin_priv('goodslib_update');
+    	
+    	$this->assign('tags', $this->tags);
+    	
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib'), RC_Uri::url('goodslib/admin/init')));
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('设置商品规格', 'goodslib')));
+    	
+    	$this->assign('ur_here', __('设置商品规格', 'goodslib'));
+    	$this->assign('action_link', array('href' => RC_Uri::url('goodslib/admin/init'), 'text' => __('商品列表', 'goodslib')));
+    	
+    	$goods_id = intval($_GET['goods_id']);
+    	$this->assign('goods_id', $goods_id);
+    	
+    	$goodslib_info = RC_DB::table('goodslib')->where('goods_id', $goods_id)->first();
+    	if (empty($goodslib_info)) {
+    		return $this->showmessage(__('未检测到此商品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回商品列表', 'goodslib'), 'href' => RC_Uri::url('goods/merchant/init')))));
+    	}
+    	$this->assign('goodslib_info', $goodslib_info);
+    	
+    	if(!empty($goodslib_info['specification_id'])) {
+    		$template_id = $goodslib_info['specification_id'];
+    	} else {
+    		$template_id = Ecjia\App\Goods\GoodsAttr::get_cat_template('specification', $goodslib_info['cat_id']);
+    	}
+    	$this->assign('template_id', $template_id);
+    	if ($template_id) {
+    		$this->assign('has_template', 'has_template');
+    	
+    		$template_info = Ecjia\App\Goods\GoodsAttr::get_template_info($template_id);
+    		$this->assign('template_info', $template_info);
+    			
+    		$this->assign('goods_attr_html', Ecjia\App\Goods\GoodsAttr::goodslib_build_specification_html($template_id, $goods_id));
+    	}
+
+    	$this->assign('form_action', RC_Uri::url('goodslib/admin/update_goods_specification', array('goods_id' => $goods_id)));
+    
+    	$this->display('goods_specification.dwt');
+    }
+    
+    /**
+     * 更新商品规格逻辑处理
+     */
+    public function update_goods_specification() {
+    	$this->admin_priv('goods_update');
+    		
+    	$goods_type     = !empty($_POST['template_id'])	   ? intval($_POST['template_id'])   : 0;
+    	$goods_id 	    = !empty($_POST['goods_id'])       ? intval($_POST['goods_id'])      : 0;
+    	$goods_barcode 	= !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
+    
+    	if (!empty($_POST['attr_id_list'])) {
+    		$goods_attr_list = array();
+    		$query = RC_DB::table('goods_attr as ga')
+    		->leftJoin('attribute as a', function ($join) use($goods_id) {
+    			$join->on(RC_DB::raw('a.attr_id'), '=', RC_DB::raw('ga.attr_id'))
+    			->where(RC_DB::raw('ga.goods_id'), '=',  $goods_id);
+    		})->get();
+    
+    		if (is_array($query)) {
+    			foreach ($query as $key => $row) {
+    				$goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
+    			}
+    		}
+    
+    		$attr_goods_list = array();
+    		foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
+    			$attr_value = $attr_id.'_attr_value_list';
+    			$attr_goods_list[$attr_id] = $_POST[$attr_value];
+    		}
+    			
+    		$data = array(
+    			'specification_id'  => $goods_type,
+    			'goods_barcode'	    => $goods_barcode
+    		);
+    		RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
+    
+    		$data_insert = array();
+    		foreach ($attr_goods_list as $attr_id => $attr_value_list) {
+    			foreach ($attr_value_list as $attr_value => $info) {
+    				$data_insert[] = array(
+    						'attr_id'		=> $attr_id,
+    						'goods_id'		=> $goods_id,
+    						'attr_value'	=> $info,
+    				);
+    			}
+    		}
+    		RC_DB::table('goodslib_attr')->insert($data_insert);
+    
+    		$pjaxurl = RC_Uri::url('goodslib/admin/edit_goods_specification', array('goods_id' => $goods_id));
+    		return $this->showmessage(__('设置商品规格成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+    	}
+    }
+    
+    /**
      * 商品属性
      */
     public function edit_goods_attr() {
@@ -1275,6 +1476,7 @@ class admin extends ecjia_admin {
         if ((isset($_POST['attr_id_list']) && isset($_POST['attr_value_list'])) || (empty($_POST['attr_id_list']) && empty($_POST['attr_value_list']))) {
             // 取得原有的属性值
             $goods_attr_list = array();
+            
             $data = RC_DB::table('attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
             $attr_list = array();
             if (is_array($data)) {
@@ -1282,18 +1484,31 @@ class admin extends ecjia_admin {
                     $attr_list[$row['attr_id']] = $row['attr_index'];
                 }
             }
+            _dump($attr_list);
+            
+            
             $query = RC_DB::table('goodslib_attr as ga')
                 ->leftJoin('attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
                 ->where(RC_DB::raw('ga.goods_id'), $goods_id)->get();
+            _dump($query);
+            
+            
             if (is_array($query)) {
                 foreach ($query as $key => $row) {
                     $goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
                 }
             }
+            _dump($goods_attr_list);
+            
             // 循环现有的，根据原有的做相应处理
             if (isset($_POST['attr_id_list'])) {
+            	_dump($_POST['attr_id_list']);
+            	
                 foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
+                	_dump([$key]);
+                	_dump($_POST['attr_value_list']);
                     $attr_value = $_POST['attr_value_list'][$key];
+                    _dump($attr_value);
                     $attr_price = $_POST['attr_price_list'][$key];
                     if (!empty($attr_value)) {
                         if (isset($goods_attr_list[$attr_id][$attr_value])) {
@@ -1308,6 +1523,7 @@ class admin extends ecjia_admin {
                     }
                 }
             }
+            _dump($goods_attr_list,1);
             $data = array(
                 'goods_type'	=> $goods_type
             );
