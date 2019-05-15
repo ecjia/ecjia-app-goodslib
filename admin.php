@@ -651,7 +651,6 @@ class admin extends ecjia_admin {
             'text' => __('商品列表', 'goodslib')
         );
         
-//         _dump($this->error,1:);
         $this->assign('error', $this->error);
         $this->display('goodslib_import_success.dwt');
 //         return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
@@ -1484,31 +1483,22 @@ class admin extends ecjia_admin {
                     $attr_list[$row['attr_id']] = $row['attr_index'];
                 }
             }
-            _dump($attr_list);
-            
             
             $query = RC_DB::table('goodslib_attr as ga')
                 ->leftJoin('attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
                 ->where(RC_DB::raw('ga.goods_id'), $goods_id)->get();
-            _dump($query);
-            
             
             if (is_array($query)) {
                 foreach ($query as $key => $row) {
                     $goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
                 }
             }
-            _dump($goods_attr_list);
             
             // 循环现有的，根据原有的做相应处理
             if (isset($_POST['attr_id_list'])) {
-            	_dump($_POST['attr_id_list']);
             	
                 foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
-                	_dump([$key]);
-                	_dump($_POST['attr_value_list']);
                     $attr_value = $_POST['attr_value_list'][$key];
-                    _dump($attr_value);
                     $attr_price = $_POST['attr_price_list'][$key];
                     if (!empty($attr_value)) {
                         if (isset($goods_attr_list[$attr_id][$attr_value])) {
@@ -1523,7 +1513,6 @@ class admin extends ecjia_admin {
                     }
                 }
             }
-            _dump($goods_attr_list,1);
             $data = array(
                 'goods_type'	=> $goods_type
             );
