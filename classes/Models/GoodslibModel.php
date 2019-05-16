@@ -68,9 +68,10 @@ class GoodslibModel extends Model
     public $timestamps = false;
     
     /**
-     * 商品货品信息
+     * 一对多
+     * 商品库商品货品集合
      */
-    public function products()
+    public function goodslib_products_collection()
     {
     	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibProductsModel', 'goods_id', 'goods_id');
     }

@@ -47,7 +47,7 @@ class GoodsAdminFormatted
             'goods_weight'              => $this->model->goods_weight,
             'sort_order'                => $this->model->sort_order,
             'is_display'                => $this->model->is_display,
-            'has_products'              => $this->model->products->isNotEmpty() ? 1 : 0,
+            'has_products'              => $this->model->goodslib_products_collection->isNotEmpty() ? 1 : 0,
         ];
 
         if ($this->model->goods_thumb) {
