@@ -77,9 +77,10 @@ class GoodslibModel extends Model
     }
     
     /**
+     * 一对多
      * 商品属性信息
      */
-    public function goods_attr()
+    public function goodslib_attr_collection()
     {
     	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibAttrModel', 'goods_id', 'goods_id');
     }
