@@ -35,7 +35,7 @@ class GoodsTypeModel extends Model
 	 */
 	public function attribute_collection()
 	{
-		return $this->hasMany('Ecjia\App\Goods\Models\AttributeModel', 'cat_id', 'cat_id');
+		return $this->hasMany('Ecjia\App\Goodslib\Models\AttributeModel', 'cat_id', 'cat_id');
 	}
 	
 }
