@@ -78,11 +78,56 @@ class GoodslibModel extends Model
     
     /**
      * 一对多
-     * 商品属性信息
+     * 商品属性集合
      */
     public function goodslib_attr_collection()
     {
     	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibAttrModel', 'goods_id', 'goods_id');
+    }
+    
+    /**
+     * 一对多
+     * 商品库商品相册
+     */
+    public function goodslib_gallery_collection()
+    {
+    	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibGalleryModel', 'goods_id', 'goods_id');
+    }
+    
+    /**
+     * 一对一
+     * 商品绑定的规格模板模型信息
+     */
+    public function goods_type_specification_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goodslib\Models\GoodsTypeModel', 'specification_id', 'cat_id');
+    }
+    
+    /**
+     * 一对一
+     * 商品绑定的参数模板模型信息
+     */
+    public function goods_type_parameter_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goodslib\Models\GoodsTypeModel', 'parameter_id', 'cat_id');
+    }
+    
+    /**
+     * 一对一
+     * 商品库商品平台分类模型信息
+     */
+    public function category_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goodslib\Models\CategoryModel', 'cat_id', 'cat_id');
+    }
+    
+    /**
+     * 一对一
+     * 商品关联的品牌模型信息
+     */
+    public function brand_model()
+    {
+    	return $this->belongsTo('Ecjia\App\Goodslib\Models\BrandModel', 'brand_id', 'brand_id');
     }
 
 }
