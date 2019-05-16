@@ -66,7 +66,7 @@ class GoodsCollection
             /**
              * @var Builder $query
              */
-            $query->with('products');
+            $query->with('goodslib_products_collection');
         });
         $collection = $collection->map(function($item) use ($user_rank_discount, $user_rank) {
             return (new GoodsAdminFormatted($item))->toArray();
