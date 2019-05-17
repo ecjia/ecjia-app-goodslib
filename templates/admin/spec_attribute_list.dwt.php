@@ -34,7 +34,7 @@
 		</div>
 	</form>
 	<div class="choose_list f_r">
-		<span>{t domain='goodslib'}按模板名称展示：{/t}</span>
+		<span>{t domain='goodslib'}按模板名称快速切换：{/t}</span>
 		<select name="goods_type" data-url="{url path='goodslib/admin_spec_attribute/init' args='cat_id='}">
 			{$goods_type_list}
 		</select>
