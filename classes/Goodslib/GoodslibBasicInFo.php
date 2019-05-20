@@ -50,7 +50,7 @@
 
 namespace Ecjia\App\Goodslib\Goodslib;
 
-use \Ecjia\App\Goodslib\Models\GoodsLibModel;
+use \Ecjia\App\Goodslib\Models\GoodslibModel;
 
 class GoodslibBasicInFo
 {
@@ -71,7 +71,7 @@ class GoodslibBasicInFo
      */
     public function goodsLibInFo()
     {
-    	$data = GoodsLibModel::where('goods_id', $this->goods_id)->first();
+    	$data = GoodslibModel::where('goods_id', $this->goods_id)->first();
     	return $data;
     }
 
