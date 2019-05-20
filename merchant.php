@@ -264,7 +264,7 @@ class merchant extends ecjia_merchant {
 	        $goods['goods_sn'] = '';
 	        //return new ecjia_error('goods_sn_exists', __('您输入的货号已存在，请换一个', 'goodslib'));
 	    }
-	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);unset($goods['goods_rank']);unset($goods['limit_days']);
+	    unset($goods['goods_id']);unset($goods['is_display']);unset($goods['used_count']);unset($goods['is_delete']);unset($goods['goods_rank']);;
 	    $goods['store_id'] = $_SESSION['store_id'];
 	    
 	    if(!empty($ext_info)) {
