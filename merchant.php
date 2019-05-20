@@ -404,6 +404,7 @@ class merchant extends ecjia_merchant {
 	    if (!empty($goods['last_update'])) {
 	        $goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
 	    }
+	    $goods['format_cost_price'] = ecjia_price_format($goods['cost_price'], false);
 	    
 	    $images_url = RC_App::apps_url('statics/images', __FILE__);
 	    $this->assign('images_url', $images_url);

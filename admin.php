@@ -80,7 +80,7 @@ class admin extends ecjia_admin {
 
         RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/product.js', __FILE__), array(), false, 1);
         RC_Script::localize_script('goods_list', 'js_lang', config('app-goodslib::jslang.goods_list_page'));
-        RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/goods.css', __FILE__), array());
+        RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/admin_goods.css', __FILE__), array());
         RC_Style::enqueue_style('product', RC_App::apps_url('statics/styles/product.css', __FILE__), array());
         
         RC_Loader::load_app_class('goods', 'goods', false );
@@ -943,7 +943,10 @@ class admin extends ecjia_admin {
         $this->assign('ur_here', __('商品预览', 'goodslib'));
         $this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/init')));
         
-        $goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_delete', 0)->first();
+        //$goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_delete', 0)->first();
+        
+        $GoodslibBasicInFo = new Ecjia\App\Goodslib\Goodslib\GoodslibBasicInFo($goods_id);
+        $goods = $GoodslibBasicInFo->goodsLibInFo();
         
         if (empty($goods)) {
             return $this->showmessage(__('未检测到此商品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goodslib'),'href'=>RC_Uri::url('goodslib/admin/init')))));
@@ -953,81 +956,37 @@ class admin extends ecjia_admin {
             $goods['goods_desc'] = stripslashes($goods['goods_desc']);
         }
         
-        $cat_name = RC_DB::table('category')->where('cat_id', $goods['cat_id'])->pluck('cat_name');
-        $brand_name = RC_DB::table('brand')->where('brand_id', $goods['brand_id'])->pluck('brand_name');
-        $disk = RC_Filesystem::disk();
-        if (!$disk->exists(RC_Upload::upload_path($goods['goods_thumb'])) || empty($goods['goods_thumb'])) {
-            $goods['goods_thumb'] = RC_Uri::admin_url('statics/images/nopic.png');
-            $goods['goods_img'] = RC_Uri::admin_url('statics/images/nopic.png');
-        } else {
-            $goods['goods_thumb'] = RC_Upload::upload_url($goods['goods_thumb']);
-            $goods['goods_img'] = RC_Upload::upload_url($goods['goods_img']);
-        }
         if (!empty($goods['add_time'])) {
             $goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods['add_time']);
         }
         if (!empty($goods['last_update'])) {
             $goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
         }
+        $goods['format_cost_price'] = ecjia_price_format($goods['cost_price'], false);
         
         $images_url = RC_App::apps_url('statics/images', __FILE__);
         $this->assign('images_url', $images_url);
         
-        /* 根据商品重量的单位重新计算 */
-        if ($goods['goods_weight'] > 0) {
-            $goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight'] / 0.001);
-        }
-        $unit = $goods['goods_weight'] >= 1 ? '1' : '0.001';
-        $unit_list = goods::unit_list();
-        $goods['goods_weight_unit'] = $unit_list[$unit];
-        
-        //商品相册
-        $goods_photo_list = RC_DB::table('goodslib_gallery')->where('goods_id', $goods['goods_id'])->get();
-        /* 格式化相册图片路径 */
-        if (!empty($goods_photo_list)) {
-            $goods_photo_list_sort = $goods_photo_list_id = array();
-            $disk = RC_Filesystem::disk();
-            foreach ($goods_photo_list as $key => $gallery_img) {
-                $desc_index = intval(strrpos($gallery_img['img_original'], '?')) + 1;
-                !empty($desc_index) && $goods_photo_list[$key]['sort'] = substr($gallery_img['img_original'], $desc_index);
-
-                //判断img_original值是否有？出现，过滤以便检测
-                if (strrpos($gallery_img['img_original'], '?') > 0) {
-                    $img_original = substr($gallery_img['img_original'], 0, strrpos($gallery_img['img_original'], '?'));
-                } else {
-                    $img_original = $gallery_img['img_original'];
-                }
-
-                $goods_photo_list[$key]['img_url'] 		= empty($gallery_img['img_url']) 		|| !$disk->exists(RC_Upload::upload_path($gallery_img['img_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_url'];
-                $goods_photo_list[$key]['thumb_url'] 	= empty($gallery_img['thumb_url']) 		|| !$disk->exists(RC_Upload::upload_path($gallery_img['thumb_url'])) 		?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['thumb_url'];
-                $goods_photo_list[$key]['img_original'] = empty($gallery_img['img_original']) 	|| !$disk->exists(RC_Upload::upload_path($img_original)) 	?  $no_picture : RC_Upload::upload_url() . '/' . $gallery_img['img_original'];
-
-                $goods_photo_list_sort[$key] = $goods_photo_list[$key]['sort'];
-                $goods_photo_list_id[$key] = $gallery_img['img_id'];
-            }
-
-            //先使用sort排序，再使用id排序。
-            array_multisort($goods_photo_list_sort, $goods_photo_list_id, $goods_photo_list);
-        }
+		//商品相册
+        $goods_photo_list = $GoodslibBasicInFo->getGoodsLibGallery();
         $this->assign('goods_photo_list', $goods_photo_list);
-        
-        // 获得商品的规格和属性
-        $properties = get_goodslib_properties($goods_id);
-        $this->assign('specification', $properties['spe']);
-        
-        //商品属性
-        $attr_list = get_goodslib_attr_list($goods_id);
-        $this->assign('attr_list', $attr_list);
-        
-        //货品
-        $product = goodslib_product_list($goods_id, '');
-        $this->assign('products', $product);
+
+        //商品货品
+        $product_list = $GoodslibBasicInFo->goodslibProducts();
+        $this->assign('product_list', $product_list);
+         
+        //商品参数
+        $attr_group = $GoodslibBasicInFo->attrGroup();
+        if (count($attr_group) > 0) {
+        	$group_parameter_list = $GoodslibBasicInFo->getGoodsGroupParameter();
+        	$this->assign('group_parameter_list', $group_parameter_list);
+        } else {
+        	$common_parameter_list = $GoodslibBasicInFo->getGoodsCommonParameter();
+        	$this->assign('common_parameter_list', $common_parameter_list);
+        }
         
         $this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
-        /* 取得分类、品牌 */
         $this->assign('goods', $goods);
-        $this->assign('cat_name', $cat_name);
-        $this->assign('brand_name', $brand_name);
         
         $this->display('preview.dwt');
     }
