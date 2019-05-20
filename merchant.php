@@ -279,7 +279,9 @@ class merchant extends ecjia_merchant {
 	        $is_shipping = isset($ext_info['is_shipping']) 		? intval($ext_info['is_shipping']) 		: 0;
 	        $is_on_sale = isset($ext_info['is_on_sale']) 		? intval($ext_info['is_on_sale']) 		: 0;
 	        $merchant_cat_id = isset($ext_info['merchant_cat_id']) 	? intval($ext_info['merchant_cat_id']) 		: 0;
-	        
+
+            $goods['goods_barcode'] = '';
+            $goods['limit_days'] = '';
 	        $goods['goods_name'] = $goods_name;
 	        $goods['goods_sn'] = $goods_sn;
 	        $goods['shop_price'] = $shop_price;
@@ -310,6 +312,7 @@ class merchant extends ecjia_merchant {
 	    $goods['last_update'] = $time;
 	    $goods['goodslib_id'] = $id;//关联id
 	    $goods['goodslib_update_time'] = $time;//同步时间
+        $goods['review_status']        = get_merchant_review_status();
 	    
 	    $new_id = RC_DB::table('goods')->insertGetId($goods);
 	    RC_DB::table('goodslib')->where('goods_id', $id)->increment('used_count');
