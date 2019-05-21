@@ -1,7 +1,6 @@
 <?php defined('IN_ECJIA') or exit('No permission resources.');?>
-<div class="goods-products">
-	货品（SKU）
-	<hr>
+<div>
+	<h3 class="heading">{t domain="goods"}货品（SKU）{/t}</h3>
 </div>
 <div class="row-fluid">
 	<div class="span12">
@@ -39,6 +38,7 @@
 						</td>
 						<td>
 							<a target="_blank" href='{url path="goodslib/admin/product_edit" args="id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}编辑{/t}</a>&nbsp;|&nbsp;
+							<a target="_blank" href='{url path="goodslib/admin/product_preview" args="product_id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}预览{/t}</a>	&nbsp;|&nbsp;		
 							<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="{t domain='goods'}您确定要把该货品放入回收站吗？{/t}" href='{url path="goodslib/admin/product_remove" args="id={$list.product_id}&goods_id={$list.goods_id}"}'>{t domain='goods'}删除{/t}</a>
 						</td>
 					</tr>
