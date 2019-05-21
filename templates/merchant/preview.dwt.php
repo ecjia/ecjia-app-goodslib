@@ -169,8 +169,8 @@
 					{/if}
 					{if $common_parameter_list OR $group_parameter_list}
 						<div class="goods-pra">
-							<div class="pra">{t domain="goods"}参数{/t}</div>
-							<hr>
+							<div class="pra">{t domain="goods"}商品参数{/t}</div>
+							<hr style="margin-top:0px;">
 						</div>
 					{/if}
 					{if $common_parameter_list}
@@ -183,7 +183,7 @@
 					{if $goods.goods_desc}
 						<div class="goods-pra">
 							<div class="pra">{t domain="goods"}图文详情{/t}</div>
-							<hr>
+							<hr style="margin-top:0px;">
 						</div>
 						<div class="t_c clear">{$goods.goods_desc}</div>
 					{/if}
