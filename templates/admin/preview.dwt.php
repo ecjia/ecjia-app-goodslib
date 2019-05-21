@@ -158,7 +158,7 @@
 		<!-- {if $common_parameter_list OR $group_parameter_list}-->
 			<div>
 				<h3 class="heading">{t domain="goods"}商品参数{/t}
-					<a class="pra-handle" "target="_blank" href='{url path="goodslib/admin/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
+					<a class="pra-handle" "target="_blank" href='{url path="goodslib/admin/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goodslib'}编辑{/t}>></span></a>
 				</h3>
 			</div>
 		<!-- {/if}-->
@@ -172,7 +172,7 @@
 		<!-- {/if}-->
 		<div>
 			<h3 class="heading">{t domain="goods"}图文详情{/t}
-				<a class="pra-handle" "target="_blank" href='{url path="goodslib/admin/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
+				<a class="pra-handle" "target="_blank" href='{url path="goodslib/admin/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goodslib'}编辑{/t}>></span></a>
 			</h3>
 			<div class="t_c clear">{$goods.goods_desc}</div>
 		</div>

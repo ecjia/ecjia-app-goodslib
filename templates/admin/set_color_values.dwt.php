@@ -2,7 +2,7 @@
 
 <div class="modal-header">
 	<button class="close" data-dismiss="modal">×</button>
-	<h3 class="modal-title">{t domain="express"}设置色值{/t}</h3>
+	<h3 class="modal-title">{t domain="goodslib"}设置色值{/t}</h3>
 </div> 
 
 <div class="modal-body">

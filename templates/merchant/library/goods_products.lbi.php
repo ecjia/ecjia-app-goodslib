@@ -22,7 +22,7 @@
 				 <div class="product-info" style="margin-left:65px;">
 				    <div class="product-goods-name-style">{$list.product_name}</div>
 				    {if $list.product_attr_value}【{$list.product_attr_value}】{/if}
-				    {if $list.is_promote_now eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
+				    {if $list.is_promote_now eq 1}<span class="goods-promote">{t domain='goodslib'}促{/t}</span>{/if}
 				 </div>
     		</td>
     		<td>
