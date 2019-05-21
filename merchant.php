@@ -192,6 +192,7 @@ class merchant extends ecjia_merchant {
 	        $goods_sn = isset($_POST['goods_sn']) 		? $_POST['goods_sn'] 		: '';
 	        $shop_price = isset($_POST['shop_price']) 		? $_POST['shop_price'] 		: 0;
 	        $market_price = isset($_POST['market_price']) 		? $_POST['market_price'] 		: 0;
+            $cost_price = isset($_POST['cost_price']) 		? $_POST['cost_price'] 		: 0;
 	        $goods_number = isset($_POST['goods_number']) 		? intval($_POST['goods_number']) : ecjia::config('default_storage');
 	        $merchant_cat_id = isset($_POST['merchant_cat_id']) 	? intval($_POST['merchant_cat_id']) : 0;
 	        if(empty($id)) {
@@ -272,6 +273,7 @@ class merchant extends ecjia_merchant {
 	        $goods_sn = isset($ext_info['goods_sn']) 		? $ext_info['goods_sn'] 		: '';
 	        $shop_price = isset($ext_info['shop_price']) 		? $ext_info['shop_price'] 		: 0;
 	        $market_price = isset($ext_info['market_price']) 		? $ext_info['market_price'] 		: 0;
+            $cost_price = isset($ext_info['cost_price']) 		? $ext_info['cost_price'] 		: 0;
 	        $goods_number = isset($ext_info['goods_number']) 		? intval($ext_info['goods_number']) : ecjia::config('default_storage');
 	        $is_best = isset($ext_info['is_best']) 		? intval($ext_info['is_best']) 		: 0;
 	        $is_new = isset($ext_info['is_new']) 		? intval($ext_info['is_new']) 		: 0;
@@ -286,6 +288,7 @@ class merchant extends ecjia_merchant {
 	        $goods['goods_sn'] = $goods_sn;
 	        $goods['shop_price'] = $shop_price;
 	        $goods['market_price'] = $market_price;
+            $goods['cost_price'] = $cost_price;
 	        $goods['goods_number'] = $goods_number;
 	        $goods['store_best'] = $is_best;
 	        $goods['store_new'] = $is_new;
@@ -313,6 +316,7 @@ class merchant extends ecjia_merchant {
 	    $goods['goodslib_id'] = $id;//关联id
 	    $goods['goodslib_update_time'] = $time;//同步时间
         $goods['review_status']        = get_merchant_review_status();
+        $goods['is_on_sale'] = $is_on_sale == 1 ? 1 : 0;//默认下架状态
 	    
 	    $new_id = RC_DB::table('goods')->insertGetId($goods);
 	    RC_DB::table('goodslib')->where('goods_id', $id)->increment('used_count');

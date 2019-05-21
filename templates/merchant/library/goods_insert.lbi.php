@@ -42,6 +42,13 @@
                           	<button class="btn btn-primary" type="button" data-toggle="integral_market_price">{t domain="goodslib"}取整数{/t}</button>
 						</div>
           			</div>
+
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">{t domain="goodslib"}成本价{/t}</label>
+                        <div class="col-lg-7">
+                            <input class="form-control" name="cost_price" type="text" value="" />
+                        </div>
+                    </div>
               			
           			<div class="form-group">
           				<label class="control-label col-lg-2">{t domain="goodslib"}库存数量{/t}</label>
