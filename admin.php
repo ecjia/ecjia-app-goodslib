@@ -46,6 +46,7 @@
 //
 defined('IN_ECJIA') or exit('No permission resources.');
 
+use Ecjia\App\Goods\Models\GoodslibAttrModel;
 /**
  *  ECJIA 商品管理程序
  */
@@ -1216,59 +1217,77 @@ class admin extends ecjia_admin {
 	 * 更新商品参数逻辑处理
 	 */
     public function update_goods_parameter() {
-    	$this->admin_priv('goodslib_update');
-    
-    	$goods_type = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-    	$goods_id   = isset($_POST['goods_id'])    ? intval($_POST['goods_id'])    : 0;
+
+    	$this->admin_priv('goods_update');
+    		
+    	$goods_type = !empty($_POST['template_id'])	 ? intval($_POST['template_id'])  : 0;
+    	$goods_id 	= !empty($_POST['goods_id'])     ? intval($_POST['goods_id'])     : 0;
     	
-    	if (!empty($_POST['attr_id_list'])) {
-
-    		$goods_attr_list = array();
+    	$attr_id_list = $this->request->input('attr_id_list');
+    	$input_all    = $this->request->input();
+    	
+    	if (!empty($attr_id_list)) {
+    		$attr_id_list = collect($attr_id_list)->mapWithKeys(function ($attr_id) use ($input_all) {
+    			$vkey = $attr_id . '_attr_value_list';
+    			$vvalue = array_get($input_all, $vkey);
+    			return [$attr_id => $vvalue];
+    		});
     		
-    		$data = RC_DB::table('attribute')->select('attr_id', 'attr_index')->where('cat_id', $goods_type)->get();
-    		$attr_list = array();
-    		if (is_array($data)) {
-    			foreach ($data as $key => $row) {
-    				$attr_list[$row['attr_id']] = $row['attr_index'];
-    			}
-    		}
-    		
-    		$query = RC_DB::table('goodslib_attr as ga')
-    		->leftJoin('attribute as a', RC_DB::raw('ga.attr_id'), '=', RC_DB::raw('a.attr_id'))
-    		->where(RC_DB::raw('ga.goods_id'), $goods_id)
-    		->get();
-    		
-    		if (is_array($query)) {
-    			foreach ($query as $key => $row) {
-    				$goods_attr_list[$row['attr_id']][$row['attr_value']] = array('sign' => 'delete', 'goods_attr_id' => $row['goods_attr_id']);
-    			}
-    		}
-            
-    		foreach ($_POST['attr_id_list'] AS $key => $attr_id) {
-				$attr_value = $attr_id.'_attr_value_list';
-				$goods_attr_list[$attr_id] = $_POST[$attr_value];
-			}
-			
-    		$data = array(
-    			'parameter_id' => $goods_type
-    		);
-    		RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
-    
-    		$data_insert = array();
-    		foreach ($goods_attr_list as $attr_id => $attr_value_list) {
-    			foreach ($attr_value_list as $attr_value => $info) {
-    				$data_insert[] = array(
-    						'attr_id'		=> $attr_id,
-    						'goods_id'		=> $goods_id,
-    						'attr_value'	=> $info,
-    				);
-    			}
-    		}
-    		RC_DB::table('goodslib_attr')->insert($data_insert);
-
-    		$pjaxurl = RC_Uri::url('goodslib/admin/edit_goods_parameter', array('goods_id' => $goods_id));
-    		return $this->showmessage(__('设置商品参数成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
+			$updateGoodsAttr = function ($goods_id, $attr_id_list) {
+				$collection = GoodslibAttrModel::where('cat_type', 'parameter')->where('goods_id', $goods_id)->get();
+				$collection = $collection->groupBy('attr_id');
+				$attr_id_list->map(function($id_values, $key) use ($collection, $goods_id) {
+					$new_collection = $collection->get($key);
+					if (is_array($id_values)) {
+						$new_collection = $collection->get($key);
+						if (!empty($new_collection)) {
+							$new_collection->map(function($model) use ($id_values) {
+								if (!in_array($model->attr_value, $id_values) ) {
+									$model->delete();
+								}
+									
+							});
+							$old_values = $new_collection->pluck('attr_value')->all();
+							$new_values = collect($id_values)->diff($old_values);
+						} else {
+							$new_values = $id_values;
+						}
+						foreach ($new_values as $v) {
+							GoodslibAttrModel::insert([
+    							'cat_type' => 'parameter',
+    							'goods_id' => $goods_id,
+    							'attr_id' => $key,
+    							'attr_value' => $v,
+							]);
+						}
+					}
+					else {
+						if (!empty($new_collection)) {
+							$new_collection->map(function($model) use ($id_values) {
+								$model->attr_value = $id_values;
+								$model->save();
+							});
+						} else {
+							GoodslibAttrModel::insert([
+    							'cat_type' => 'parameter',
+    							'goods_id' => $goods_id,
+    							'attr_id' => $key,
+    							'attr_value' => $id_values,
+							]);
+						}
+					}
+				});
+			};
+			$updateGoodsAttr($goods_id, $attr_id_list);
+			$data = array(
+				'parameter_id' => $goods_type,
+			);
+			RC_DB::table('goods')->where('goods_id', $goods_id)->update($data);
+	
+			$pjaxurl = RC_Uri::url('goodslib/admin/edit_goods_parameter', array('goods_id' => $goods_id));
+			return $this->showmessage(__('编辑商品参数成功', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => $pjaxurl));
     	}
+    	
     }
     
     
