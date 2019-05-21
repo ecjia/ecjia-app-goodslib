@@ -85,13 +85,17 @@
 								        <span id="J_StockTips"></span>
 								    </dd>
 								</dl>
-								<dl class="tb-amount tm-clear">
-								    <dt class="tb-metatit">{t domain="goods"}商品品牌{/t}</dt>
-								    <dd id="J_Amount">
-								        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->brand_model}{$goods->brand_model->brand_name}{/if}</em>
-								        <span id="J_StockTips"></span>
-								    </dd>
-								</dl>
+								<!-- {if $goods->brand_model} -->
+									<!-- {if $goods->brand_model->brand_name} -->
+										<dl class="tb-amount tm-clear">
+										    <dt class="tb-metatit">{t domain="goods"}商品品牌{/t}</dt>
+										    <dd id="J_Amount">
+										        <em id="J_EmStock" class="tb-hidden" style="display: inline;">{if $goods->brand_model}{$goods->brand_model->brand_name}{/if}</em>
+										        <span id="J_StockTips"></span>
+										    </dd>
+										</dl>
+									<!-- {/if} -->
+								<!-- {/if} -->
 								<dl class="tb-amount tm-clear">
 				          			<dt class="tb-metatit">{t domain="goods"}商品排序{/t}</dt>
 				          			<dd id="J_Amount">
