@@ -17,12 +17,6 @@
                       	<span class="input-must m_l15">*</span>
           			</div>
           			<div class="form-group">
-          				<label class="control-label col-lg-2">{t domain="goodslib"}商品货号{/t}</label>
-          				<div class="controls col-lg-7">
-                        	<input class="form-control" name="goods_sn" type="text" value="" />
-                      	</div>
-          			</div>
-          			<div class="form-group">
           				<label class="control-label col-lg-2">{t domain="goodslib"}本店售价{/t}</label>
           				<div class="controls col-lg-7">
                         	<input class="form-control" name="shop_price" type="text" value="" />
