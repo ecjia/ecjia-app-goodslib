@@ -155,32 +155,27 @@
 			<!-- #BeginLibraryItem "/library/goods_products.lbi" --><!-- #EndLibraryItem -->
 		{/if}
 		
-		{if $common_parameter_list OR $group_parameter_list}
-			<div class="goods-pra" style="margin-bottom:20px;">
-				<div class="pra">{t domain="goods"}商品参数{/t}
-					<div class="pra-handle">
-						<a target="_blank" href='{url path="goodslib/admin/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
-					</div>
-				</div>
-				<hr>
+		<!-- {if $common_parameter_list OR $group_parameter_list}-->
+			<div>
+				<h3 class="heading">{t domain="goods"}商品参数{/t}
+					<a class="pra-handle" "target="_blank" href='{url path="goodslib/admin/edit_goods_parameter" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
+				</h3>
 			</div>
-		{/if}
-		{if $common_parameter_list}
-			<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
-		{/if}
-		{if $group_parameter_list}
-			<!-- #BeginLibraryItem "/library/goods_group_prameter.lbi" --><!-- #EndLibraryItem -->
-		{/if}
+		<!-- {/if}-->
 		
-		<div class="goods-pra">
-			<div class="pra">{t domain="goods"}图文详情{/t}
-				<div class="pra-handle">
-					<a target="_blank" href='{url path="goodslib/admin/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
-				</div>
-			</div>
-			<hr>
+		<!-- {if $common_parameter_list}-->
+			<!-- #BeginLibraryItem "/library/goods_common_prameter.lbi" --><!-- #EndLibraryItem -->
+		<!-- {/if}-->
+		
+		<!-- {if $group_parameter_list}-->
+			<!-- #BeginLibraryItem "/library/goods_group_prameter.lbi" --><!-- #EndLibraryItem -->
+		<!-- {/if}-->
+		<div>
+			<h3 class="heading">{t domain="goods"}图文详情{/t}
+				<a class="pra-handle" "target="_blank" href='{url path="goodslib/admin/edit_goods_desc" args="goods_id={$goods.goods_id}"}'><span class="pra-edit">{t domain='goods'}编辑{/t}>></span></a>
+			</h3>
+			<div class="t_c clear">{$goods.goods_desc}</div>
 		</div>
-		<div class="t_c clear">{$goods.goods_desc}</div>
 	</div>
 </div>	
 <!-- {/block} -->

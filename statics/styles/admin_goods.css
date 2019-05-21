@@ -177,20 +177,10 @@
 	font-size: 20px;
 	color:#666;
 }
-#detail .goods-pra{
-	clear: both;
-}
-#detail .goods-pra .pra{
-	font-size: 20px;
-	color:#666;
-}
-#detail .goods-pra .pra .pra-handle{
+.heading .pra-handle{
 	float:right;
-}
-#detail .goods-pra .pra .pra-edit{
-	display:inline-block;
-	font-size:17px;
-	padding-right:15px;
+	clear: both;
+	text-decoration:none;
 }
 #detail .product-goods-name-style{
 	height: 40px;
