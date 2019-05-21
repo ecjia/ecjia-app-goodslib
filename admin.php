@@ -1326,8 +1326,13 @@ class admin extends ecjia_admin {
 				$collection = $collection->groupBy('attr_id');
 				$attr_id_list->map(function($id_values, $key) use ($collection, $goods_id) {
 					$new_collection = $collection->get($key);
-					if (is_array($id_values)) {
-						$new_collection = $collection->get($key);
+					if (is_null($id_values)) {
+						if (!empty($new_collection)) {
+							$new_collection->map(function($model){
+								$model->delete();
+							});
+						}
+					} elseif (is_array($id_values)) {
 						if (!empty($new_collection)) {
 							$new_collection->map(function($model) use ($id_values) {
 								if (!in_array($model->attr_value, $id_values) ) {
@@ -1348,8 +1353,7 @@ class admin extends ecjia_admin {
     							'attr_value' => $v,
 							]);
 						}
-					}
-					else {
+					} else {
 						if (!empty($new_collection)) {
 							$new_collection->map(function($model) use ($id_values) {
 								$model->attr_value = $id_values;
