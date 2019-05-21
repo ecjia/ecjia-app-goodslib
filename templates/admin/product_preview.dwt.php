@@ -36,7 +36,6 @@
 				    	<dl class="tm-promo-price">
 					     	<dt class="tb-metatit">{t domain="goods"}本店售价{/t}</dt>
 					      	<dd>
-					          	<em class="tm-yen">¥</em>
 					          	<span class="tm-price">{$product.product_shop_price}</span>&nbsp;&nbsp;
 					      	</dd>
 				    	</dl>
@@ -102,7 +101,7 @@
 			</div>
 			<div class="span5">
 				<div id="tbody">
-					{if $goods_photo_list}
+					{if $product_photo_list}
 				    <div id="mainbody">
 				    	<!-- {foreach from=$product_photo_list key=k item=val} -->
 				    	{if $k eq 0}
