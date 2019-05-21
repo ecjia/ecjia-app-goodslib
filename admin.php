@@ -943,8 +943,6 @@ class admin extends ecjia_admin {
         $this->assign('ur_here', __('商品预览', 'goodslib'));
         $this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/init')));
         
-        //$goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->where('is_delete', 0)->first();
-        
         $GoodslibBasicInFo = new Ecjia\App\Goodslib\Goodslib\GoodslibBasicInFo($goods_id);
         $goods = $GoodslibBasicInFo->goodsLibInFo();
         
@@ -989,6 +987,96 @@ class admin extends ecjia_admin {
         $this->assign('goods', $goods);
         
         $this->display('preview.dwt');
+    }
+    
+    /**
+     * 商品库货品预览
+     */
+    public function product_preview()
+    {
+    	$this->admin_priv('goodslib_manage');
+    	
+    	$product_id = !empty($_GET['product_id']) ? intval($_GET['product_id']) : 0;
+		$goods_id   = !empty($_GET['goods_id']) ? intval($_GET['goods_id']) : 0;
+    	if (empty($product_id)) {
+    		return $this->showmessage(__('未检测到此货品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text' => __('返回上一页', 'goodslib'), 'href' => 'javascript:history.go(-1)'))));
+    	}
+    	
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品库', 'goodslib'),RC_Uri::url('goodslib/admin/init')));
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('商品预览', 'goodslib'),RC_Uri::url('goodslib/admin/preview', array('goods_id' => $goods_id))));
+    	ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('货品预览', 'goodslib')));
+    	
+    	$this->assign('ur_here', __('货品预览', 'goodslib'));
+    	$this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/preview', array('goods_id' => $goods_id))));
+    	
+    	//商品库货品信息
+    	$GoodslibProductsBasicInFo =  new Ecjia\App\Goodslib\Goodslib\GoodslibProductsBasicInFo($product_id);
+        $goodslib_product = $GoodslibProductsBasicInFo->goodslibProductInFo();
+        if (empty($goodslib_product)) {
+        	return $this->showmessage(__('未检测到此货品', 'goods'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品预览', 'goods'),'href'=>RC_Uri::url('goodslib/admin/preview', array('goods_id' => $goods_id))))));
+        }
+       
+        //商品库商品
+    	$GoodslibBasicInFo = new Ecjia\App\Goodslib\Goodslib\GoodslibBasicInFo($goodslib_product->goods_id);
+        $goods = $GoodslibBasicInFo->goodsLibInFo();
+    	
+        //名称处理
+        $goodslib_product['product_attr_value'] = '';
+        if (empty($goodslib_product->product_name)) {
+        	$goodslib_product['product_name'] = $goods->goods_name;
+        	if ($goodslib_product->goods_attr) {
+        		$goods_attr = explode('|', $product->goods_attr);
+        		if ($goods->goodslib_attr_collection) {
+        			$product_attr_value = $goods->goodslib_attr_collection->whereIn('goods_attr_id', $goods_attr)->sortBy('goods_attr_id')->lists('attr_value');
+        			$product_attr_value = $product_attr_value->implode('/');
+        			$goodslib_product['product_attr_value'] = $product_attr_value;
+        		}
+        	}
+        }
+        
+        //本店价格处理
+        if ($goodslib_product->product_shop_price <= 0){
+        	$goodslib_product['product_shop_price'] = ecjia_price_format($goods->shop_price, false);
+        } else {
+        	$goodslib_product['product_shop_price'] = ecjia_price_format($goodslib_product->product_shop_price, false);
+        }
+        //添加时间
+        if (!empty($goods->add_time)) {
+        	$goods['add_time'] = RC_Time::local_date(ecjia::config('time_format'), $goods->add_time);
+        }
+        
+        //图文详情
+        if (!empty($goodslib_product['product_desc'])) {
+        	$goodslib_product['product_desc'] = stripslashes($goodslib_product->product_desc);
+        } else{
+        	if (!empty($goods['goods_desc'])){
+        		$goodslib_product['product_desc'] = stripslashes($goods->goods_desc);
+        	}
+        }
+        //货品相册
+        $product_photo_list = $GoodslibProductsBasicInFo->getProductGallery();
+        if (empty($product_photo_list)) {
+        	$product_photo_list = $GoodslibBasicInFo->getGoodsLibGallery();
+        }
+        $this->assign('product_photo_list', $product_photo_list);
+        
+        //商品参数
+        $attr_group = $GoodslibBasicInFo->attrGroup();
+        if (count($attr_group) > 0) {
+        	$group_parameter_list = $GoodslibBasicInFo->getGoodsGroupParameter();
+        	$this->assign('group_parameter_list', $group_parameter_list);
+        } else {
+        	$common_parameter_list = $GoodslibBasicInFo->getGoodsCommonParameter();
+        	$this->assign('common_parameter_list', $common_parameter_list);
+        }
+        
+        $images_url = RC_App::apps_url('statics/images', __FILE__);
+        $this->assign('images_url', $images_url);
+        $this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
+        $this->assign('product', $goodslib_product);
+        $this->assign('goods', $goods);
+        
+    	$this->display('product_preview.dwt');
     }
     
     /**
