@@ -80,7 +80,8 @@ class admin extends ecjia_admin {
 //         RC_Script::enqueue_script('ecjia-region', RC_Uri::admin_url('statics/ecjia.js/ecjia.region.js'), array('jquery'), false, true);
 
         RC_Script::enqueue_script('product', RC_App::apps_url('statics/js/product.js', __FILE__), array(), false, 1);
-        RC_Script::localize_script('goods_list', 'js_lang', config('app-goodslib::jslang.goods_list_page'));
+        RC_Script::localize_script('goods_list', 'js_lang', config('app-goodslib::jslang.spec_product_page'));
+        
         RC_Style::enqueue_style('goods', RC_App::apps_url('statics/styles/admin_goods.css', __FILE__), array());
         RC_Style::enqueue_style('product', RC_App::apps_url('statics/styles/product.css', __FILE__), array());
         
@@ -1679,15 +1680,9 @@ class admin extends ecjia_admin {
     	$this->admin_priv('goods_update');
     
     	$goods_id = intval($_POST['goods_id']);
-    	$product_list = RC_DB::TABLE('goodslib_products')->where('goods_id', $goods_id)->lists('product_id');
-    
-    	$count = 0;
-    	if(count($product_list) > 0) {
-    		$count = RC_DB::TABLE('order_goods')->whereIn('product_id', $product_list)->count();
-    	}
-    
+    	$count = RC_DB::TABLE('goods')->where('goodslib_id', $goods_id)->count();
     	if($count > 0) {
-    		return $this->showmessage(__('该规格模板下的货品以及产品了订单交易，不可以更改规格模板', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('url' => RC_Uri::url('goodslib/admin/edit_goods_specification', array('goods_id' => $goods_id))));
+    		return $this->showmessage(__('该商品库商品已被导入使用，不可以随意更改规格模板', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('url' => RC_Uri::url('goodslib/admin/edit_goods_specification', array('goods_id' => $goods_id))));
     	} else {
     		//清除商品关联的模板id为0
     		RC_DB::table('goodslib')->where('goods_id', $goods_id)->update(array('specification_id' => 0));
@@ -1696,6 +1691,7 @@ class admin extends ecjia_admin {
     		RC_DB::table('goodslib_attr')->where(array('goods_id' => $goods_id))->delete();
     			
     		//删除货品相关
+    		$product_list = RC_DB::TABLE('goodslib_products')->where('goods_id', $goods_id)->lists('product_id');
     		foreach($product_list as $value) {
     			$product = Ecjia\App\Goods\GoodsAttr::get_goodslib_products_info($value, 'goods_id');
     			$image_data = new product_image_data('', '', '', 0, $value);
@@ -1704,13 +1700,9 @@ class admin extends ecjia_admin {
     			if ($result) {
     				$image_data->delete_gallery();
     				RC_DB::table('goodslib_gallery')->where('product_id', $value)->delete();
-    				if (update_goods_stock($product['goods_id'], -$product['product_number'])) {
-    					ecjia_merchant::admin_log('', 'edit', 'goods');
-    				}
-    				ecjia_merchant::admin_log('', 'trash', 'products');
     			}
     		}
-    		return $this->showmessage(__('清除相关数据成功，您可以重新进行更换规格模板', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goods/merchant/edit_goods_specification', array('goods_id' => $goods_id))));
+    		return $this->showmessage(__('清除相关数据成功，您可以重新进行更换规格模板', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goodslib/admin/edit_goods_specification', array('goods_id' => $goods_id))));
     	}
     }
     

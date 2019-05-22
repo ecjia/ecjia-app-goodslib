@@ -254,6 +254,7 @@
 				
 				var url = $(this).attr('data-href');
 				var goods_id = $(this).attr('goods-id');
+				
 				smoke.confirm(js_lang.tip_msg, function(e) {
 					if (e) {
 						$.ajax({
