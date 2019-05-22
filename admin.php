@@ -143,7 +143,7 @@ class admin extends ecjia_admin {
             'brand'             => $brand_id,
             'keywords'          => $keywords,
             'review_status'     => $review_status,
-            'sort_by'           => [$sort_by => $sort_order],
+            'sort_by'           => [$sort_by => $sort_order, 'goods_id' => 'DESC'],
             'page'              => $page,
         ];
         $input = collect($input)->filter()->all(); //->merge($where)
