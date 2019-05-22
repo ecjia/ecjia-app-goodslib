@@ -1306,7 +1306,6 @@ class admin extends ecjia_admin {
 	 * 更新商品参数逻辑处理
 	 */
     public function update_goods_parameter() {
-
     	$this->admin_priv('goods_update');
     		
     	$goods_type = !empty($_POST['template_id'])	 ? intval($_POST['template_id'])  : 0;
@@ -1383,6 +1382,27 @@ class admin extends ecjia_admin {
     	
     }
     
+    /**
+     * 更换参数模板需要清除数据
+     */
+    public function clear_parameter_data() {
+    	$this->admin_priv('goods_update');
+    
+    	$goods_id = intval($_POST['goods_id']);
+
+    	$goods_id = intval($_POST['goods_id']);
+    	$count = RC_DB::TABLE('goods')->where('goodslib_id', $goods_id)->count();
+    	if($count > 0) {
+    		return $this->showmessage(__('该商品库商品已被导入使用，不可以随意更改参数模板', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR, array('url' => RC_Uri::url('goodslib/admin/edit_goods_specification', array('goods_id' => $goods_id))));
+    	} else {
+    		//清除商品关联的模板id为0
+    		RC_DB::table('goodslib')->where('goods_id', $goods_id)->update(array('parameter_id' => 0));
+    		
+    		//删除关联的规格属性
+    		RC_DB::table('goodslib_attr')->where(array('goods_id' => $goods_id))->delete();
+    		return $this->showmessage(__('清除相关数据成功，您可以重新进行更换参数模板', 'goods'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('url' => RC_Uri::url('goodslib/admin/edit_goods_parameter', array('goods_id' => $goods_id))));
+    	}
+    }
     
     /**
      * 设置规格页面
