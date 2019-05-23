@@ -344,7 +344,7 @@ class merchant extends ecjia_merchant {
         //优先使用规格模板specification_id
         if ($goods['specification_id']) {
             $cat_id = $goods['specification_id'];
-            $this->copy_goodslib_attr($id, $new_id, $cat_id, $goods);
+            $this->copy_goodslib_attr($id, $new_id, $cat_id, $goods, 'specification');
         }
 
 	    if ($goods['goods_type'] && empty($goods['specification_id'])) {
@@ -362,7 +362,13 @@ class merchant extends ecjia_merchant {
 	}
 
 	private function copy_goodslib_attr($goods_id, $new_id, $cat_id, $goods = [], $cat_type = '') {
-        $goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $goods_id)->get();
+        $db_goods_attr = RC_DB::table('goodslib_attr')->where('goods_id', $goods_id);
+        if($cat_type) {
+            $db_goods_attr->where('cat_type', $cat_type);
+        } else {
+            $db_goods_attr->whereNull('cat_type');
+        }
+        $goods_attr = $db_goods_attr->get();
         if($goods_attr) {
             $goods_type = RC_DB::table('goods_type')->where('cat_id', $cat_id)->first();
             if($goods_type) {
