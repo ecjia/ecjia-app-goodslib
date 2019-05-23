@@ -361,7 +361,7 @@ class admin extends ecjia_admin {
         
         $goods_list = goodslib::get_export_goods_list(0);
         if(empty($goods_list['goods'])) {
-            
+            return $this->showmessage(__('暂无数据', 'goodslib'), ecjia::MSGTYPE_HTML| ecjia::MSGSTAT_ERROR);
         }
         $goods = $goods_list['goods'];
         //         $goods = [];
