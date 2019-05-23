@@ -72,7 +72,7 @@
 							<div class="box_content">
 								<div class="control-group">
 									<label class="control-label">{t domain="goodslib"}规格模板：{/t}</label>
-									<div class="controls l_h35">
+									<div class="controls ">
 										{$template_info.cat_name}
 										
 										{if $goodslib_info.specification_id}
@@ -88,6 +88,7 @@
                                         {/if} 
 									</div>
 								</div>
+								
 								{if $product_list}
 								<table class="table table-striped table-hide-edit">
                                   <thead>
