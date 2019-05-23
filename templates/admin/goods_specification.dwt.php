@@ -102,6 +102,7 @@
                
                                   <tbody>
                                       <!-- {foreach from=$product_list item=product} -->
+                                      <input type="hidden" name="product_id[]" value="{$product.product_id}" />
                                       <tr>
                                         <td>
                                         <!-- {foreach from=$product.goods_attr item=goods_attr} -->
