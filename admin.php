@@ -47,6 +47,7 @@
 defined('IN_ECJIA') or exit('No permission resources.');
 
 use Ecjia\App\Goods\Models\GoodslibAttrModel;
+use Ecjia\App\Goods\Category\CategoryLevel;
 /**
  *  ECJIA 商品管理程序
  */
@@ -271,12 +272,18 @@ class admin extends ecjia_admin {
         if (empty($catgory_id)) {
             return $this->showmessage(__('请选择商品分类', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
-            
+        
+        $cats= new CategoryLevel();
+        $cat_ids = $cats->getParentCategoryIds($catgory_id);
+        list($level1, $level2, $level3) = $cat_ids;
+        
         /* 入库 */
         $data = array(
             'goods_name'            => $goods_name,
             'goods_name_style'      => $goods_name_style,
             'goods_sn'              => empty($goods_sn) ? '' : $goods_sn,
+        	'cat_level1_id'         => empty($level1) ? 0 : $level1,
+        	'cat_level2_id'         => empty($level2) ? 0 : $level2,
             'cat_id'                => $catgory_id,
             'brand_id'              => $brand_id,
             'shop_price'            => $shop_price,
@@ -867,10 +874,16 @@ class admin extends ecjia_admin {
             return $this->showmessage(__('请输入商品名称', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
         
+        $cats= new CategoryLevel();
+        $cat_ids = $cats->getParentCategoryIds($catgory_id);
+        list($level1, $level2, $level3) = $cat_ids;
+        
         $data = array(
             'goods_name'				=> rc_stripslashes($goods_name),
             'goods_name_style'	  		=> $goods_name_style,
             'goods_sn'			  		=> $goods_sn,
+        	'cat_level1_id'         	=> empty($level1) ? 0 : $level1,
+        	'cat_level2_id'         	=> empty($level2) ? 0 : $level2,
             'cat_id'					=> $catgory_id,
             'brand_id'			  		=> $brand_id,
             'shop_price'				=> $shop_price,
