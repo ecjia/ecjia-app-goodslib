@@ -110,14 +110,25 @@ class GoodslibBasicInFo
     public function goodslibProducts()
     {
     	$product_list = [];
+    	$disk = \RC_Filesystem::disk();
     	if ($this->model->goodslib_products_collection) {
     		$goods = $this->model;
     		$time = \RC_Time::gmtime();
-    		$product_list = $goods->goodslib_products_collection->map(function ($item) use ($goods, $time) {
+    		$product_list = $goods->goodslib_products_collection->map(function ($item) use ($goods, $time, $disk) {
     			if (empty($item->product_name)) {
     				$item['product_name'] = $goods->goods_name;
     			}
-    			$item['product_thumb'] = empty($item->product_thumb) ?  \RC_Upload::upload_url($goods->goods_thumb) :  \RC_Upload::upload_url($item->product_thumb);
+    			$product_thumb = $item->product_thumb;
+    			if (empty($product_thumb)) {
+    				$product_thumb = $goods->goods_thumb;
+    			}
+    			
+    			if (!$disk->exists(\RC_Upload::upload_path($product_thumb)) || empty($product_thumb)) {
+    				$item['product_thumb'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    			} else {
+    				$item['product_thumb'] = \RC_Upload::upload_url($product_thumb);
+    			}
+    			
     			$item['product_shop_price'] = $item->product_shop_price <= 0 ? ecjia_price_format($goods->shop_price, false) : ecjia_price_format($item->product_shop_price, false);
     			$item['product_attr_value'] = '';
     			$item['is_promote_now'] = 0 ;
