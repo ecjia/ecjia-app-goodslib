@@ -44,14 +44,11 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-namespace Ecjia\App\Goods\Maintains;
+namespace Ecjia\App\Goodslib\Maintains;
 
-use Ecjia\App\Goods\Models\GoodsAttrModel;
-use Ecjia\App\Goods\Models\GoodsModel;
-use Ecjia\App\Goods\Models\GoodsTypeModel;
+use Ecjia\App\Goodslib\Models\GoodslibAttrModel;
 use Ecjia\App\Goodslib\Models\GoodslibModel;
 use Ecjia\App\Maintain\AbstractCommand;
-use RC_DB;
 
 class GoodsSpecParameterCompatible extends AbstractCommand
 {
@@ -61,7 +58,7 @@ class GoodsSpecParameterCompatible extends AbstractCommand
      * 代号标识
      * @var string
      */
-    protected $code = 'goods_spec_parameter_compatible';
+    protected $code = 'goodslib_spec_parameter_compatible';
     
     /**
      * 图标
@@ -77,8 +74,8 @@ class GoodsSpecParameterCompatible extends AbstractCommand
      */
     public function __construct()
     {
-    	$this->name = __('更新商品规格参数老数据兼容', 'goods');
-    	$this->description = __('更新商品规格参数老数据兼容', 'goods');
+    	$this->name = __('商品库规格参数更新', 'goodslib');
+    	$this->description = __('更新商品库规格参数老数据兼容', 'goodslib');
     }
 
     /**
@@ -92,19 +89,33 @@ class GoodsSpecParameterCompatible extends AbstractCommand
         ini_set('memory_limit',-1);
         set_time_limit(0);
 
-
-        $this->processGoodsTypeTable();
-
-        $this->processGoodsTable();
-
-        $this->processGoodsAttrTable();
-
         $this->processGoodslibTable();
 
+        $this->processGoodslibAttrTable();
         
         return true;
     }
 
+    private function processGoodslibAttrTable()
+    {
+
+        $count = GoodslibAttrModel::whereNull('cat_type')->count();
+
+        while ($count) {
+
+            GoodslibAttrModel::with('attribute_model')->whereNull('cat_type')->chunk(50, function ($items) {
+
+                $items->map(function ($model) {
+                    $model->cat_type = $model->attribute_model->attr_type > 0 ? 'specification' : 'parameter';
+                    $model->save();
+                });
+
+            });
+
+            $count = GoodslibAttrModel::whereNull('cat_type')->count();
+        }
+
+    }
 
     private function processGoodslibTable()
     {
