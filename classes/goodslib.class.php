@@ -201,7 +201,7 @@ class goodslib {
         $filter ['record_count'] 	= $count;
         
         $db_goods
-            ->select(RC_DB::raw('goods_id, g.goods_sn, g.goods_name, g.shop_price, g.market_price, g.goods_weight, 
+            ->select(RC_DB::raw('goods_id, g.goods_sn, g.goods_name, g.shop_price, g.market_price, g.cost_price, g.goods_weight, 
             g.keywords, g.goods_brief, g.goods_desc, g.brand_id, g.cat_id, goods_type, g.specification_id, g.parameter_id
             '))
         ->orderBy($filter['sort_by'], $filter['sort_order']);
@@ -249,7 +249,7 @@ class goodslib {
                     $rows[$k]['goods_parameter'] = $cat_info['cat_name'] . "\n" . Ecjia\App\Goods\GoodsAttr::goodslib_build_attr_text($cat_id, $v['goods_id']);
                 }
             }
-
+//            _dump($rows,1);
             $goods = [];
             foreach ($rows as $row) {
                 $goods[] = array(
@@ -258,6 +258,7 @@ class goodslib {
                     'goods_name' => $row['goods_name'],
                     'shop_price' => $row['shop_price'],
                     'market_price' => $row['market_price'],
+                    'cost_price' => $row['cost_price'],
                     'goods_weight' => $row['goods_weight'],
                     'keywords' => $row['keywords'],
                     'goods_brief' => $row['goods_brief'],
@@ -279,6 +280,7 @@ class goodslib {
                             'goods_name' => $product['product_name'],
                             'shop_price' => $product['product_shop_price'],
                             'market_price' => NULL,
+                            'cost_price' => NULL,
                             'goods_weight' => NULL,
                             'keywords' => NULL,
                             'goods_brief' => NULL,
