@@ -44,19 +44,88 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-defined('IN_ECJIA') or exit('No permission resources.');
+namespace Ecjia\App\Goodslib\Maintains;
 
-class goodslib_admin_hooks
+use Ecjia\App\Goods\Category\CategoryLevel;
+use Ecjia\App\Goodslib\Models\GoodslibModel;
+use Ecjia\App\Maintain\AbstractCommand;
+
+class GoodsUpLevelsCatidCompatible extends AbstractCommand
 {
 
-    public static function add_maintain_command($factories)
-    {
-        $factories['goodslib_spec_parameter_compatible'] = 'Ecjia\App\Goodslib\Maintains\GoodsSpecParameterCompatible';
-        $factories['goodslib_up_levels_catid_compatible'] = 'Ecjia\App\Goodslib\Maintains\GoodsUpLevelsCatidCompatible';
-        return $factories;
-    }
-}
 
-RC_Hook::add_action('ecjia_maintain_command_filter', array('goodslib_admin_hooks', 'add_maintain_command'));
+    /**
+     * 代号标识
+     * @var string
+     */
+    protected $code = 'goodslib_up_levels_catid_compatible';
+    
+    /**
+     * 图标
+     * @var string
+     */
+    protected $icon = '/statics/images/setting_shop.png';
+	
+    /**
+     * 名称
+     * @var string
+     * 描述
+     * @var string
+     */
+    public function __construct()
+    {
+    	$this->name = __('商品库上级分类数据同步', 'goods');
+    	$this->description = __('更新商品库一级、二级分类老数据兼容', 'goods');
+    }
+
+
+    public function run()
+    {
+        //忽略内存大小限制
+        ini_set('memory_limit',-1);
+        set_time_limit(0);
+
+
+        $this->processCategoryTable();
+
+        return true;
+    }
+
+    private function processCategoryTable()
+    {
+
+        $count = GoodslibModel::where('cat_level1_id', 0)->where('cat_level2_id', 0)->where('cat_id', '<>', 0)->count();
+
+        while ($count) {
+
+            $cats = new CategoryLevel();
+
+
+            GoodslibModel::where('cat_level1_id', 0)->where('cat_level2_id', 0)->where('cat_id', '<>', 0)->chunk(50, function ($items) use ($cats) {
+
+                $items->map(function ($model) use ($cats) {
+
+                    $cat_ids = $cats->getParentCategoryIds($model->cat_id);
+
+                    list($level1, $level2, $level3) = $cat_ids;
+
+                    $model->cat_level1_id = $level1 ?: 0;
+                    $model->cat_level2_id = $level2 ?: 0;
+
+                    if (empty($level1) && empty($level2)) {
+                        $model->cat_id = 0;
+                    }
+
+                    $model->save();
+                });
+
+            });
+
+            $count = GoodslibModel::where('cat_level1_id', 0)->where('cat_level2_id', 0)->where('cat_id', '<>', 0)->count();
+        }
+
+    }
+    
+}
 
 // end
