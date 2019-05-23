@@ -479,23 +479,27 @@ class admin extends ecjia_admin {
                     $data['goods_name'] = $value[2] == null ? '' : trim($value[2]);
                     $data['shop_price'] = $value[3] == null ? '' : trim($value[3]);
                     $data['market_price'] = $value[4] == null ? '' : trim($value[4]);
-                    $data['goods_weight'] = $value[5] == null ? '' : trim($value[5]);
-                    $data['keywords'] = $value[6] == null ? '' : trim($value[6]);
-                    $data['goods_brief'] = $value[7] == null ? '' : trim($value[7]);
-                    $data['goods_desc'] = $value[8] == null ? '' : trim($value[8]);
-                    $data['brand_id'] = $value[9] == null ? '' : trim($value[9]);
-                    $data['cat_id'] = $value[11] == null ? '' : trim($value[11]);
+                    $data['cost_price'] = $value[5] == null ? '' : trim($value[5]);
+                    $data['goods_weight'] = $value[6] == null ? '' : trim($value[6]);
+                    $data['keywords'] = $value[7] == null ? '' : trim($value[7]);
+                    $data['goods_brief'] = $value[8] == null ? '' : trim($value[8]);
+                    $data['goods_desc'] = $value[9] == null ? '' : trim($value[9]);
+                    $data['brand_id'] = $value[10] == null ? '' : trim($value[10]);
+                    $data['cat_id'] = $value[12] == null ? '' : trim($value[12]);
+                    $data_ext['product'] = $value[15] == null ? '' : trim($value[15]);
+                    $data_ext['specification'] = $value[14] == null ? '' : trim($value[14]);
+                    $data_ext['parameter'] = $value[16] == null ? '' : trim($value[16]);
 
                     //货品$value[14]
                     if(!empty($data['goods_sn']) && !empty($data['product_sn'])) {
                         /*
                          * 电脑,内存,8G|电脑,硬盘,256G  */
-                        if(empty($value[14])) {
+                        if(empty($data_ext['product'])) {
                             continue;
                         }
                         $data_pro = [];
                         //$pro = explode(';', $value[14]);
-                        $pro = $value[14];
+                        $pro = $data_ext['product'];
                         //TODO判断货号
                         $count_product_sn = RC_DB::table('goodslib_products as p')
                             ->leftJoin('goodslib as g', RC_DB::raw('p.goods_id'), '=', RC_DB::raw('g.goods_id'))
@@ -607,8 +611,8 @@ class admin extends ecjia_admin {
                     //规格属性$value[13]
                     /* 电脑;内存;32G;
                      * 电脑;内存;16G;500 */
-                    if(!empty($value[13]) && $new_goods_id) {
-                        $goods_attr = explode("\n", $value[13]);
+                    if(!empty($data_ext['specification']) && $new_goods_id) {
+                        $goods_attr = explode("\n", $data_ext['specification']);
                         foreach ($goods_attr as $k_a => $v_a) {
                             if (empty($v_a)) {
                                 unset($goods_attr[$k_a]);
@@ -653,8 +657,8 @@ class admin extends ecjia_admin {
                     /*电脑（商品规格名称）
                     商品产地:中国大陆
                     系统:OS X*/
-                    if(!empty($value[15]) && $new_goods_id) {
-                        $goods_attr = explode("\n", $value[15]);
+                    if(!empty($data_ext['parameter']) && $new_goods_id) {
+                        $goods_attr = explode("\n", $data_ext['parameter']);
                         $type_name = $goods_attr[0];//参数模板名
                         unset($goods_attr[0]);
                         $type_info = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->where('cat_type', 'parameter')->first();
