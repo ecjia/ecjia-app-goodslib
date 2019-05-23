@@ -479,9 +479,8 @@ class admin extends ecjia_admin {
                     $data['brand_id'] = $value[9] == null ? '' : trim($value[9]);
                     $data['cat_id'] = $value[11] == null ? '' : trim($value[11]);
 
+                    //货品$value[14]
                     if(!empty($data['goods_sn']) && !empty($data['product_sn'])) {
-
-                        //货品$value[14]
                         /*
                          * 电脑,内存,8G|电脑,硬盘,256G  */
                         if(empty($value[14])) {
@@ -511,7 +510,7 @@ class admin extends ecjia_admin {
                             $new_goods_attr = [];
                             foreach ($pro_attr as $v_attr) {
                                 $v_attr = explode(',', $v_attr);//电脑,内存,8G
-                                $type_row = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $v_attr[0])->first();
+                                $type_row = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $v_attr[0])->where('cat_type', 'specification')->first();
                                 if ($type_row) {
                                     $attr = RC_DB::table('attribute')->where('cat_id', $type_row['cat_id'])->where('attr_name', $v_attr[1])->first();
                                     if ($attr) {
@@ -531,7 +530,7 @@ class admin extends ecjia_admin {
                                         break;
                                     }
                                 } else {
-                                    $message = sprintf(__('第%s行，货品属性【%s】不存在。', 'goodslib'), $key + 1, $v_attr[0]);
+                                    $message = sprintf(__('第%s行，货品规格【%s】不存在。', 'goodslib'), $key + 1, $v_attr[0]);
                                     $this->error[] = array('state' => 'error', 'message' => $message);
                                     $new_goods_attr = [];
                                     break;
@@ -555,7 +554,6 @@ class admin extends ecjia_admin {
                             $this->error[] = array('state' => 'error', 'message' => $message);
                             continue;
                         }
-
                         //货品 end
 
                         continue;
@@ -599,7 +597,7 @@ class admin extends ecjia_admin {
                     }
                     unset($data['product_sn']);
                     $new_goods_id = RC_DB::table('goodslib')->insertGetId($data);
-                    //规格属性$value[12]
+                    //规格属性$value[13]
                     /* 电脑;内存;32G;
                      * 电脑;内存;16G;500 */
                     if(!empty($value[13]) && $new_goods_id) {
@@ -614,7 +612,7 @@ class admin extends ecjia_admin {
                             $new_attr[$new_key] = $attr;
                             $type_name = $attr[0];
                         }
-                        $types = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->first();
+                        $types = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->where('cat_type', 'specification')->first();
                         foreach ($new_attr as $k_a => $v_a) {
                             $type_row = RC_DB::table('goods_type')->where('cat_id', $types['cat_id'])->where('store_id', 0)->where('cat_name', $v_a[0])->first();
                             if ($type_row) {
@@ -622,6 +620,7 @@ class admin extends ecjia_admin {
                                 $attr = RC_DB::table('attribute')->where('cat_id', $types['cat_id'])->where('attr_name', $v_a[1])->first();
                                 if ($attr) {
                                     $data_attr = [
+                                        'cat_type'   => 'specification',
                                         'goods_id'   => $new_goods_id,
                                         'attr_id'    => $attr['attr_id'],
                                         'attr_value' => $v_a[2],
@@ -629,6 +628,7 @@ class admin extends ecjia_admin {
                                         'attr_price' => $v_a[3],
                                     ];
                                     $new_attr[$k_a]['goods_attr_id'] = RC_DB::table('goodslib_attr')->insertGetId($data_attr);
+                                    RC_DB::table('goodslib')->where('goods_id', $new_goods_id)->update(['specification_id' => $types['cat_id']]);
                                 } else {
                                     $message = sprintf(__('第%s行，，商品【%s】属性【%s】不存在。', 'goodslib'), $key + 1, $data['goods_name'], $v_a[1]);
                                     $this->error[] = array('state' => 'error', 'message' => $message);
@@ -640,8 +640,49 @@ class admin extends ecjia_admin {
                                 break;
                             }
                         }
+                    }
+
+                    //商品参数$value[15]
+                    /*电脑（商品规格名称）
+                    商品产地:中国大陆
+                    系统:OS X*/
+                    if(!empty($value[15]) && $new_goods_id) {
+                        $goods_attr = explode("\n", $value[15]);
+                        $type_name = $goods_attr[0];//参数模板名
+                        unset($goods_attr[0]);
+                        $type_info = RC_DB::table('goods_type')->where('store_id', 0)->where('cat_name', $type_name)->where('cat_type', 'parameter')->first();
+                        if($type_info) {
+                            foreach ($goods_attr as $k_a => $v_a) {
+                                if (empty($v_a)) {
+                                    unset($goods_attr[$k_a]);
+                                    continue;
+                                }
+                                $attr = explode(':', $v_a);//[商品产地，中国大陆]
+                                $attr_info = RC_DB::table('attribute')->where('cat_id', $type_info['cat_id'])->where('attr_name', $attr[0])->first();
+                                if($attr_info) {
+                                    $data = [
+                                        'cat_type' => 'parameter',
+                                        'goods_id' => $new_goods_id,
+                                        'attr_id' => $attr_info['attr_id'],
+                                        'attr_value' => $attr[1],
+                                    ];
+                                    RC_DB::table('goodslib_attr')->insert($data);
+                                    RC_DB::table('goodslib')->where('goods_id', $new_goods_id)->update(['parameter_id' => $type_info['cat_id']]);
+                                } else {
+                                    $message = sprintf(__('第%s行，，商品【%s】属性【%s】不存在。', 'goodslib'), $key + 1, $data['goods_name'], $attr[0]);
+                                    $this->error[] = array('state' => 'error', 'message' => $message);
+                                    break;
+                                }
+
+                            }
+                        } else {
+                            $message = sprintf(__('第%s行，，商品【%s】参数模板【%s】不存在。', 'goodslib'), $key + 1, $data['goods_name'], $type_name);
+                            $this->error[] = array('state' => 'error', 'message' => $message);
+                            break;
+                        }
 
                     }
+
                 }
             }
         });
@@ -1293,7 +1334,7 @@ class admin extends ecjia_admin {
     			
     		$template_info = Ecjia\App\Goods\GoodsAttr::get_template_info($template_id);
     		$this->assign('template_info', $template_info);
-    			
+
     		$this->assign('goods_attr_html', Ecjia\App\Goods\GoodsAttr::goodslib_build_attr_html($template_id, $goods_id));
     	}
     	

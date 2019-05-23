@@ -245,10 +245,11 @@ class goodslib {
                 $rows[$k]['goods_product_export'] = $goods_attr['goods_product_export'];
                 if($v['parameter_id']) {
                     $cat_id = $v['parameter_id'];
-                    $rows[$k]['goods_parameter'] = Ecjia\App\Goods\GoodsAttr::goodslib_build_attr_text($cat_id, $v['goods_id']);
+                    $cat_info = Ecjia\App\Goods\GoodsAttr::get_template_info($cat_id);
+                    $rows[$k]['goods_parameter'] = $cat_info['cat_name'] . "\n" . Ecjia\App\Goods\GoodsAttr::goodslib_build_attr_text($cat_id, $v['goods_id']);
                 }
             }
-//            _dump($rows,1);
+
             $goods = [];
             foreach ($rows as $row) {
                 $goods[] = array(
@@ -330,7 +331,7 @@ class goodslib {
 //                                 'color_value' => $r_a['color_value'],//暂用不到
                     'attr_price' => $r_a['attr_price'],
                 ];
-                $parent_row['goods_attr_export'] .= $goods_attr[$k_a]['cat_name'].';'.$goods_attr[$k_a]['attr_name'].';'.$r_a['attr_value'].';'/* .$r_a['color_value'].';' */.$r_a['attr_price']."\r\n";
+                $parent_row['goods_attr_export'] .= $goods_attr[$k_a]['cat_name'].';'.$goods_attr[$k_a]['attr_name'].';'.$r_a['attr_value'].';'/* .$r_a['color_value'].';' */.$r_a['attr_price']."\n";
             }
 
             //product
@@ -347,7 +348,7 @@ class goodslib {
                         'goods_attr' => $goods_pro[$k_p]['goods_attr_name'],
                         'product_sn' => $r_p['product_sn'],
                     ];
-                    $r_p['goods_product'] = $goods_pro[$k_p]['goods_attr_name']."\r\n";
+                    $r_p['goods_product'] = $goods_pro[$k_p]['goods_attr_name']/*."\r\n"*/;
                     $parent_row['goods_product_export'][] = $r_p;
                 }
             }
