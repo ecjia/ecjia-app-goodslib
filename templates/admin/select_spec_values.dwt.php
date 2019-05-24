@@ -8,6 +8,13 @@
 <div class="modal-body">
 	{if $goods_attr_html}
 	 <form class="form-horizontal" method="post" name="insertForm" id="insertForm" action='{url path="goodslib/admin/select_spec_values_insert"}'>
+	   {if $has_product}
+		 <div class="control-group">
+				<div class=" l_h35">
+					<i class="fontello-icon-attention-circled ecjiafc-red"></i><span class="ecjiafc-red">您当前设置的规格属性已生成货品，如需更改请先删除货品。</span>
+				</div>
+			</div>
+		{/if}
 		<div id="tbody-goodsAttr"> 
 			{if $goods_attr_html}{$goods_attr_html}{/if}
 		</div>
