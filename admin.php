@@ -430,6 +430,10 @@ class admin extends ecjia_admin {
     }
 
     public function getProduct() {
+        $attr = RC_DB::table('goods_attr')->where('goods_id', $_GET['goods_id'])->get();
+        _dump($attr);
+        $product = RC_DB::table('products')->where('goods_id', $_GET['goods_id'])->get();
+        _dump($product);
         $attr = RC_DB::table('goodslib_attr')->where('goods_id', $_GET['goods_id'])->get();
         _dump($attr);
         $product = RC_DB::table('goodslib_products')->where('goods_id', $_GET['goods_id'])->get();
