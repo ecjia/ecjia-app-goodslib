@@ -266,7 +266,6 @@
 							dataType: "json",
 							success: function(data) {
 								ecjia.admin.showmessage(data);
-								window.location.href = data.url;
 							}
 						});
 					}
