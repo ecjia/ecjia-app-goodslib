@@ -23,12 +23,12 @@
 			<div class="controls">
 			 	<input  type="hidden" name="template_id" value="{$template_id}">
  				<input  type="hidden" name="goods_id" value="{$goods_id}">
-		        <a class="btn btn-gebo insertSubmit" href="javascript:;" {if $has_product}disabled="disabled"{/if}>{t domain="goodslib"}确定{/t}</a>
+		        <button class="btn btn-gebo insertSubmit" href="javascript:;" {if $has_product}disabled="disabled"{/if}>{t domain="goodslib"}确定{/t}</button>
 			</div>
 		</div>
 	</form>
 	{else}
-	 <form class="form-horizontal" method="post" name="insertForm" id="insertForm" action='{url path="goodslib/admin/select_spec_values_insert"}'>
+	 <form class="form-horizontal" >
 		<div class="control-group">
 			<label class="control-label"></label>
 			<div class="controls l_h35">
