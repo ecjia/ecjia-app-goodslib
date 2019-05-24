@@ -498,7 +498,7 @@ class merchant extends ecjia_merchant {
 	                $attr_value = $goods_attr_formate[$goods_attr_id]['attr_value'];
 	                $new_attr_id[] = $goods_attr_store_formate[$goods['goods_id'].'_'.$attr_id.'_'.$attr_value]['goods_attr_id'];
 	            }
-	            $goodslib_products[$key]['goods_attr'] = implode('|', $new_attr_id);
+	            $goodslib_products[$key]['goods_attr'] = implode('|', asort($new_attr_id));
 	            $goodslib_products[$key]['product_sn'] = '';
 	            $goodslib_products[$key]['product_number'] = ecjia::config('default_storage');
 
