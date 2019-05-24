@@ -57,7 +57,7 @@
 								</div>
 							</div>
 							
-							<div class="form-group">
+							<div class="control-group">
 								<label class="control-label col-lg-2 ">{t domain="goodslib"}商品条形码：{/t}</label>
 								<div class="controls">
 									<input class="w350" type="text" name="goods_barcode" value="{$goodslib_info.goods_barcode}" >
@@ -86,6 +86,13 @@
 										{if $has_spec}
                                         <a data-type="add-pro" data-toggle="modal" data-backdrop="static" href="#myModal2" goods-id="{$goodslib_info.goods_id}" attr-url="{RC_Uri::url('goodslib/admin/spec_add_product')}" ><button class="btn btn-gebo"><i class="fontello-icon-plus"></i> {t domain="goods"}添加货品{/t}</button></a>
                                         {/if} 
+									</div>
+								</div>
+								
+								<div class="control-group">
+									<label class="control-label col-lg-2 "></label>
+									<div class="controls">
+										<span class="help-block">当前规格模板默认使用商品所属分类绑定的模板，如需更换，可在当前商品所属分类下更换，更换后再设置规格属性和货品。</span>
 									</div>
 								</div>
 								
