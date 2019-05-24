@@ -428,6 +428,11 @@ class admin extends ecjia_admin {
         
         $this->display('goodslib_import.dwt');
     }
+
+    public function getProduct() {
+        $product = RC_DB::table('goodslib_products')->where('goods_id', $_GET['goods_id'])->get();
+        _dump($product,1);
+    }
     
     public function upload() {
         $this->admin_priv('goodslib_import');
