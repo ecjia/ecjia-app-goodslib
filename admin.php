@@ -549,7 +549,8 @@ class admin extends ecjia_admin {
                             }
 
                             if($new_goods_attr) {
-                                $data_pro['goods_attr'] = implode('|', asort($new_goods_attr));
+                                asort($new_goods_attr);
+                                $data_pro['goods_attr'] = implode('|', $new_goods_attr);
                                 $data_pro['goods_id'] = $new_goods_id;
                                 $data_pro['product_sn'] = $data['product_sn'];
                                 $data_pro['product_name'] = $data['goods_name'];
@@ -1666,8 +1667,9 @@ class admin extends ecjia_admin {
     		$attr_values = key($value['attr_values']);
     		array_push($product_value, $attr_values);
     	}
-    
-    	$goods_attr = implode('|', asort($product_value));
+
+        asort($product_value);
+    	$goods_attr = implode('|', $product_value);
     	$product_sn = RC_DB::table('goodslib_products')->where('goods_attr', $goods_attr)->pluck('product_sn');
     	$data = $this->fetch('spec_add_product.dwt');
     
@@ -1688,8 +1690,9 @@ class admin extends ecjia_admin {
     	}
     
     	$goods = RC_DB::table('goodslib')->where('goods_id', $goods_id)->select('goods_sn', 'goods_name', 'goods_type', 'shop_price')->first();
-    
-    	$goods_attr = implode('|', asort($product_value));
+
+        asort($product_value);
+    	$goods_attr = implode('|', $product_value);
     	if (Ecjia\App\Goods\GoodsAttr::check_goods_attr_exist($goods_attr, $goods_id)) {
     		return $this->showmessage(__('所匹配的属性已存在相应的货品,请更换组合', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
     	} else {
@@ -1720,7 +1723,8 @@ class admin extends ecjia_admin {
     	if (empty($goods_id)) {
     		return $this->showmessage(__('找不到指定的商品', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
     	}
-    	$goods_attr = implode('|', asort($product_value));
+        asort($product_value);
+    	$goods_attr = implode('|', $product_value);
     
     	if(RC_DB::table('goodslib_products')->where('goods_id', $goods_id)->where('goods_attr', $goods_attr)->delete()) {
     		return $this->showmessage(__('移除货品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
@@ -1742,7 +1746,8 @@ class admin extends ecjia_admin {
     	if (empty($goods_id)) {
     		return $this->showmessage(__('找不到指定的商品', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
     	}
-    	$goods_attr = implode('|', asort($product_value));
+        asort($product_value);
+    	$goods_attr = implode('|', $product_value);
     	$product_sn = RC_DB::table('goodslib_products')->where('goods_attr', $goods_attr)->pluck('product_sn');
     
     	if(!empty($product_sn)) {
@@ -2300,7 +2305,8 @@ class admin extends ecjia_admin {
                 
                 /* 是否为重复规格的货品 */
                 $goods_attr = sort_goodslib_attr_id_array($goods_attr_id);
-                $goods_attr = implode('|', asort($goods_attr['sort']));
+                asort($goods_attr['sort']);
+                $goods_attr = implode('|', $goods_attr['sort']);
                 
                 if (check_goodslib_attr_exist($goods_attr, $product['goods_id'])) {
                     continue;

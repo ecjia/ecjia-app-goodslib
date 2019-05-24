@@ -345,7 +345,7 @@ class goodslib {
                     foreach ($product_attr as $goods_attr_id) {
                         $new_goods_attr[] = $goods_attr[$goods_attr_id]['cat_name'] .','.$goods_attr[$goods_attr_id]['attr_name'] .','.$goods_attr[$goods_attr_id]['attr_value'];
                     }
-                    $goods_pro[$k_p]['goods_attr_name'] = implode('|', asort($new_goods_attr));
+                    $goods_pro[$k_p]['goods_attr_name'] = implode('|', $new_goods_attr);
                     $parent_row['goods_product'][] = [
                         'goods_attr' => $goods_pro[$k_p]['goods_attr_name'],
                         'product_sn' => $r_p['product_sn'],
