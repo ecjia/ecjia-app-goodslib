@@ -67,13 +67,13 @@ class GoodslibProductsBasicInfo
     	
         $this->goods_id = $goods_id;
 
-        $this->model = $this->goodslibProductInFo();
+        $this->model = $this->goodslibProductInfo();
     }
     
     /**
      * 获取货品信息
      */
-    public function goodslibProductInFo()
+    public function goodslibProductInfo()
     {
     	$data = GoodslibProductsModel::where('product_id', $this->product_id)->first();
     	return $data;
