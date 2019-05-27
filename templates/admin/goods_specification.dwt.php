@@ -48,25 +48,6 @@
 			{/if}
 			
 			<form class="form-horizontal" action="{$form_action}" method="post" name="theForm">
-				<div class="template_box">
-						<div class="box_content">
-							<div class="control-group">
-								<label class="control-label">{t domain="goodslib"}商品货号：{/t}</label>
-								<div class="controls">
-									<input class="w350" type="text" name="goods_sn" value="{$goodslib_info.goods_sn}" disabled="disabled" />
-								</div>
-							</div>
-							
-							<div class="control-group">
-								<label class="control-label col-lg-2 ">{t domain="goodslib"}商品条形码：{/t}</label>
-								<div class="controls">
-									<input class="w350" type="text" name="goods_barcode" value="{$goodslib_info.goods_barcode}" >
-									<span class="help-block">非必填项，条形码必须搭配条码秤才可使用</span>
-								</div>
-							</div>
-						 </div>
-					</div> 
-					
 					<div class="template_box">
 						{if $has_template}
 							<div class="box_content">

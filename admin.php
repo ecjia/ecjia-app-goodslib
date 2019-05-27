@@ -277,11 +277,13 @@ class admin extends ecjia_admin {
         $cat_ids = $cats->getParentCategoryIds($catgory_id);
         list($level1, $level2, $level3) = $cat_ids;
         
+        $goods_barcode    = !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
         /* 入库 */
         $data = array(
             'goods_name'            => $goods_name,
             'goods_name_style'      => $goods_name_style,
             'goods_sn'              => empty($goods_sn) ? '' : $goods_sn,
+        	'goods_barcode'         => $goods_barcode,
         	'cat_level1_id'         => empty($level1) ? 0 : $level1,
         	'cat_level2_id'         => empty($level2) ? 0 : $level2,
             'cat_id'                => $catgory_id,
@@ -882,11 +884,12 @@ class admin extends ecjia_admin {
         $cats= new CategoryLevel();
         $cat_ids = $cats->getParentCategoryIds($catgory_id);
         list($level1, $level2, $level3) = $cat_ids;
-        
+        $goods_barcode    = !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
         $data = array(
             'goods_name'				=> rc_stripslashes($goods_name),
             'goods_name_style'	  		=> $goods_name_style,
             'goods_sn'			  		=> $goods_sn,
+        	'goods_barcode'			  	=> $goods_barcode,
         	'cat_level1_id'         	=> empty($level1) ? 0 : $level1,
         	'cat_level2_id'         	=> empty($level2) ? 0 : $level2,
             'cat_id'					=> $catgory_id,
@@ -1521,11 +1524,9 @@ class admin extends ecjia_admin {
     		
     	$goods_type     = !empty($_POST['template_id'])	   ? intval($_POST['template_id'])   : 0;
     	$goods_id 	    = !empty($_POST['goods_id'])       ? intval($_POST['goods_id'])      : 0;
-    	$goods_barcode 	= !empty($_POST['goods_barcode'])  ? trim($_POST['goods_barcode'])   : '';
  
     	$data = array(
     		'specification_id'  => $goods_type,
-    		'goods_barcode'	    => $goods_barcode
     	);
     	RC_DB::table('goodslib')->where('goods_id', $goods_id)->update($data);
     	
