@@ -23,7 +23,12 @@
 			<div class="controls">
 			 	<input  type="hidden" name="template_id" value="{$template_id}">
  				<input  type="hidden" name="goods_id" value="{$goods_id}">
-		        <button class="btn btn-gebo insertSubmit" href="javascript:;" {if $has_product}disabled="disabled"{/if}>{t domain="goodslib"}确定{/t}</button>
+ 				 {if $has_product}
+ 				  <button class="btn btn-gebo insertSubmit" href="javascript:;" disabled="disabled">{t domain="goodslib"}确定{/t}</button>
+ 				 {else}
+ 				  <a class="btn btn-gebo insertSubmit" href="javascript:;" >{t domain="goodslib"}确定{/t}</a>
+ 				 {/if}
+		       
 			</div>
 		</div>
 	</form>
