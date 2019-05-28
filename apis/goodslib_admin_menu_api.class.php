@@ -55,9 +55,6 @@ class goodslib_admin_menu_api extends Component_Event_Api {
 		$submenus = array(
 		    ecjia_admin::make_admin_menu('01_goodslib_add', __('添加商品', 'goodslib'), RC_Uri::url('goodslib/admin/add'), 1)->add_purview(array('goodslib_update')),
 			ecjia_admin::make_admin_menu('02_goodslib_list', __('商品库商品', 'goodslib'), RC_Uri::url('goodslib/admin/init'), 2)->add_purview(array('goodslib_manage')),
-		    ecjia_admin::make_admin_menu('03_goodslib_spec', __('商品库规格', 'goodslib'), RC_Uri::url('goodslib/admin_spec/init'), 3)->add_purview('attr_manage'),
-			ecjia_admin::make_admin_menu('04_goodslib_parameter', __('商品库参数', 'goodslib'), RC_Uri::url('goodslib/admin_parameter/init'), 4)->add_purview('attr_manage'),
-		    
 		    
 		);
         $menus->add_submenu($submenus);
