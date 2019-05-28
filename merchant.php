@@ -312,6 +312,19 @@ class merchant extends ecjia_merchant {
 	        }
 	    }
 	    
+	    //商品重量处理
+	    if ($goods['goods_weight'] > 0) {
+	    	if ($goods['goods_weight'] >= 1) {
+	    		//千克
+	    		$goods['weight_unit'] = 2;
+	    	} else {
+	    		//克
+	    		$goods['goods_weight'] = $goods['goods_weight'] * 1000;
+	    		$goods['weight_unit'] = 1;
+	    	}	
+	    }
+	    
+	    
 	    $time = RC_Time::gmtime();
 	    $goods['add_time'] = $time;
 	    $goods['last_update'] = $time;
@@ -419,7 +432,7 @@ class merchant extends ecjia_merchant {
 	    
 	    $GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goods_id);
 	    
-	    $goods = $GoodslibBasicInfo->goodsLibInfo();
+	    $goods = $GoodslibBasicInfo->goodslibInfo();
 	    
 	    if (empty($goods)) {
 	        return $this->showmessage(__('未检测到此商品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goodslib'),'href'=>RC_Uri::url('goods/merchant/init')))));
@@ -438,6 +451,23 @@ class merchant extends ecjia_merchant {
 	        $goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
 	    }
 	    $goods['format_cost_price'] = ecjia_price_format($goods['cost_price'], false);
+	    
+	    //商品重量存在，重量单位是0的情况
+	    if ($goods['goods_weight'] > 0) {
+	    	if (empty($goods['weight_unit'])) {
+	    		if ($goods['goods_weight'] >= 1 ) {
+	    			$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
+	    		} else {
+	    			$goods['goods_weight_string'] = ($goods['goods_weight']*1000).'克';
+	    		}
+	    	} else {
+	    		if ($goods['weight_unit'] == 2 ) {
+	    			$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
+	    		} else {
+	    			$goods['goods_weight_string'] = $goods['goods_weight'].'克';
+	    		}
+	    	}
+	    }
 	    
 	    $images_url = RC_App::apps_url('statics/images', __FILE__);
 	    $this->assign('images_url', $images_url);

@@ -199,7 +199,8 @@ class admin extends ecjia_admin {
         $this->assign('goods_name_color', $goods_name_style);
         $this->assign('cat_list', cat_list(0, $goods['cat_id'], false));
         $this->assign('brand_list', get_brand_list());
-        $this->assign('unit_list',  goods::unit_list());
+        //$this->assign('unit_list',  goods::unit_list());
+        $this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
         $this->assign('form_action', RC_Uri::url('goodslib/admin/insert'));
         $this->assign_lang();
         
@@ -260,7 +261,9 @@ class admin extends ecjia_admin {
         $market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
         $cost_price = !empty($_POST['cost_price']) ? $_POST['cost_price'] : 0;
 
-        $goods_weight = !empty($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
+        $goods_weight = !empty($_POST['goods_weight']) ? $_POST['goods_weight'] : 0.000;
+        $weight_unit  = !empty($_POST['weight_unit']) ? $_POST['weight_unit'] : 0.000;
+        
         $goods_type = isset($_POST['goods_type']) ? $_POST['goods_type'] : 0;
         $goods_name = htmlspecialchars($_POST['goods_name']);
         $goods_name_style = htmlspecialchars($_POST['goods_name_color']);
@@ -296,6 +299,7 @@ class admin extends ecjia_admin {
             'keywords'              => $_POST['keywords'],
             'goods_brief'           => $_POST['goods_brief'],
             'goods_weight'          => $goods_weight,
+        	'weight_unit'			=> $weight_unit,
             'goods_desc'            => !empty($_POST['goods_desc']) ? $_POST['goods_desc'] : '',
             'add_time'              => RC_Time::gmtime(),
             'last_update'           => RC_Time::gmtime(),
@@ -865,7 +869,7 @@ class admin extends ecjia_admin {
         }
         /* 根据商品重量的单位重新计算 */
         if ($goods['goods_weight'] > 0) {
-            $goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight'] / 0.001);
+            $goods['goods_weight_by_unit'] = ($goods['goods_weight'] >= 1) ? $goods['goods_weight'] : ($goods['goods_weight']*1000);
         }
         
         if (!empty($goods['goods_brief'])) {
@@ -895,6 +899,15 @@ class admin extends ecjia_admin {
             }
         }
         
+        //商品重量存在，重量单位是0的情况
+        if (empty($goods['weight_unit']) && $goods['goods_weight'] > 0) {
+        	if ($goods['goods_weight'] >= 1 ) {
+        		$goods['weight_unit'] = 2; //千克
+        	} else {
+        		$goods['weight_unit'] = 1; //克
+        	}
+        }
+        
         //设置选中状态,并分配标签导航
         $this->assign('action', 			ROUTE_A);
         $this->assign('tags', 				$this->tags);
@@ -904,9 +917,10 @@ class admin extends ecjia_admin {
         $this->assign('cat_list', 			$cat_list);
         
         $this->assign('brand_list', 		get_brand_list());
-        $this->assign('unit_list', 			goods::unit_list());
+        //$this->assign('unit_list', 			goods::unit_list());
+        $this->assign('weight_unit', 		$goods['weight_unit']);
+        $this->assign('unit_list', Ecjia\App\Cashier\BulkGoods::unit_list());
         
-        $this->assign('weight_unit', 		$goods['goods_weight'] >= 1 ? '1' : '0.001');
         $this->assign('cfg', 				ecjia::config());
         
         $this->assign('form_act', 			RC_Uri::url('goodslib/admin/edit'));
@@ -976,7 +990,8 @@ class admin extends ecjia_admin {
         $market_price 	= !empty($_POST['market_price']) && is_numeric($_POST['market_price']) ? $_POST['market_price'] : 0;
         $cost_price 	= !empty($_POST['cost_price']) 		? $_POST['cost_price'] 				: 0;
         
-        $goods_weight 	= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] * $_POST['weight_unit'] : 0;
+        $goods_weight 	= !empty($_POST['goods_weight']) && is_numeric($_POST['goods_weight']) ? $_POST['goods_weight'] : 0.000;
+        $weight_unit	= !empty($_POST['weight_unit']) ? $_POST['weight_unit'] : 1;
         
         //$suppliers_id 	= isset($_POST['suppliers_id']) 	? intval($_POST['suppliers_id']) 	: '0';
         
@@ -1016,6 +1031,7 @@ class admin extends ecjia_admin {
             'keywords'			  		=> $_POST['keywords'],
             'goods_brief'		   		=> $_POST['goods_brief'],
             'goods_weight'		 		=> $goods_weight,
+        	'weight_unit'				=> $weight_unit,
             'last_update'		   		=> RC_Time::gmtime(),
             'is_display'			    => !empty($_POST['is_display']) ? intval($_POST['is_display']) : 0,
         );
@@ -1121,7 +1137,7 @@ class admin extends ecjia_admin {
         $this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/init')));
         
         $GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goods_id);
-        $goods = $GoodslibBasicInfo->goodsLibInfo();
+        $goods = $GoodslibBasicInfo->goodslibInfo();
         
         if (empty($goods)) {
             return $this->showmessage(__('未检测到此商品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goodslib'),'href'=>RC_Uri::url('goodslib/admin/init')))));
@@ -1138,6 +1154,23 @@ class admin extends ecjia_admin {
             $goods['last_update'] = RC_Time::local_date(ecjia::config('time_format'), $goods['last_update']);
         }
         $goods['format_cost_price'] = ecjia_price_format($goods['cost_price'], false);
+        
+        //商品重量存在，重量单位是0的情况
+        if ($goods['goods_weight'] > 0) {
+        	if (empty($goods['weight_unit'])) {
+        		if ($goods['goods_weight'] >= 1 ) {
+        			$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
+        		} else {
+        			$goods['goods_weight_string'] = ($goods['goods_weight']*1000).'克';
+        		}
+        	} else {
+        		if ($goods['weight_unit'] == 2 ) {
+        			$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
+        		} else {
+        			$goods['goods_weight_string'] = $goods['goods_weight'].'克';
+        		}
+        	}
+        }
         
         $images_url = RC_App::apps_url('statics/images', __FILE__);
         $this->assign('images_url', $images_url);
@@ -1187,7 +1220,7 @@ class admin extends ecjia_admin {
     	$this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/preview', array('goods_id' => $goods_id))));
     	
     	//商品库货品信息
-    	$GoodslibProductsBasicInfo =  new Ecjia\App\Goodslib\Goodslib\GoodslibProductsBasicInfo($product_id);
+    	$GoodslibProductsBasicInfo =  new Ecjia\App\Goodslib\GoodslibProductsBasicInfo($product_id);
         $goodslib_product = $GoodslibProductsBasicInfo->goodslibProductInfo();
         if (empty($goodslib_product)) {
         	return $this->showmessage(__('未检测到此货品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品预览', 'goodslib'),'href'=>RC_Uri::url('goodslib/admin/preview', array('goods_id' => $goods_id))))));
@@ -1195,7 +1228,7 @@ class admin extends ecjia_admin {
        
         //商品库商品
     	$GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goodslib_product->goods_id);
-        $goods = $GoodslibBasicInfo->goodsLibInfo();
+        $goods = $GoodslibBasicInfo->goodslibInfo();
     	
         //名称处理
         $goodslib_product['product_attr_value'] = '';
