@@ -312,6 +312,19 @@ class merchant extends ecjia_merchant {
 	        }
 	    }
 	    
+	    //商品重量处理
+	    if ($goods['goods_weight'] > 0) {
+	    	if ($goods['goods_weight'] >= 1) {
+	    		//千克
+	    		$goods['weight_unit'] = 2;
+	    	} else {
+	    		//克
+	    		$goods['goods_weight'] = $goods['goods_weight'] * 1000;
+	    		$goods['weight_unit'] = 1;
+	    	}	
+	    }
+	    
+	    
 	    $time = RC_Time::gmtime();
 	    $goods['add_time'] = $time;
 	    $goods['last_update'] = $time;
