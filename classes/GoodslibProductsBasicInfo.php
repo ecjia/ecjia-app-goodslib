@@ -44,44 +44,66 @@
 //
 //  ---------------------------------------------------------------------------------
 //
-
 /**
- * js语言包设置
+ * 商品库货品基本信息类
  */
 
-defined('IN_ECJIA') or exit('No permission resources.');
+namespace Ecjia\App\Goodslib\Goodslib;
 
-return array(
-    //
-    'attribute_page' =>array(
-        'spec_name_required'	=> __('请输入规格名称', 'goodslib'),
-        'attr_name_required'	=> __('请输入属性名称', 'goodslib'),
-        'cat_id_select'			=> __('请选择所属商品类型', 'goodslib'),
-    ),
-		
-	'spec_product_page' => array(
-		'tip_msg' => __('更换模板，会将之前已添加的相关数据进行清除，请谨慎操作，您确定要【清除】吗？', 'goods'),
-		'ok'      => __('确定', 'goods'),
-		'cancel'  => __('取消', 'goods'),
-	),
-		
-    'goods_list_page' => array(
-        'pls_select'			=> __('请选择...', 'goodslib'),
-        'brand_name_empty'		=> __('品牌名称不能为空', 'goodslib'),
-        'cat_name_empty'		=> __('分类名称不能为空', 'goodslib'),
-    ),
+use \Ecjia\App\Goodslib\Models\GoodslibProductsModel;
 
-    'merchant_goods_list_page' => array(
-        'add_goods_ok'          => __('添加商品成功', 'goodslib'),
-        'import_goods'          => __('开始导入', 'goodslib'),
-        'importing'             => __('导入中', 'goodslib'),
-        'goods_name_required'   => __('请输入商品名称！', 'goodslib'),
-        'shop_price_required'   => __('请输入商品价格！', 'goodslib'),
-        'goods_number_required' => __('请输入商品库存！', 'goodslib'),
-        'import_goods_required' => __('请选择需要导入的商品！', 'goodslib'),
-        'not_compute'           => __('未计算', 'goodslib'),
-        'empty_data'            => __('暂无内容', 'goodslib'),
-    ),
+class GoodslibProductsBasicInfo
+{
 
-);
-//end
+    protected $model;
+    
+    protected $product_id;
+
+    protected $goods_id;
+
+    public function __construct($product_id, $goods_id = 0)
+    {
+    	$this->product_id = $product_id;
+    	
+        $this->goods_id = $goods_id;
+
+        $this->model = $this->goodslibProductInfo();
+    }
+    
+    /**
+     * 获取货品信息
+     */
+    public function goodslibProductInfo()
+    {
+    	$data = GoodslibProductsModel::where('product_id', $this->product_id)->first();
+    	return $data;
+    }
+
+    /**
+     * 货品相册
+     * @return array
+     */
+    public function getProductGallery()
+    {
+    	$gallery = [];
+    	if ($this->model->goodslib_gallery_collection) {
+    		$disk = \RC_Filesystem::disk();
+    		$gallery = $this->model->goodslib_gallery_collection->map(function ($item) use ($disk) {
+    			if (!$disk->exists(\RC_Upload::upload_path($item['img_url'])) || empty($item['img_url'])) {
+    				$item['img_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    			} else {
+    				$item['img_url'] = \RC_Upload::upload_url($item['img_url']);
+    			}
+    			
+    			if (!$disk->exists(\RC_Upload::upload_path($item['thumb_url'])) || empty($item['thumb_url'])) {
+    				$item['thumb_url'] = \RC_Uri::admin_url('statics/images/nopic.png');
+    			} else {
+    				$item['thumb_url'] = \RC_Upload::upload_url($item['thumb_url']);
+    			}
+    			return $item;
+    		});
+    		$gallery = $gallery->toArray();
+    	}
+    	return $gallery;
+    }
+}

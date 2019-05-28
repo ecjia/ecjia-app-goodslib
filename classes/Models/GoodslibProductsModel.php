@@ -42,4 +42,13 @@ class GoodslibProductsModel extends Model
      */
     public $timestamps = false;
 
+    
+    /**
+     * 一对多
+     * 商品库货品相册
+     */
+    public function goodslib_gallery_collection()
+    {
+    	return $this->hasMany('Ecjia\App\Goodslib\Models\GoodslibGalleryModel', 'product_id', 'product_id');
+    }
 }

@@ -1,6 +1,6 @@
 <div class="goods-products">
-	商品属性
-	<hr>
+	{t domain="goods"}货品（SKU）{/t}
+	<hr style="margin-top:0px;">
 </div>
 <table class="table table-striped table-hide-edit">
 	<thead>
@@ -21,8 +21,8 @@
 				{/if}
 				 <div class="product-info" style="margin-left:65px;">
 				    <div class="product-goods-name-style">{$list.product_name}</div>
-				           【{$list.product_attr_value}】
-				    {if $list.is_promote_now eq 1}<span class="goods-promote">{t domain='goods'}促{/t}</span>{/if}
+				    {if $list.product_attr_value}【{$list.product_attr_value}】{/if}
+				    {if $list.is_promote_now eq 1}<span class="goods-promote">{t domain='goodslib'}促{/t}</span>{/if}
 				 </div>
     		</td>
     		<td>
