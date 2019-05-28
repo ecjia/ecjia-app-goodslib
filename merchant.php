@@ -430,7 +430,7 @@ class merchant extends ecjia_merchant {
 	    $this->assign('ur_here', __('商品预览', 'goodslib'));
 	    $this->assign('action_link', array('text' => '返回', 'href' => RC_Uri::url('goodslib/merchant/add', array('cat_id' => $_GET['cat_id']))));
 	    
-	    $GoodslibBasicInfo = new Ecjia\App\Goodslib\Goodslib\GoodslibBasicInfo($goods_id);
+	    $GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goods_id);
 	    
 	    $goods = $GoodslibBasicInfo->goodsLibInfo();
 	    

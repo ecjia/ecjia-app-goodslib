@@ -1007,7 +1007,7 @@ class admin extends ecjia_admin {
         $this->assign('ur_here', __('商品预览', 'goodslib'));
         $this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/init')));
         
-        $GoodslibBasicInfo = new Ecjia\App\Goodslib\Goodslib\GoodslibBasicInfo($goods_id);
+        $GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goods_id);
         $goods = $GoodslibBasicInfo->goodsLibInfo();
         
         if (empty($goods)) {
@@ -1081,7 +1081,7 @@ class admin extends ecjia_admin {
         }
        
         //商品库商品
-    	$GoodslibBasicInfo = new Ecjia\App\Goodslib\Goodslib\GoodslibBasicInfo($goodslib_product->goods_id);
+    	$GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goodslib_product->goods_id);
         $goods = $GoodslibBasicInfo->goodsLibInfo();
     	
         //名称处理
