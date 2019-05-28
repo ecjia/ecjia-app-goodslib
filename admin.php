@@ -1008,7 +1008,7 @@ class admin extends ecjia_admin {
         $this->assign('action_link', array('text' => __('返回', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/init')));
         
         $GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goods_id);
-        $goods = $GoodslibBasicInfo->goodsLibInfo();
+        $goods = $GoodslibBasicInfo->goodslibInfo();
         
         if (empty($goods)) {
             return $this->showmessage(__('未检测到此商品', 'goodslib'), ecjia::MSGTYPE_HTML | ecjia::MSGSTAT_ERROR, array('links' => array(array('text'=> __('返回商品列表', 'goodslib'),'href'=>RC_Uri::url('goodslib/admin/init')))));
@@ -1082,7 +1082,7 @@ class admin extends ecjia_admin {
        
         //商品库商品
     	$GoodslibBasicInfo = new Ecjia\App\Goodslib\GoodslibBasicInfo($goodslib_product->goods_id);
-        $goods = $GoodslibBasicInfo->goodsLibInfo();
+        $goods = $GoodslibBasicInfo->goodslibInfo();
     	
         //名称处理
         $goodslib_product['product_attr_value'] = '';
