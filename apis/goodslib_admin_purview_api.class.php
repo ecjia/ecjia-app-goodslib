@@ -59,7 +59,7 @@ class goodslib_admin_purview_api extends Component_Event_Api {
             array('action_name' => __('商品库商品导入', 'goodslib'), 'action_code' => 'goodslib_import', 'relevance' => ''),
             array('action_name' => __('商品库商品导出', 'goodslib'), 'action_code' => 'goodslib_export', 'relevance' => ''),
 
-        	//商品规格模板
+                //商品规格模板
         	array('action_name' => __('商品库规格模板', 'goodslib'), 'action_code' => 'goods_spec_template_manage', 'relevance' => ''),
         	array('action_name' => __('更新商品库规格模板', 'goodslib'), 'action_code' => 'goods_spec_template_update', 'relevance' => ''),
         	array('action_name' => __('删除商品库规格模板', 'goodslib'), 'action_code' => 'goods_spec_template_delete', 'relevance' => ''),
@@ -79,7 +79,6 @@ class goodslib_admin_purview_api extends Component_Event_Api {
         	array('action_name' => __('删除商品库参数', 'goodslib'), 'action_code' => 'goods_parameter_attr_delete', 'relevance' => ''),
 
             array('action_name' => __('加入供货', 'goodslib'), 'action_code' => 'goodslib_supplier', 'relevance' => ''),
-
 
         );
         return $purviews;
