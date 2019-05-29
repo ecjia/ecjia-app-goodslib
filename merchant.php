@@ -311,19 +311,25 @@ class merchant extends ecjia_merchant {
 	            }
 	        }
 	    }
-	    
-	    //商品重量处理
+	    //商品重量存在，重量单位是0的情况
 	    if ($goods['goods_weight'] > 0) {
-	    	if ($goods['goods_weight'] >= 1) {
-	    		//千克
-	    		$goods['weight_unit'] = 2;
+	    	if (empty($goods['weight_unit'])) {
+	    		if ($goods['goods_weight'] >= 1 ) {
+	    			$goods['weight_unit'] = 2; //千克
+	    		} else {
+	    			$goods['weight_unit'] = 1; //克
+	    			$goods['goods_weight'] = $goods['goods_weight'] * 1000;
+	    		}
 	    	} else {
-	    		//克
-	    		$goods['goods_weight'] = $goods['goods_weight'] * 1000;
-	    		$goods['weight_unit'] = 1;
-	    	}	
+	    		if ($goods['weight_unit'] == 1) {
+	    			if ($goods['goods_weight'] > 1) {
+	    				$goods['weight_unit'] = 2; //千克
+	    			} else {
+	    				$goods['goods_weight'] = $goods['goods_weight'] * 1000;
+	    			}
+	    		}
+	    	}
 	    }
-	    
 	    
 	    $time = RC_Time::gmtime();
 	    $goods['add_time'] = $time;
@@ -464,7 +470,14 @@ class merchant extends ecjia_merchant {
 	    		if ($goods['weight_unit'] == 2 ) {
 	    			$goods['goods_weight_string'] = $goods['goods_weight'].'千克';
 	    		} else {
-	    			$goods['goods_weight_string'] = $goods['goods_weight'].'克';
+	    			if ($goods['goods_weight'] < 1){
+	    				$str = '克';
+	    				$goods_weight = $goods['goods_weight']*1000;
+	    			} else {
+	    				$str = '千克';
+	    				$goods_weight = $goods['goods_weight'];
+	    			}
+	    			$goods['goods_weight_string'] = $goods_weight.$str;
 	    		}
 	    	}
 	    }
