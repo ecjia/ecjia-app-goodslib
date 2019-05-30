@@ -432,12 +432,12 @@ class admin extends ecjia_admin {
         $goods['cat_id'] = $goods_info['cat_id'];
         $goods['goodslib_id'] = $goods_info['goods_id'];
         $goods['goodslib_update_time'] = $time;
-        if($goods_info['goods_type']) {
-            $goods_type = RC_DB::table('goods_type')->where('cat_id', $goods_info['goods_type'])->where('store_id', 0)->first();
-            if ($goods_type) {
-                $goods['goods_type'] = $goods_info['goods_type'];
-            }
-        }
+//        if($goods_info['goods_type']) {
+//            $goods_type = RC_DB::table('goods_type')->where('cat_id', $goods_info['goods_type'])->where('store_id', 0)->first();
+//            if ($goods_type) {
+//                $goods['goods_type'] = $goods_info['goods_type'];
+//            }
+//        }
 
         $new_id = RC_DB::table('supplier_goods')->insertGetId($goods);
         if(!empty($goods_info['goods_img'])) {
@@ -474,7 +474,7 @@ class admin extends ecjia_admin {
 //            }
 //        }
 
-        return $this->showmessage(__('加入供货成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('goods/admin/init')));
+        return $this->showmessage(__('加入供货成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS/*, array('pjaxurl' => RC_Uri::url('goodslib/admin/init'))*/);
     }
     
     //导出

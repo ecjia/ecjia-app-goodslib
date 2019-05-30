@@ -4,6 +4,8 @@
 <!-- {block name="footer"} -->
 <script type="text/javascript">
 	ecjia.admin.goods_list.init();
+    ecjia.admin.goods_info.integral_market_price();
+    ecjia.admin.goods_info.marketPriceSetted();
 </script>
 <!-- {/block} -->
 
@@ -153,20 +155,20 @@
     <div class="modal-body" style="height:auto;">
         <form class="form-horizontal" action="{$form_action_supplier}" method="post" name="insertForm">
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goodslib'}商品名称{/t}</label>
+                <label class="control-label m_r10">{t domain='goodslib'}商品名称{/t}</label>
                 <div class="controls">
                     <input class="form-control" name="goods_name" type="text" value="" />
                     <span class="input-must m_l15">*</span>
                 </div>
             </div>
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goodslib'}商品货号{/t}</label>
+                <label class="control-label m_r10">{t domain='goodslib'}商品货号{/t}</label>
                 <div class="controls">
                     <input class="form-control" name="goods_sn" type="text" value="" />
                 </div>
             </div>
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goodslib'}本店售价{/t}</label>
+                <label class="control-label m_r10">{t domain='goodslib'}本店售价{/t}</label>
                 <div class="controls">
                     <input class="form-control" name="shop_price" type="text" value="" />
                     <a class="btn" data-toggle="marketPriceSetted">{t domain='goodslib'}按市场价计算{/t}</a>
@@ -174,14 +176,14 @@
                 </div>
             </div>
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goodslib'}市场售价{/t}</label>
+                <label class="control-label m_r10">{t domain='goodslib'}市场售价{/t}</label>
                 <div class="controls">
                     <input class="form-control" name="market_price" type="text" value="" />
                     <a class="btn" data-toggle="integral_market_price">{t domain='goodslib'}取整数{/t}</a>
                 </div>
             </div>
             <div class="control-group control-group-small formSep">
-                <label class="control-label">{t domain='goodslib'}上架{/t}</label>
+                <label class="control-label m_r10">{t domain='goodslib'}上架{/t}</label>
                 <div class="controls chk_radio">
                     <input type="checkbox" name="is_on_sale" value="1" style="opacity: 0;" checked="checked">
                     <span>{t domain='goodslib'}打勾表示采购商可见此商品，并允许采购商购买{/t}</span>
