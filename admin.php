@@ -159,14 +159,14 @@ class admin extends ecjia_admin {
 
         $this->assign('form_action_supplier', RC_Uri::url('goodslib/admin/supplier'));
         
-        $this->display('goodslib_list.dwt');
+        return $this->display('goodslib_list.dwt');
     }
     
     public function goods_spec() {
         $this->admin_priv('goodslib_update');
         
         
-        $this->display('goods_list.dwt');
+        return $this->display('goods_list.dwt');
     }
     
     /**
@@ -204,7 +204,7 @@ class admin extends ecjia_admin {
         $this->assign('form_action', RC_Uri::url('goodslib/admin/insert'));
         $this->assign_lang();
         
-        $this->display('goodslib_info.dwt');
+        return $this->display('goodslib_info.dwt');
     }
     
     public function insert() {
@@ -545,7 +545,7 @@ class admin extends ecjia_admin {
         
         $this->assign('demo_url', RC_App::apps_url('statics/files/goodslib_demo.xls', __FILE__));
         
-        $this->display('goodslib_import.dwt');
+        return $this->display('goodslib_import.dwt');
     }
 
     public function upload() {
@@ -826,7 +826,7 @@ class admin extends ecjia_admin {
         );
         
         $this->assign('error', $this->error);
-        $this->display('goodslib_import_success.dwt');
+        return $this->display('goodslib_import_success.dwt');
 //         return $this->showmessage('导入成功', ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('links' => $link));
     }
     
@@ -940,7 +940,7 @@ class admin extends ecjia_admin {
         /* 显示商品信息页面 */
         $this->assign('form_action', RC_Uri::url('goodslib/admin/update'));
         
-        $this->display('goodslib_info.dwt');
+        return $this->display('goodslib_info.dwt');
     }
     
     /**
@@ -1211,7 +1211,7 @@ class admin extends ecjia_admin {
         $this->assign('no_picture', RC_Uri::admin_url('statics/images/nopic.png'));
         $this->assign('goods', $goods);
         
-        $this->display('preview.dwt');
+        return $this->display('preview.dwt');
     }
     
     /**
@@ -1301,7 +1301,7 @@ class admin extends ecjia_admin {
         $this->assign('product', $goodslib_product);
         $this->assign('goods', $goods);
         
-    	$this->display('product_preview.dwt');
+    	return $this->display('product_preview.dwt');
     }
     
     /**
@@ -1448,7 +1448,7 @@ class admin extends ecjia_admin {
         $this->assign('goods_id', $goods_id);
         $this->assign('form_action', RC_Uri::url('goodslib/admin/update_goods_desc','goods_id='.$goods_id));
         
-        $this->display('goods_desc.dwt');
+        return $this->display('goods_desc.dwt');
     }
     /**
      * 商品描述更新
@@ -1522,7 +1522,7 @@ class admin extends ecjia_admin {
     	
     	$this->assign('form_action', RC_Uri::url('goodslib/admin/update_goods_parameter', array('goods_id' => $goods_id)));
     
-    	$this->display('goods_parameter.dwt');
+    	return $this->display('goods_parameter.dwt');
     }
     
   	/**
@@ -1674,7 +1674,7 @@ class admin extends ecjia_admin {
 
     	$this->assign('form_action', RC_Uri::url('goodslib/admin/update_goods_specification', array('goods_id' => $goods_id)));
     
-    	$this->display('goods_specification.dwt');
+    	return $this->display('goods_specification.dwt');
     }
     
     /**
@@ -1988,7 +1988,7 @@ class admin extends ecjia_admin {
         
         $this->assign('form_action', RC_Uri::url('goodslib/admin/update_goods_attr','goods_id='.$goods_id));
         
-        $this->display('goods_attr.dwt');
+        return $this->display('goods_attr.dwt');
     }
     
     /**
@@ -2157,7 +2157,7 @@ class admin extends ecjia_admin {
             $ur_here = __('编辑货品（SKU）', 'goodslib');
         }
         $this->assign('ur_here', $ur_here);
-        $this->display('product_info.dwt');
+        return $this->display('product_info.dwt');
     }
 
     public function product_edit() {
@@ -2200,7 +2200,7 @@ class admin extends ecjia_admin {
         $product = goodslib_product_list($goods_id, '');
         $this->assign('product_list', $product['product']);
 
-        $this->display('product_edit.dwt');
+        return $this->display('product_edit.dwt');
     }
 
     public function product_update()
@@ -2375,7 +2375,7 @@ class admin extends ecjia_admin {
         $product = goodslib_product_list($goods_id, '');
         $this->assign('product_list', $product['product']);
 
-        $this->display('product_desc.dwt');
+        return $this->display('product_desc.dwt');
     }
     /**
      * 货品描述更新
