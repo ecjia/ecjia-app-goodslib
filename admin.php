@@ -158,8 +158,6 @@ class admin extends ecjia_admin {
         $this->assign('action_link',      	array('text' => __('添加商品', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/add')));
         $this->assign('form_action', RC_Uri::url('goodslib/admin/batch'));
 
-        $this->assign('form_action_supplier', RC_Uri::url('goodslib/admin/supplier'));
-        
         return $this->display('goodslib_list.dwt');
     }
 
