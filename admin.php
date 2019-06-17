@@ -166,18 +166,16 @@ class admin extends ecjia_admin {
      */
     public static function maker_goodslist_links($data)
     {
-
         $links = [
             '<a class="data-pjax" href="'.RC_Uri::url('goodslib/admin/edit', ['goods_id' => $data['goods_id']]).'">'.__('编辑', 'goodslib').'</a>',
             '<a class="data-pjax" href="'.RC_Uri::url('goodslib/admin_gallery/init', ['goods_id' => $data['goods_id']]).'">'.__('商品相册', 'goodslib').'</a>',
             '<a class="data-pjax" href="'.RC_Uri::url('goodslib/admin/edit_goods_parameter', ['goods_id' => $data['goods_id']]).'">'.__('商品参数', 'goodslib').'</a>',
             '<a class="data-pjax" href="'.RC_Uri::url('goodslib/admin/edit_goods_specification', ['goods_id' => $data['goods_id']]).'">'.__('规格/货品', 'goodslib').'</a>',
             '<a target="_blank" href="'.RC_Uri::url('goodslib/admin/preview', ['goods_id' => $data['goods_id']]).'">'.__('预览', 'goodslib').'</a>',
-            '<a class="insert-goods-btn" href="javascript:;" data-href="'.RC_Uri::url('goodslib/admin/supplier', ['goods_id' => $data['goods_id']]).'"
-                               data-id="'.$data['goods_id'].'" data-name="'.$data['goods_name'].'" data-sn="'.$data['goods_sn'].'" data-shopprice="'.$data['shop_price'].'" data-marketprice="'.$data['market_price'].'">'.__('我要供货', 'goodslib').'</a>',
             '<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="'.__('您确定要删除此商品吗？', 'goodslib').'" href="'.RC_Uri::url('goodslib/admin/remove', ['id' => $data['goods_id']]).'">'.__('删除', 'goodslib').'</a>',
-
         ];
+
+        $links = RC_Hook::apply_filters('goodslib_maker_goodslist_links', $links);
 
         return implode('&nbsp;|&nbsp;', $links);
     }
