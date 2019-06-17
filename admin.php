@@ -175,7 +175,7 @@ class admin extends ecjia_admin {
             '<a class="ajaxremove ecjiafc-red" data-toggle="ajaxremove" data-msg="'.__('您确定要删除此商品吗？', 'goodslib').'" href="'.RC_Uri::url('goodslib/admin/remove', ['id' => $data['goods_id']]).'">'.__('删除', 'goodslib').'</a>',
         ];
 
-        $links = RC_Hook::apply_filters('goodslib_maker_goodslist_links', $links);
+        $links = RC_Hook::apply_filters('goodslib_maker_goodslist_links', $links, $data);
 
         return implode('&nbsp;|&nbsp;', $links);
     }
