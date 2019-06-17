@@ -140,57 +140,6 @@
 	</div>
 </div>
 
-
-<div class="modal hide fade" id="insertGoods">
-    <div class="modal-header">
-        <button class="close" data-dismiss="modal">×</button>
-        <h3 class="modal-title">{t domain='goodslib'}我要供货{/t}</h3>
-    </div>
-    <div class="modal-body" style="height:auto;">
-        <form class="form-horizontal" action="{$form_action_supplier}" method="post" name="insertForm">
-            <div class="control-group control-group-small formSep">
-                <label class="control-label m_r10">{t domain='goodslib'}商品名称{/t}</label>
-                <div class="controls">
-                    <input class="form-control" name="goods_name" type="text" value="" />
-                    <span class="input-must m_l15">*</span>
-                </div>
-            </div>
-            <div class="control-group control-group-small formSep">
-                <label class="control-label m_r10">{t domain='goodslib'}商品货号{/t}</label>
-                <div class="controls">
-                    <input class="form-control" name="goods_sn" type="text" value="" />
-                </div>
-            </div>
-            <div class="control-group control-group-small formSep">
-                <label class="control-label m_r10">{t domain='goodslib'}本店售价{/t}</label>
-                <div class="controls">
-                    <input class="form-control" name="shop_price" type="text" value="" />
-                    <a class="btn" data-toggle="marketPriceSetted">{t domain='goodslib'}按市场价计算{/t}</a>
-                    <span class="input-must">*</span>
-                </div>
-            </div>
-            <div class="control-group control-group-small formSep">
-                <label class="control-label m_r10">{t domain='goodslib'}市场售价{/t}</label>
-                <div class="controls">
-                    <input class="form-control" name="market_price" type="text" value="" />
-                    <a class="btn" data-toggle="integral_market_price">{t domain='goodslib'}取整数{/t}</a>
-                </div>
-            </div>
-            <div class="control-group control-group-small formSep">
-                <label class="control-label m_r10">{t domain='goodslib'}上架{/t}</label>
-                <div class="controls chk_radio">
-                    <input type="checkbox" name="is_on_sale" value="1" style="opacity: 0;" checked="checked">
-                    <span>{t domain='goodslib'}打勾表示采购商可见此商品，并允许采购商购买{/t}</span>
-                </div>
-            </div>
-
-            <input type="hidden" name="goods_id" value="" />
-
-            <div class="form-group t_c">
-                <a class="btn btn-gebo insertSubmit" href="javascript:;">{t domain='goodslib'}确认{/t}</a>
-            </div>
-        </form>
-    </div>
-</div>
+<!-- {ecjia:hook id=goodslib_modal_goodslist_page} -->
 
 <!-- {/block} -->
