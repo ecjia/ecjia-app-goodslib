@@ -78,8 +78,6 @@ class goodslib_admin_purview_api extends Component_Event_Api {
         	array('action_name' => __('更新商品库参数', 'goodslib'), 'action_code' => 'goods_parameter_attr_update', 'relevance' => ''),
         	array('action_name' => __('删除商品库参数', 'goodslib'), 'action_code' => 'goods_parameter_attr_delete', 'relevance' => ''),
 
-            array('action_name' => __('加入供货', 'goodslib'), 'action_code' => 'goodslib_supplier', 'relevance' => ''),
-
         );
         return $purviews;
     }
