@@ -529,7 +529,7 @@ class merchant extends ecjia_merchant {
 	    $goods_attr_store_formate = array_change_key($goods_attr_store, array('goods_id', 'attr_id', 'attr_value'));
 	    
 	    if($goodslib_products) {
-	        $time = RC_Time::gmtime();
+            $time = RC_Time::gmtime();
 	        foreach ($goodslib_products as $key => $product) {
 	            unset($goodslib_products[$key]['product_id']);
 	            $goodslib_products[$key]['goods_id'] = $goods['goods_id'];
