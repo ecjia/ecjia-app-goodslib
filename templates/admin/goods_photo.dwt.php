@@ -56,7 +56,6 @@
 					<a class="move-mod-head" href="javascript:void(0)" title="{t domain="goodslib"}移动{/t}"><i class="icon-move"></i></a>
 					<a href="javascript:;" title="{t domain="goodslib"}编辑{/t}" data-toggle="edit"><i class="icon-pencil"></i></a>
 					<span class="edit_title">{if $img.img_desc}{$img.img_desc}{else}{t domain="goodslib"}无标题{/t}{/if}</span>
-					<input type="hidden" class="img_desc_data" value="{$img.img_desc}"/>
 				</p>
 				</li>
 				<!-- {/foreach} -->

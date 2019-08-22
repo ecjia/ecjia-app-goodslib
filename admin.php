@@ -157,7 +157,7 @@ class admin extends ecjia_admin {
 
         $this->assign('action_link',      	array('text' => __('添加商品', 'goodslib'), 'href' => RC_Uri::url('goodslib/admin/add')));
         $this->assign('form_action', RC_Uri::url('goodslib/admin/batch'));
-
+        
         return $this->display('goodslib_list.dwt');
     }
 
@@ -384,8 +384,7 @@ class admin extends ecjia_admin {
 
         return $this->showmessage(__('添加商品成功', 'goodslib'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array( 'pjaxurl' => RC_Uri::url('goodslib/admin/edit', "goods_id=$goods_id"), 'links' => $links, 'max_id' => $goods_id));
     }
-
-
+    
     //导出
     public function export() {
         $this->admin_priv('goodslib_export');

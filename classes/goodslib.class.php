@@ -124,7 +124,7 @@ class goodslib {
         /* 记录总数 */
         $count = $db_goods->whereRaw('is_delete = ' . $is_delete . '' . $where)->count('goods_id');
         if ($_SESSION['store_id']) {
-            $page = new ecjia_merchant_page ($count, $page_size, 5);
+            $page = new ecjia_merchant_page ($count, $page_size, 3);
         } else {
             $page = new ecjia_page ($count, $page_size, 5);
         }
