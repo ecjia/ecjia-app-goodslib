@@ -869,7 +869,7 @@ class admin extends ecjia_admin {
         /* 是否处理商品图 */
         $proc_goods_img = $this->request->hasFile('goods_img');
         $proc_thumb_img = $this->request->hasFile('thumb_img');
-        
+
         if ($proc_goods_img) {
             $image_info = $upload->upload('goods_img');
             if (empty($image_info)) {
